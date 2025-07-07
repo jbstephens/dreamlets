@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(45, 100%, 98%);
+  --foreground: hsl(210, 40%, 18%);
+  --muted: hsl(43, 13%, 95%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 40%, 18%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 40%, 18%);
+  --border: hsl(43, 13%, 90%);
+  --input: hsl(43, 13%, 90%);
+  --primary: hsl(4, 100%, 68%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(43, 13%, 95%);
+  --secondary-foreground: hsl(210, 40%, 18%);
+  --accent: hsl(43, 13%, 95%);
+  --accent-foreground: hsl(210, 40%, 18%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(4, 100%, 68%);
+  --radius: 0.5rem;
+  
+  /* Custom StoryForge colors */
+  --coral: hsl(4, 100%, 68%);
+  --lavender: hsl(275, 48%, 55%);
+  --mint: hsl(165, 56%, 55%);
+  --sunset: hsl(35, 85%, 52%);
+  --cream: hsl(45, 100%, 98%);
+  --navy: hsl(210, 40%, 18%);
+  --golden: hsl(48, 89%, 60%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(4, 100%, 68%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--cream);
+    color: var(--foreground);
+  }
+}
+
+/* Custom utility classes */
+.text-coral { color: var(--coral); }
+.text-lavender { color: var(--lavender); }
+.text-mint { color: var(--mint); }
+.text-sunset { color: var(--sunset); }
+.text-navy { color: var(--navy); }
+.text-golden { color: var(--golden); }
+
+.bg-coral { background-color: var(--coral); }
+.bg-lavender { background-color: var(--lavender); }
+.bg-mint { background-color: var(--mint); }
+.bg-sunset { background-color: var(--sunset); }
+.bg-cream { background-color: var(--cream); }
+.bg-navy { background-color: var(--navy); }
+.bg-golden { background-color: var(--golden); }
+
+.border-coral { border-color: var(--coral); }
+.border-lavender { border-color: var(--lavender); }
+.border-mint { border-color: var(--mint); }
+.border-sunset { border-color: var(--sunset); }
+.border-golden { border-color: var(--golden); }
+
+.font-nunito { font-family: 'Nunito', sans-serif; }
+.font-crimson { font-family: 'Crimson Text', serif; }
+
+/* Print styles */
+@media print {
+  .no-print { 
+    display: none !important; 
+  }
+  
+  .print-page { 
+    page-break-after: always;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  
+  .print-page:last-child { 
+    page-break-after: avoid; 
+  }
+  
+  body { 
+    background: white !important;
+    color: black !important;
+  }
+  
+  .story-page { 
+    width: 100% !important; 
+    margin: 0 !important;
+    padding: 2rem !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+  
+  .story-page img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
