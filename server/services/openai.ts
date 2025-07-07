@@ -31,6 +31,8 @@ export interface GeneratedImages {
 export async function generateStory(request: StoryRequest): Promise<StoryResponse> {
   const { kidNames, characterNames, storyIdea, tone } = request;
   
+  console.log("Starting story generation for:", { kidNames, characterNames, storyIdea, tone });
+  
   const kidNamesStr = kidNames.join(" and ");
   const characterNamesStr = characterNames.length > 0 ? ` featuring ${characterNames.join(", ")}` : "";
   
@@ -60,6 +62,7 @@ Respond in JSON format with this structure:
 }`;
 
   try {
+    console.log("Sending request to OpenAI GPT-4o...");
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -76,17 +79,21 @@ Respond in JSON format with this structure:
       max_tokens: 2000
     });
 
+    console.log("Story generation completed successfully");
     const result = JSON.parse(response.choices[0].message.content!);
     return result as StoryResponse;
   } catch (error) {
     console.error("Error generating story:", error);
-    throw new Error("Failed to generate story. Please try again.");
+    throw new Error(`Failed to generate story: ${error.message || 'Unknown error'}`);
   }
 }
 
 export async function generateImages(imagePrompts: string[]): Promise<GeneratedImages> {
   try {
-    const imagePromises = imagePrompts.map(async (prompt) => {
+    console.log("Starting image generation for", imagePrompts.length, "prompts...");
+    
+    const imagePromises = imagePrompts.map(async (prompt, index) => {
+      console.log(`Generating image ${index + 1}...`);
       const response = await openai.images.generate({
         model: "dall-e-3",
         prompt: `Children's book illustration style: ${prompt}. Soft, warm colors, friendly and cozy atmosphere, suitable for bedtime stories.`,
@@ -94,10 +101,12 @@ export async function generateImages(imagePrompts: string[]): Promise<GeneratedI
         size: "1024x1024",
         quality: "standard"
       });
+      console.log(`Image ${index + 1} generated successfully`);
       return response.data[0].url!;
     });
 
     const imageUrls = await Promise.all(imagePromises);
+    console.log("All images generated successfully");
     
     return {
       imageUrl1: imageUrls[0],
@@ -106,6 +115,6 @@ export async function generateImages(imagePrompts: string[]): Promise<GeneratedI
     };
   } catch (error) {
     console.error("Error generating images:", error);
-    throw new Error("Failed to generate images. Please try again.");
+    throw new Error(`Failed to generate images: ${error.message || 'Unknown error'}`);
   }
 }

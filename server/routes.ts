@@ -135,6 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/stories/generate", async (req, res) => {
     try {
+      console.log("Received story generation request:", req.body);
       const validatedData = generateStorySchema.parse(req.body);
       
       // Get kid and character names
@@ -147,7 +148,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const kidNames = selectedKids.map(kid => kid.name);
       const characterNames = selectedCharacters.map(char => char.name);
       
+      console.log("Selected kids:", kidNames);
+      console.log("Selected characters:", characterNames);
+      
       // Generate story
+      console.log("Starting story generation...");
       const storyResponse = await generateStory({
         kidNames,
         characterNames,
@@ -155,13 +160,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tone: validatedData.tone
       });
       
-      // Generate images
-      const images = await generateImages([
-        storyResponse.imagePrompt1,
-        storyResponse.imagePrompt2,
-        storyResponse.imagePrompt3
-      ]);
+      console.log("Story generated, now generating images...");
+      // Generate images with fallback
+      let images;
+      try {
+        images = await generateImages([
+          storyResponse.imagePrompt1,
+          storyResponse.imagePrompt2,
+          storyResponse.imagePrompt3
+        ]);
+      } catch (imageError: any) {
+        console.warn("Image generation failed, creating story without images:", imageError.message);
+        images = {
+          imageUrl1: null,
+          imageUrl2: null,
+          imageUrl3: null
+        };
+      }
       
+      console.log("Images generated, saving story...");
       // Save story to database
       const story = await storage.createStory({
         userId: DEMO_USER_ID,
@@ -177,10 +194,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tone: validatedData.tone
       });
       
+      console.log("Story saved successfully:", story.id);
       res.json(story);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating story:", error);
-      res.status(500).json({ message: "Failed to generate story" });
+      res.status(500).json({ 
+        message: "Failed to generate story", 
+        error: error.message || "Unknown error" 
+      });
+    }
+  });
+
+  // Test endpoint for OpenAI connection
+  app.post("/api/test-openai", async (req, res) => {
+    try {
+      console.log("Testing OpenAI connection...");
+      const storyResponse = await generateStory({
+        kidNames: ["Test Child"],
+        characterNames: [],
+        storyIdea: "A simple test story",
+        tone: "cozy"
+      });
+      res.json({ success: true, title: storyResponse.title });
+    } catch (error: any) {
+      console.error("OpenAI test failed:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message || "Unknown error" 
+      });
     }
   });
 
