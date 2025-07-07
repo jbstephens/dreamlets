@@ -61,17 +61,51 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12 no-print">
-          <div className="relative mb-8">
-            <img
-              src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=600"
-              alt="Children reading colorful storybooks together"
-              className="w-full h-64 object-cover rounded-2xl shadow-lg"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-coral/20 to-lavender/20 rounded-2xl"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
-                <h2 className="text-4xl md:text-5xl font-nunito font-bold mb-4">Create Magic Together</h2>
-                <p className="text-xl md:text-2xl font-light">AI-powered bedtime stories personalized for your little ones</p>
+          <div className="relative mb-8 bg-gradient-to-br from-lavender via-coral to-mint rounded-3xl p-12 overflow-hidden">
+            {/* Floating decorative elements */}
+            <div className="absolute top-4 left-8 text-3xl animate-bounce">🌟</div>
+            <div className="absolute top-8 right-12 text-2xl animate-pulse delay-500">🦋</div>
+            <div className="absolute bottom-6 left-12 text-2xl animate-bounce delay-1000">🌙</div>
+            <div className="absolute bottom-4 right-8 text-3xl animate-pulse delay-300">✨</div>
+            <div className="absolute top-16 left-1/4 text-xl animate-bounce delay-700">⭐</div>
+            <div className="absolute bottom-12 right-1/4 text-2xl animate-pulse delay-200">🎈</div>
+            
+            <div className="relative z-10 text-white">
+              <div className="mb-8 flex justify-center space-x-4">
+                <div className="bg-cream p-4 rounded-full shadow-xl transform rotate-12 animate-bounce">
+                  <div className="text-4xl">🌙</div>
+                </div>
+                <div className="bg-white p-4 rounded-full shadow-xl transform -rotate-12 animate-bounce delay-200">
+                  <div className="text-4xl">📖</div>
+                </div>
+                <div className="bg-sunset p-4 rounded-full shadow-xl transform rotate-6 animate-bounce delay-500">
+                  <div className="text-4xl">✨</div>
+                </div>
+              </div>
+              
+              <h2 className="text-5xl md:text-6xl font-nunito font-bold mb-6 drop-shadow-lg">
+                Where Dreams Come to Life! 
+              </h2>
+              <p className="text-xl md:text-2xl font-medium mb-6 max-w-4xl mx-auto leading-relaxed">
+                🎭 Create magical personalized bedtime stories with your little ones as the heroes! 
+              </p>
+              <p className="text-lg md:text-xl text-white/90 mb-8">
+                🎨 Beautiful AI illustrations bring every adventure to life
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-6 text-white/95 text-lg font-medium">
+                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <span className="text-2xl mr-2">🦄</span>
+                  Unicorns & Dragons
+                </div>
+                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <span className="text-2xl mr-2">🏰</span>
+                  Castles & Adventures  
+                </div>
+                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <span className="text-2xl mr-2">🌈</span>
+                  Rainbow Quests
+                </div>
               </div>
             </div>
           </div>
