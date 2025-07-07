@@ -147,16 +147,16 @@ export function CharacterForm() {
             <DialogTrigger asChild>
               <div className="bg-gradient-to-br from-golden/10 to-sunset/10 p-4 rounded-xl border border-golden/20 flex items-center justify-center cursor-pointer hover:shadow-md transition-shadow">
                 <Plus className="h-4 w-4 text-golden mr-2" />
-                <span className="font-nunito font-medium text-golden">Add Baby</span>
+                <span className="font-nunito font-medium text-golden">Add Child</span>
               </div>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Baby</DialogTitle>
+                <DialogTitle>Add New Child</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleKidSubmit} className="space-y-4">
                 <Input
-                  placeholder="Baby's name"
+                  placeholder="Child's name"
                   value={kidForm.name}
                   onChange={(e) => setKidForm({ ...kidForm, name: e.target.value })}
                   required
@@ -176,7 +176,7 @@ export function CharacterForm() {
                   onChange={(e) => setKidForm({ ...kidForm, description: e.target.value })}
                 />
                 <Button type="submit" className="w-full" disabled={createKidMutation.isPending}>
-                  {createKidMutation.isPending ? "Adding..." : "Add Baby"}
+                  {createKidMutation.isPending ? "Adding..." : "Add Child"}
                 </Button>
               </form>
             </DialogContent>
