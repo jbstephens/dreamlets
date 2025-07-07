@@ -1,0 +1,92 @@
+StoryForge MVP Builder
+
+⸻
+
+Project Title:
+StoryForge MVP – 3-Page Illustrated Story Generator for Kids
+
+⸻
+
+Overview:
+We’re building an AI-powered bedtime story creator. Parents define their kids and recurring characters (e.g. stuffies), input a story idea, and the app generates a short 3-part narrative with matching illustrations. Each story is rendered in a 3-page printable HTML layout with embedded images, optimized for printing or saving as PDF via the browser. No backend PDF generation required.
+
+⸻
+
+Key Features:
+
+🧒 1. User Setup (Characters + Kids)
+	•	Allow user to input and save:
+	•	Kids: name, age, short description (e.g. “Loves space and cats”)
+	•	Characters: name, type (manual or image upload), optional description
+	•	Store these per user (use Supabase or Firebase for user auth + DB)
+	•	Later stories pull from these profiles
+
+⸻
+
+📚 2. Story Generation Flow
+	•	Input form includes:
+	•	Select one or more kids
+	•	Select optional characters (via pill UI)
+	•	Input freeform story idea
+	•	Option to select tone: cozy / funny / adventure / dreamy
+	•	Bonus: show 3 suggested ideas if no input is given
+	•	When user submits:
+	•	GPT generates a story in 3 parts:
+	1.	Setup
+	2.	Climax
+	3.	Resolution
+	•	Each part includes a corresponding illustration description
+	•	scene_intro
+	•	scene_climax
+	•	scene_conclusion
+	•	AI art generator (e.g. DALL·E or Midjourney API) returns 3 images
+
+⸻
+
+🖼️ 3. Story Rendering
+	•	Display the story in a 3-page view using styled HTML/CSS
+	•	Each page includes:
+	•	1/3 of the story text
+	•	1 centered image
+	•	Clean serif font, kid-friendly layout
+	•	Page breaks using page-break-after: always
+	•	Add a fixed button: “Print / Save as PDF” → uses window.print()
+	•	@media print CSS hides buttons and ensures good pagination
+
+⸻
+
+💾 4. Data Storage
+
+Each story record should include:
+	•	id
+	•	title
+	•	child_ids
+	•	character_ids
+	•	story_part_1, story_part_2, story_part_3
+	•	image_url_1, image_url_2, image_url_3
+	•	created_at
+	•	part_of_collection (for later storybook printing)
+
+⸻
+
+Stretch Goals (Optional for V1):
+	•	“Add to Storybook” button that queues stories for future multi-story PDF
+	•	Story continuity: optionally pass prior story titles/summary into GPT prompt
+	•	Narration audio button (ElevenLabs or similar)
+
+⸻
+
+Stack Suggestions:
+	•	Frontend: Next.js + Tailwind
+	•	Auth + DB: Supabase
+	•	AI: OpenAI (GPT-4o), DALL·E 3 API (or Midjourney via webhook workaround)
+	•	Deployment: Vercel
+
+⸻
+
+Success Criteria for MVP:
+	•	A parent can:
+	•	Input their kids and favorite characters
+	•	Generate a 3-part bedtime story with 3 relevant images
+	•	View the story in a beautiful 3-page layout
+	•	Print or save as PDF fro
