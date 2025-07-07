@@ -70,7 +70,7 @@ export default function Home() {
             <div className="absolute top-16 left-1/4 text-xl animate-bounce delay-700">⭐</div>
             <div className="absolute bottom-12 right-1/4 text-2xl animate-pulse delay-200">🎈</div>
             
-            <div className="relative z-10 text-white">
+            <div className="relative z-10">
               <div className="mb-8 flex justify-center space-x-4">
                 <div className="bg-cream p-4 rounded-full shadow-xl transform rotate-12 animate-bounce">
                   <div className="text-4xl">🌙</div>
@@ -83,26 +83,26 @@ export default function Home() {
                 </div>
               </div>
               
-              <h2 className="text-5xl md:text-6xl font-nunito font-bold mb-6 drop-shadow-lg">
+              <h2 className="text-5xl md:text-6xl font-nunito font-bold mb-6 text-navy drop-shadow-2xl">
                 Where Dreams Come to Life! 
               </h2>
-              <p className="text-xl md:text-2xl font-medium mb-6 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl font-medium mb-6 max-w-4xl mx-auto leading-relaxed text-navy">
                 🎭 Create magical personalized bedtime stories with your little ones as the heroes! 
               </p>
-              <p className="text-lg md:text-xl text-white/90 mb-8">
+              <p className="text-lg md:text-xl text-navy/80 mb-8">
                 🎨 Beautiful AI illustrations bring every adventure to life
               </p>
               
-              <div className="flex flex-wrap justify-center gap-6 text-white/95 text-lg font-medium">
-                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+              <div className="flex flex-wrap justify-center gap-6 text-navy text-lg font-medium">
+                <div className="flex items-center bg-white/90 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
                   <span className="text-2xl mr-2">🦄</span>
                   Unicorns & Dragons
                 </div>
-                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                <div className="flex items-center bg-white/90 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
                   <span className="text-2xl mr-2">🏰</span>
                   Castles & Adventures  
                 </div>
-                <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+                <div className="flex items-center bg-white/90 px-4 py-2 rounded-full shadow-lg backdrop-blur-sm">
                   <span className="text-2xl mr-2">🌈</span>
                   Rainbow Quests
                 </div>
