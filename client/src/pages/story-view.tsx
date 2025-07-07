@@ -10,7 +10,7 @@ export default function StoryView() {
   const [, setLocation] = useLocation();
 
   const { data: story, isLoading, error } = useQuery<Story>({
-    queryKey: ["/api/stories", parseInt(id!)],
+    queryKey: [`/api/stories/${id}`],
     enabled: !!id,
   });
 
