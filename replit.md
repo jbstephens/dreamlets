@@ -1,8 +1,8 @@
-# StoryForge MVP - AI-Powered Bedtime Story Generator
+# Dreamlets MVP - AI-Powered Bedtime Story Generator
 
 ## Overview
 
-StoryForge is a full-stack web application that generates personalized illustrated bedtime stories for children. The app allows parents to define their kids and recurring characters, input story ideas, and generate 3-page illustrated stories with AI-generated text and images.
+Dreamlets is a full-stack web application that generates personalized illustrated bedtime stories for children. The app allows parents to define their kids and recurring characters, input story ideas, and generate 3-page illustrated stories with AI-generated text and images.
 
 ## System Architecture
 
@@ -105,3 +105,4 @@ Preferred communication style: Simple, everyday language.
 
 Changelog:
 - July 07, 2025. Initial setup
+- July 07, 2025. Changed app name from StoryForge to Dreamlets throughout codebase

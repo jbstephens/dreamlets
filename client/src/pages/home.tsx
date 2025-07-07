@@ -140,7 +140,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="h-6 w-6 text-coral mr-3">📚</div>
-            <h3 className="text-xl font-nunito font-bold">StoryForge</h3>
+            <h3 className="text-xl font-nunito font-bold">Dreamlets</h3>
           </div>
           <p className="text-gray-300 mb-4">Creating magical bedtime stories, one adventure at a time.</p>
         </div>

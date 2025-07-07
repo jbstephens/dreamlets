@@ -7,7 +7,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <BookOpen className="h-6 w-6 text-coral mr-3" />
-            <h1 className="text-xl font-nunito font-bold text-navy">StoryForge</h1>
+            <h1 className="text-xl font-nunito font-bold text-navy">Dreamlets</h1>
           </div>
           <div className="flex items-center space-x-4">
             <button className="text-navy hover:text-coral transition-colors">
