@@ -84,14 +84,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     </div>
                   </div>
                 )}
-                {imageErrors.image1 ? (
-                  <div className="w-full h-64 bg-gradient-to-br from-coral/10 to-sunset/10 rounded-xl flex items-center justify-center">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">🎨</span>
-                      <span className="text-coral font-medium">Illustration temporarily unavailable</span>
-                    </div>
-                  </div>
-                ) : (
+                {!imageErrors.image1 && (
                   <img
                     src={story.imageUrl1}
                     alt="Story illustration - Chapter 1"
@@ -100,6 +93,14 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     onError={() => handleImageError('image1')}
                     style={{ display: imageLoadingStates.image1 ? 'none' : 'block' }}
                   />
+                )}
+                {imageErrors.image1 && (
+                  <div className="w-full h-64 bg-gradient-to-br from-coral/10 to-sunset/10 rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <span className="text-4xl mb-2 block">🎨</span>
+                      <span className="text-coral font-medium">Illustration temporarily unavailable</span>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -141,14 +142,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     </div>
                   </div>
                 )}
-                {imageErrors.image2 ? (
-                  <div className="w-full h-64 bg-gradient-to-br from-lavender/10 to-mint/10 rounded-xl flex items-center justify-center">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">🎨</span>
-                      <span className="text-lavender font-medium">Illustration temporarily unavailable</span>
-                    </div>
-                  </div>
-                ) : (
+                {!imageErrors.image2 && (
                   <img
                     src={story.imageUrl2}
                     alt="Story illustration - Chapter 2"
@@ -157,6 +151,14 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     onError={() => handleImageError('image2')}
                     style={{ display: imageLoadingStates.image2 ? 'none' : 'block' }}
                   />
+                )}
+                {imageErrors.image2 && (
+                  <div className="w-full h-64 bg-gradient-to-br from-lavender/10 to-mint/10 rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <span className="text-4xl mb-2 block">🎨</span>
+                      <span className="text-lavender font-medium">Illustration temporarily unavailable</span>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -198,14 +200,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     </div>
                   </div>
                 )}
-                {imageErrors.image3 ? (
-                  <div className="w-full h-64 bg-gradient-to-br from-mint/10 to-golden/10 rounded-xl flex items-center justify-center">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">🎨</span>
-                      <span className="text-mint font-medium">Illustration temporarily unavailable</span>
-                    </div>
-                  </div>
-                ) : (
+                {!imageErrors.image3 && (
                   <img
                     src={story.imageUrl3}
                     alt="Story illustration - Chapter 3"
@@ -214,6 +209,14 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                     onError={() => handleImageError('image3')}
                     style={{ display: imageLoadingStates.image3 ? 'none' : 'block' }}
                   />
+                )}
+                {imageErrors.image3 && (
+                  <div className="w-full h-64 bg-gradient-to-br from-mint/10 to-golden/10 rounded-xl flex items-center justify-center">
+                    <div className="text-center">
+                      <span className="text-4xl mb-2 block">🎨</span>
+                      <span className="text-mint font-medium">Illustration temporarily unavailable</span>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
