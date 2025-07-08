@@ -72,7 +72,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <img
                 src={story.imageUrl1}
                 alt="Story illustration - Chapter 1"
-                className="w-full h-80 object-cover rounded-xl shadow-lg"
+                className="w-full h-96 object-cover rounded-xl shadow-lg"
               />
             </div>
           </div>
@@ -100,7 +100,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <img
                 src={story.imageUrl2}
                 alt="Story illustration - Chapter 2"
-                className="w-full h-80 object-cover rounded-xl shadow-lg"
+                className="w-full h-96 object-cover rounded-xl shadow-lg"
               />
             </div>
           </div>
@@ -128,7 +128,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <img
                 src={story.imageUrl3}
                 alt="Story illustration - Chapter 3"
-                className="w-full h-80 object-cover rounded-xl shadow-lg"
+                className="w-full h-96 object-cover rounded-xl shadow-lg"
               />
             </div>
           </div>
