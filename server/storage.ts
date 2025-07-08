@@ -1,3 +1,6 @@
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { eq, desc } from "drizzle-orm";
 import { users, kids, characters, stories, type User, type InsertUser, type Kid, type InsertKid, type Character, type InsertCharacter, type Story, type InsertStory } from "@shared/schema";
 
 export interface IStorage {
@@ -147,4 +150,79 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database implementation
+class DatabaseStorage implements IStorage {
+  private db = drizzle(neon(process.env.DATABASE_URL!));
+
+  async getUser(id: number): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.username, username)).limit(1);
+    return result[0];
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const result = await this.db.insert(users).values(insertUser).returning();
+    return result[0];
+  }
+
+  async getKidsByUserId(userId: number): Promise<Kid[]> {
+    return await this.db.select().from(kids).where(eq(kids.userId, userId)).orderBy(desc(kids.createdAt));
+  }
+
+  async createKid(insertKid: InsertKid): Promise<Kid> {
+    const result = await this.db.insert(kids).values(insertKid).returning();
+    return result[0];
+  }
+
+  async updateKid(id: number, updates: Partial<InsertKid>): Promise<Kid | undefined> {
+    const result = await this.db.update(kids).set(updates).where(eq(kids.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteKid(id: number): Promise<void> {
+    await this.db.delete(kids).where(eq(kids.id, id));
+  }
+
+  async getCharactersByUserId(userId: number): Promise<Character[]> {
+    return await this.db.select().from(characters).where(eq(characters.userId, userId)).orderBy(desc(characters.createdAt));
+  }
+
+  async createCharacter(insertCharacter: InsertCharacter): Promise<Character> {
+    const result = await this.db.insert(characters).values(insertCharacter).returning();
+    return result[0];
+  }
+
+  async updateCharacter(id: number, updates: Partial<InsertCharacter>): Promise<Character | undefined> {
+    const result = await this.db.update(characters).set(updates).where(eq(characters.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteCharacter(id: number): Promise<void> {
+    await this.db.delete(characters).where(eq(characters.id, id));
+  }
+
+  async getStoriesByUserId(userId: number): Promise<Story[]> {
+    return await this.db.select().from(stories).where(eq(stories.userId, userId)).orderBy(desc(stories.createdAt));
+  }
+
+  async getStoryById(id: number): Promise<Story | undefined> {
+    const result = await this.db.select().from(stories).where(eq(stories.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createStory(insertStory: InsertStory): Promise<Story> {
+    const result = await this.db.insert(stories).values(insertStory).returning();
+    return result[0];
+  }
+
+  async deleteStory(id: number): Promise<void> {
+    await this.db.delete(stories).where(eq(stories.id, id));
+  }
+}
+
+// Use database storage instead of memory storage
+export const storage = new DatabaseStorage();

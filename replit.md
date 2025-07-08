@@ -22,11 +22,11 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 - **API Design**: RESTful endpoints for CRUD operations
 
 ### Data Storage
-- **Database**: PostgreSQL via Neon Database
+- **Database**: PostgreSQL via Neon Database (currently using Replit's PostgreSQL)
 - **ORM**: Drizzle ORM with type-safe queries
 - **Schema**: Four main tables - users, kids, characters, stories
 - **Migrations**: Managed through Drizzle Kit
-- **Development Storage**: In-memory storage for development/testing
+- **Production Storage**: PostgreSQL database with persistent data storage
 
 ## Key Components
 
@@ -106,3 +106,5 @@ Preferred communication style: Simple, everyday language.
 Changelog:
 - July 07, 2025. Initial setup
 - July 07, 2025. Changed app name from StoryForge to Dreamlets throughout codebase
+- July 08, 2025. Fixed routing system - stories now use unique URLs (/story/1, /story/2, etc.)
+- July 08, 2025. Switched from in-memory storage to PostgreSQL database for data persistence
