@@ -34,7 +34,10 @@ export function Navbar() {
                 <User className="h-4 w-4 mr-3" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center cursor-pointer text-red-600 hover:text-red-700">
+              <DropdownMenuItem 
+                className="flex items-center cursor-pointer text-red-600 hover:text-red-700"
+                onClick={() => window.location.href = "/api/logout"}
+              >
                 <LogOut className="h-4 w-4 mr-3" />
                 Sign Out
               </DropdownMenuItem>

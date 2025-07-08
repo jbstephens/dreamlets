@@ -4,11 +4,14 @@ import { Link } from "wouter";
 import { Navbar } from "@/components/navbar";
 import { CharacterForm } from "@/components/character-form";
 import { StoryForm } from "@/components/story-form";
+import { SubscriptionStatus } from "@/components/subscription-status";
 import { Button } from "@/components/ui/button";
 import { History, Clock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import type { Story } from "@/lib/types";
 
 export default function Home() {
+  const { user } = useAuth();
   const { data: stories = [], isLoading: storiesLoading } = useQuery<Story[]>({
     queryKey: ["/api/stories"],
   });
@@ -16,6 +19,22 @@ export default function Home() {
   const handleStoryGenerated = (storyId: number) => {
     // Story will be available in the stories list, no need to handle locally
     // The user can click on it to view
+  };
+
+  // Calculate stories used this month for subscription status
+  const now = new Date();
+  const thisMonthStories = stories.filter(story => {
+    const storyDate = new Date(story.createdAt || '');
+    return storyDate.getMonth() === now.getMonth() && storyDate.getFullYear() === now.getFullYear();
+  });
+
+  const getStoriesLimit = () => {
+    if (!user) return 5;
+    switch (user.subscriptionTier) {
+      case "premium_15": return 15;
+      case "premium_unlimited": return Infinity;
+      default: return 5;
+    }
   };
 
   return (
@@ -73,6 +92,14 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Subscription Status */}
+        <div className="mb-8">
+          <SubscriptionStatus 
+            storiesUsed={thisMonthStories.length} 
+            limit={getStoriesLimit()} 
+          />
         </div>
 
         {/* Character Setup */}

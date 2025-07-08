@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertKidSchema, insertCharacterSchema, insertStorySchema } from "@shared/schema";
 import { generateStory, generateImages } from "./services/openai";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { z } from "zod";
 
 const generateStorySchema = z.object({
@@ -13,29 +14,50 @@ const generateStorySchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Demo user ID for this MVP
-  const DEMO_USER_ID = 1;
+  // Auth middleware
+  await setupAuth(app);
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Guest session management (for demo purposes)
+  const GUEST_USER_ID = "guest-session";
 
   // Kids routes
-  app.get("/api/kids", async (req, res) => {
+  app.get("/api/kids", async (req: any, res) => {
     try {
-      const kids = await storage.getKidsByUserId(DEMO_USER_ID);
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const kids = await storage.getKidsByUserId(userId);
       res.json(kids);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch kids" });
     }
   });
 
-  app.post("/api/kids", async (req, res) => {
+  app.post("/api/kids", async (req: any, res) => {
     try {
-      const validatedData = insertKidSchema.parse({
-        ...req.body,
-        userId: DEMO_USER_ID
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const validatedData = insertKidSchema.parse(req.body);
+      const kid = await storage.createKid({
+        ...validatedData,
+        userId,
       });
-      const kid = await storage.createKid(validatedData);
       res.json(kid);
     } catch (error) {
-      res.status(400).json({ message: "Invalid kid data" });
+      console.error("Error creating kid:", error);
+      res.status(500).json({ message: "Failed to create kid" });
     }
   });
 
@@ -64,25 +86,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Characters routes
-  app.get("/api/characters", async (req, res) => {
+  app.get("/api/characters", async (req: any, res) => {
     try {
-      const characters = await storage.getCharactersByUserId(DEMO_USER_ID);
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const characters = await storage.getCharactersByUserId(userId);
       res.json(characters);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch characters" });
     }
   });
 
-  app.post("/api/characters", async (req, res) => {
+  app.post("/api/characters", async (req: any, res) => {
     try {
-      const validatedData = insertCharacterSchema.parse({
-        ...req.body,
-        userId: DEMO_USER_ID
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const validatedData = insertCharacterSchema.parse(req.body);
+      const character = await storage.createCharacter({
+        ...validatedData,
+        userId,
       });
-      const character = await storage.createCharacter(validatedData);
       res.json(character);
     } catch (error) {
-      res.status(400).json({ message: "Invalid character data" });
+      console.error("Error creating character:", error);
+      res.status(500).json({ message: "Failed to create character" });
     }
   });
 
@@ -111,9 +136,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stories routes
-  app.get("/api/stories", async (req, res) => {
+  app.get("/api/stories", async (req: any, res) => {
     try {
-      const stories = await storage.getStoriesByUserId(DEMO_USER_ID);
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const stories = await storage.getStoriesByUserId(userId);
       res.json(stories);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch stories" });
@@ -133,14 +159,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/stories/generate", async (req, res) => {
+  app.post("/api/stories/generate", async (req: any, res) => {
     try {
       console.log("Received story generation request:", req.body);
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
       const validatedData = generateStorySchema.parse(req.body);
       
+      // Check if user can create a story (subscription limits)
+      if (userId !== GUEST_USER_ID) {
+        const canCreate = await storage.canCreateStory(userId);
+        if (!canCreate.canCreate) {
+          return res.status(403).json({ 
+            message: canCreate.reason,
+            storiesUsed: canCreate.storiesUsed,
+            limit: canCreate.limit
+          });
+        }
+      }
+      
       // Get kid and character names
-      const allKids = await storage.getKidsByUserId(DEMO_USER_ID);
-      const allCharacters = await storage.getCharactersByUserId(DEMO_USER_ID);
+      const allKids = await storage.getKidsByUserId(userId);
+      const allCharacters = await storage.getCharactersByUserId(userId);
       
       const selectedKids = allKids.filter(kid => validatedData.kidIds.includes(kid.id));
       const selectedCharacters = allCharacters.filter(char => validatedData.characterIds.includes(char.id));
@@ -181,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Images generated, saving story...");
       // Save story to database
       const story = await storage.createStory({
-        userId: DEMO_USER_ID,
+        userId,
         title: storyResponse.title,
         kidIds: validatedData.kidIds,
         characterIds: validatedData.characterIds,
@@ -193,6 +232,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageUrl3: images.imageUrl3,
         tone: validatedData.tone
       });
+      
+      // Increment story count for authenticated users
+      if (userId !== GUEST_USER_ID) {
+        await storage.incrementUserStoryCount(userId);
+      }
       
       console.log("Story saved successfully:", story.id);
       res.json(story);
