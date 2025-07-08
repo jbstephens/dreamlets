@@ -27,13 +27,21 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
-              onClick={() => window.location.href = "/api/login"}
+              onClick={() => window.location.href = "/guest"}
             >
               <Heart className="mr-2 h-5 w-5" />
-              Start Creating Stories
+              Try Free Story
             </Button>
-            <p className="text-cream/80 text-sm">No credit card required</p>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
+              onClick={() => window.location.href = "/api/login"}
+            >
+              Sign Up Free
+            </Button>
           </div>
+          <p className="text-cream/80 text-sm mt-4">Create one story as a guest, or sign up for 5 free stories</p>
         </div>
 
         {/* Features */}

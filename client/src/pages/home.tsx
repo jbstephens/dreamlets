@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { CharacterForm } from "@/components/character-form";
 import { StoryForm } from "@/components/story-form";
 import { SubscriptionStatus } from "@/components/subscription-status";
+import { GuestNotification } from "@/components/guest-notification";
 import { Button } from "@/components/ui/button";
 import { History, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -94,13 +95,18 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Subscription Status */}
-        <div className="mb-8">
-          <SubscriptionStatus 
-            storiesUsed={thisMonthStories.length} 
-            limit={getStoriesLimit()} 
-          />
-        </div>
+        {/* Guest Notification */}
+        <GuestNotification />
+
+        {/* Subscription Status - only for authenticated users */}
+        {user && (
+          <div className="mb-8">
+            <SubscriptionStatus 
+              storiesUsed={thisMonthStories.length} 
+              limit={getStoriesLimit()} 
+            />
+          </div>
+        )}
 
         {/* Character Setup */}
         <CharacterForm />

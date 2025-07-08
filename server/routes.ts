@@ -35,26 +35,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Guest session management (for demo purposes)
   const GUEST_USER_ID = "guest-session";
 
-  // Kids routes
+  // Kids routes - support guest sessions
   app.get("/api/kids", async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
-      const kids = await storage.getKidsByUserId(userId);
+      let kids = [];
+      
+      if (req.user?.claims?.sub) {
+        // Authenticated user - get from database
+        const userId = req.user.claims.sub;
+        kids = await storage.getKidsByUserId(userId);
+      } else {
+        // Guest user - get from session
+        kids = req.session.guestKids || [];
+      }
+      
       res.json(kids);
     } catch (error) {
+      console.error("Error fetching kids:", error);
       res.status(500).json({ message: "Failed to fetch kids" });
     }
   });
 
   app.post("/api/kids", async (req: any, res) => {
     try {
+      const isAuthenticated = !!req.user?.claims?.sub;
       const userId = req.user?.claims?.sub || GUEST_USER_ID;
-      const validatedData = insertKidSchema.parse(req.body);
-      const kid = await storage.createKid({
-        ...validatedData,
-        userId,
-      });
-      res.json(kid);
+      
+      if (isAuthenticated) {
+        // Authenticated user - save to database
+        const validatedData = insertKidSchema.parse(req.body);
+        const kid = await storage.createKid({
+          ...validatedData,
+          userId,
+        });
+        res.json(kid);
+      } else {
+        // Guest user - save to session
+        const guestKids = req.session.guestKids || [];
+        const newKid = {
+          id: Date.now(), // Simple ID for guest kids
+          userId: GUEST_USER_ID,
+          name: req.body.name,
+          age: req.body.age,
+          description: req.body.description || null,
+          createdAt: new Date()
+        };
+        
+        guestKids.push(newKid);
+        req.session.guestKids = guestKids;
+        res.json(newKid);
+      }
     } catch (error) {
       console.error("Error creating kid:", error);
       res.status(500).json({ message: "Failed to create kid" });
@@ -85,26 +115,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Characters routes
+  // Characters routes - support guest sessions
   app.get("/api/characters", async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
-      const characters = await storage.getCharactersByUserId(userId);
+      let characters = [];
+      
+      if (req.user?.claims?.sub) {
+        // Authenticated user - get from database
+        const userId = req.user.claims.sub;
+        characters = await storage.getCharactersByUserId(userId);
+      } else {
+        // Guest user - get from session
+        characters = req.session.guestCharacters || [];
+      }
+      
       res.json(characters);
     } catch (error) {
+      console.error("Error fetching characters:", error);
       res.status(500).json({ message: "Failed to fetch characters" });
     }
   });
 
   app.post("/api/characters", async (req: any, res) => {
     try {
+      const isAuthenticated = !!req.user?.claims?.sub;
       const userId = req.user?.claims?.sub || GUEST_USER_ID;
-      const validatedData = insertCharacterSchema.parse(req.body);
-      const character = await storage.createCharacter({
-        ...validatedData,
-        userId,
-      });
-      res.json(character);
+      
+      if (isAuthenticated) {
+        // Authenticated user - save to database
+        const validatedData = insertCharacterSchema.parse(req.body);
+        const character = await storage.createCharacter({
+          ...validatedData,
+          userId,
+        });
+        res.json(character);
+      } else {
+        // Guest user - save to session
+        const guestCharacters = req.session.guestCharacters || [];
+        const newCharacter = {
+          id: Date.now(), // Simple ID for guest characters
+          userId: GUEST_USER_ID,
+          name: req.body.name,
+          type: req.body.type,
+          description: req.body.description || null,
+          createdAt: new Date()
+        };
+        
+        guestCharacters.push(newCharacter);
+        req.session.guestCharacters = guestCharacters;
+        res.json(newCharacter);
+      }
     } catch (error) {
       console.error("Error creating character:", error);
       res.status(500).json({ message: "Failed to create character" });
@@ -135,26 +195,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stories routes
+  // Stories routes - support both authenticated and guest users
   app.get("/api/stories", async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
-      const stories = await storage.getStoriesByUserId(userId);
+      let stories = [];
+      
+      if (req.user?.claims?.sub) {
+        // Authenticated user - get from database
+        const userId = req.user.claims.sub;
+        stories = await storage.getStoriesByUserId(userId);
+      } else {
+        // Guest user - get from session
+        if (req.session.guestStory) {
+          stories = [req.session.guestStory];
+        }
+      }
+      
       res.json(stories);
     } catch (error) {
+      console.error("Error fetching stories:", error);
       res.status(500).json({ message: "Failed to fetch stories" });
     }
   });
 
-  app.get("/api/stories/:id", async (req, res) => {
+  app.get("/api/stories/:id", async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
-      const story = await storage.getStoryById(id);
-      if (!story) {
-        return res.status(404).json({ message: "Story not found" });
+      
+      if (req.user?.claims?.sub) {
+        // Authenticated user - get from database
+        const story = await storage.getStoryById(id);
+        if (!story) {
+          return res.status(404).json({ message: "Story not found" });
+        }
+        
+        // Check if user owns this story
+        const userId = req.user.claims.sub;
+        if (story.userId !== userId) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+        
+        res.json(story);
+      } else {
+        // Guest user - get from session
+        if (req.session.guestStory && req.session.guestStory.id === id) {
+          res.json(req.session.guestStory);
+        } else {
+          res.status(404).json({ message: "Story not found" });
+        }
       }
-      res.json(story);
     } catch (error) {
+      console.error("Error fetching story:", error);
       res.status(500).json({ message: "Failed to fetch story" });
     }
   });
@@ -162,17 +253,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/stories/generate", async (req: any, res) => {
     try {
       console.log("Received story generation request:", req.body);
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
       const validatedData = generateStorySchema.parse(req.body);
+      const isAuthenticated = !!req.user?.claims?.sub;
+      const userId = req.user?.claims?.sub || GUEST_USER_ID;
       
-      // Check if user can create a story (subscription limits)
-      if (userId !== GUEST_USER_ID) {
+      // Check story limits
+      if (isAuthenticated) {
+        // Authenticated user - check subscription limits
         const canCreate = await storage.canCreateStory(userId);
         if (!canCreate.canCreate) {
           return res.status(403).json({ 
             message: canCreate.reason,
             storiesUsed: canCreate.storiesUsed,
             limit: canCreate.limit
+          });
+        }
+      } else {
+        // Guest user - only allow one story
+        if (req.session.guestStory) {
+          return res.status(403).json({ 
+            message: "You can only create one story as a guest. Sign up to create more!",
+            isGuest: true
           });
         }
       }
@@ -218,27 +319,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       console.log("Images generated, saving story...");
-      // Save story to database
-      const story = await storage.createStory({
-        userId,
-        title: storyResponse.title,
-        kidIds: validatedData.kidIds,
-        characterIds: validatedData.characterIds,
-        storyPart1: storyResponse.part1,
-        storyPart2: storyResponse.part2,
-        storyPart3: storyResponse.part3,
-        imageUrl1: images.imageUrl1,
-        imageUrl2: images.imageUrl2,
-        imageUrl3: images.imageUrl3,
-        tone: validatedData.tone
-      });
       
-      // Increment story count for authenticated users
-      if (userId !== GUEST_USER_ID) {
+      let story;
+      
+      if (isAuthenticated) {
+        // Authenticated user - save to database
+        story = await storage.createStory({
+          userId,
+          title: storyResponse.title,
+          kidIds: validatedData.kidIds,
+          characterIds: validatedData.characterIds,
+          storyPart1: storyResponse.part1,
+          storyPart2: storyResponse.part2,
+          storyPart3: storyResponse.part3,
+          imageUrl1: images.imageUrl1,
+          imageUrl2: images.imageUrl2,
+          imageUrl3: images.imageUrl3,
+          tone: validatedData.tone
+        });
+        
+        // Increment story count for authenticated users
         await storage.incrementUserStoryCount(userId);
+        console.log("Story saved to database successfully:", story.id);
+      } else {
+        // Guest user - save to session with a temporary ID
+        const guestStoryId = Date.now(); // Simple ID for guest stories
+        story = {
+          id: guestStoryId,
+          userId: GUEST_USER_ID,
+          title: storyResponse.title,
+          kidIds: validatedData.kidIds,
+          characterIds: validatedData.characterIds,
+          storyPart1: storyResponse.part1,
+          storyPart2: storyResponse.part2,
+          storyPart3: storyResponse.part3,
+          imageUrl1: images.imageUrl1,
+          imageUrl2: images.imageUrl2,
+          imageUrl3: images.imageUrl3,
+          tone: validatedData.tone,
+          createdAt: new Date()
+        };
+        
+        // Store in session
+        req.session.guestStory = story;
+        console.log("Story saved to session successfully:", story.id);
       }
       
-      console.log("Story saved successfully:", story.id);
       res.json(story);
     } catch (error: any) {
       console.error("Error generating story:", error);

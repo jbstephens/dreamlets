@@ -14,15 +14,24 @@ function Router() {
 
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
+      {isLoading ? (
+        <div className="min-h-screen bg-cream flex items-center justify-center">
+          <div className="text-navy text-xl">Loading...</div>
+        </div>
+      ) : !isAuthenticated ? (
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/guest" component={Home} />
+          <Route path="/story/:id" component={StoryView} />
+          <Route component={NotFound} />
+        </>
       ) : (
         <>
           <Route path="/" component={Home} />
           <Route path="/story/:id" component={StoryView} />
+          <Route component={NotFound} />
         </>
       )}
-      <Route component={NotFound} />
     </Switch>
   );
 }

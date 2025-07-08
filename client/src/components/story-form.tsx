@@ -36,8 +36,19 @@ export function StoryForm({ onStoryGenerated }: StoryFormProps) {
       onStoryGenerated(story.id);
       toast({ title: "Story generated successfully!" });
     },
-    onError: () => {
-      toast({ title: "Failed to generate story", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Error generating story:", error);
+      
+      // Check if this is a guest limit error
+      if (error.message?.includes("one story as a guest")) {
+        toast({ 
+          title: "Guest Story Limit Reached", 
+          description: "Sign up to create more stories!",
+          variant: "destructive" 
+        });
+      } else {
+        toast({ title: "Failed to generate story", variant: "destructive" });
+      }
     },
   });
 
