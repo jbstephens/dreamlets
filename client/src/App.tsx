@@ -12,13 +12,18 @@ import NotFound from "@/pages/not-found";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Show loading only if we're actually waiting for auth check
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-navy text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
-      {isLoading ? (
-        <div className="min-h-screen bg-cream flex items-center justify-center">
-          <div className="text-navy text-xl">Loading...</div>
-        </div>
-      ) : !isAuthenticated ? (
+      {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
           <Route path="/guest" component={Home} />
