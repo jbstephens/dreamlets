@@ -1,27 +1,31 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, desc } from "drizzle-orm";
-import { users, kids, characters, stories, type User, type InsertUser, type Kid, type InsertKid, type Character, type InsertCharacter, type Story, type InsertStory } from "@shared/schema";
+import { eq, desc, sql } from "drizzle-orm";
+import { users, kids, characters, stories, type User, type UpsertUser, type Kid, type InsertKid, type Character, type InsertCharacter, type Story, type InsertStory } from "@shared/schema";
 
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // User operations for Replit Auth
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
   
-  getKidsByUserId(userId: number): Promise<Kid[]>;
+  getKidsByUserId(userId: string): Promise<Kid[]>;
   createKid(kid: InsertKid): Promise<Kid>;
   updateKid(id: number, updates: Partial<InsertKid>): Promise<Kid | undefined>;
   deleteKid(id: number): Promise<void>;
   
-  getCharactersByUserId(userId: number): Promise<Character[]>;
+  getCharactersByUserId(userId: string): Promise<Character[]>;
   createCharacter(character: InsertCharacter): Promise<Character>;
   updateCharacter(id: number, updates: Partial<InsertCharacter>): Promise<Character | undefined>;
   deleteCharacter(id: number): Promise<void>;
   
-  getStoriesByUserId(userId: number): Promise<Story[]>;
+  getStoriesByUserId(userId: string): Promise<Story[]>;
   getStoryById(id: number): Promise<Story | undefined>;
   createStory(story: InsertStory): Promise<Story>;
   deleteStory(id: number): Promise<void>;
+  
+  // Subscription management
+  canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }>;
+  incrementUserStoryCount(userId: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -154,22 +158,27 @@ export class MemStorage implements IStorage {
 class DatabaseStorage implements IStorage {
   private db = drizzle(neon(process.env.DATABASE_URL!));
 
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
     return result[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const result = await this.db.select().from(users).where(eq(users.username, username)).limit(1);
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const result = await this.db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
     return result[0];
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const result = await this.db.insert(users).values(insertUser).returning();
-    return result[0];
-  }
-
-  async getKidsByUserId(userId: number): Promise<Kid[]> {
+  async getKidsByUserId(userId: string): Promise<Kid[]> {
     return await this.db.select().from(kids).where(eq(kids.userId, userId)).orderBy(desc(kids.createdAt));
   }
 
@@ -187,7 +196,7 @@ class DatabaseStorage implements IStorage {
     await this.db.delete(kids).where(eq(kids.id, id));
   }
 
-  async getCharactersByUserId(userId: number): Promise<Character[]> {
+  async getCharactersByUserId(userId: string): Promise<Character[]> {
     return await this.db.select().from(characters).where(eq(characters.userId, userId)).orderBy(desc(characters.createdAt));
   }
 
@@ -205,7 +214,7 @@ class DatabaseStorage implements IStorage {
     await this.db.delete(characters).where(eq(characters.id, id));
   }
 
-  async getStoriesByUserId(userId: number): Promise<Story[]> {
+  async getStoriesByUserId(userId: string): Promise<Story[]> {
     return await this.db.select().from(stories).where(eq(stories.userId, userId)).orderBy(desc(stories.createdAt));
   }
 
@@ -221,6 +230,63 @@ class DatabaseStorage implements IStorage {
 
   async deleteStory(id: number): Promise<void> {
     await this.db.delete(stories).where(eq(stories.id, id));
+  }
+
+  async canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      return { canCreate: false, reason: "User not found", storiesUsed: 0, limit: 0 };
+    }
+
+    // Check if monthly reset is needed
+    const now = new Date();
+    const resetDate = new Date(user.monthlyResetDate);
+    if (now.getMonth() !== resetDate.getMonth() || now.getFullYear() !== resetDate.getFullYear()) {
+      // Reset monthly count
+      await this.db.update(users)
+        .set({ 
+          storiesThisMonth: 0, 
+          monthlyResetDate: now,
+          updatedAt: now 
+        })
+        .where(eq(users.id, userId));
+      user.storiesThisMonth = 0;
+    }
+
+    let limit: number;
+    switch (user.subscriptionTier) {
+      case "free":
+        limit = 5;
+        break;
+      case "premium_15":
+        limit = 15;
+        break;
+      case "premium_unlimited":
+        return { canCreate: true, storiesUsed: user.storiesThisMonth || 0, limit: Infinity };
+      default:
+        limit = 5;
+    }
+
+    const storiesUsed = user.storiesThisMonth || 0;
+    if (storiesUsed >= limit) {
+      return { 
+        canCreate: false, 
+        reason: `You've reached your ${limit} story limit for this month. Upgrade to create more stories!`,
+        storiesUsed,
+        limit
+      };
+    }
+
+    return { canCreate: true, storiesUsed, limit };
+  }
+
+  async incrementUserStoryCount(userId: string): Promise<void> {
+    await this.db.update(users)
+      .set({ 
+        storiesThisMonth: sql`${users.storiesThisMonth} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 }
 

@@ -1,16 +1,35 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, varchar, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Session storage table for Replit Auth
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
+// User storage table for Replit Auth + subscription info
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  id: varchar("id").primaryKey().notNull(), // Replit user ID (string)
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  subscriptionTier: varchar("subscription_tier").default("free"), // 'free', 'premium_15', 'premium_unlimited'
+  storiesThisMonth: integer("stories_this_month").default(0),
+  monthlyResetDate: timestamp("monthly_reset_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const kids = pgTable("kids", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(), // Changed to varchar to match users.id
   name: text("name").notNull(),
   age: integer("age").notNull(),
   description: text("description"),
@@ -19,7 +38,7 @@ export const kids = pgTable("kids", {
 
 export const characters = pgTable("characters", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(), // Changed to varchar to match users.id
   name: text("name").notNull(),
   type: text("type").notNull(), // 'manual' or 'image'
   description: text("description"),
@@ -28,7 +47,7 @@ export const characters = pgTable("characters", {
 
 export const stories = pgTable("stories", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(), // Changed to varchar to match users.id
   title: text("title").notNull(),
   kidIds: jsonb("kid_ids").$type<number[]>().notNull(),
   characterIds: jsonb("character_ids").$type<number[]>().default([]),
@@ -43,9 +62,15 @@ export const stories = pgTable("stories", {
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+  id: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  profileImageUrl: true,
 });
+
+export type UpsertUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
 
 export const insertKidSchema = createInsertSchema(kids).omit({
   id: true,
