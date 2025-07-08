@@ -308,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           storyResponse.imagePrompt1,
           storyResponse.imagePrompt2,
           storyResponse.imagePrompt3
-        ]);
+        ], storyResponse.characterDescriptions);
       } catch (imageError: any) {
         console.warn("Image generation failed, creating story without images:", imageError.message);
         images = {

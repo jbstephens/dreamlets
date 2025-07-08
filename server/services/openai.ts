@@ -17,6 +17,7 @@ export interface StoryResponse {
   part1: string;
   part2: string;
   part3: string;
+  characterDescriptions: string;
   imagePrompt1: string;
   imagePrompt2: string;
   imagePrompt3: string;
@@ -48,7 +49,9 @@ Please create a 3-part story with the following structure:
 
 Each part should be suitable for children and appropriate for bedtime. The story should be engaging but calming.
 
-Also provide image description prompts for each part that would create beautiful, child-friendly illustrations.
+IMPORTANT: For consistent illustrations, first establish detailed character descriptions that will be used across all three images. Include physical appearance, clothing, and distinctive features for each character (both kids and story characters).
+
+Then provide image description prompts for each part that reference these consistent character descriptions.
 
 Respond in JSON format with this structure:
 {
@@ -56,9 +59,10 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "imagePrompt1": "Description for first illustration...",
-  "imagePrompt2": "Description for second illustration...",
-  "imagePrompt3": "Description for third illustration..."
+  "characterDescriptions": "Detailed physical descriptions of all characters (kids and story characters) that will appear consistently across all illustrations...",
+  "imagePrompt1": "Description for first illustration that references the character descriptions...",
+  "imagePrompt2": "Description for second illustration that references the character descriptions...",
+  "imagePrompt3": "Description for third illustration that references the character descriptions..."
 }`;
 
   try {
@@ -88,7 +92,7 @@ Respond in JSON format with this structure:
   }
 }
 
-export async function generateImages(imagePrompts: string[]): Promise<GeneratedImages> {
+export async function generateImages(imagePrompts: string[], characterDescriptions: string): Promise<GeneratedImages> {
   try {
     console.log("Starting image generation for", imagePrompts.length, "prompts...");
     
@@ -96,7 +100,7 @@ export async function generateImages(imagePrompts: string[]): Promise<GeneratedI
       console.log(`Generating image ${index + 1}...`);
       const response = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `Children's book illustration style: ${prompt}. Soft, warm colors, friendly and cozy atmosphere, suitable for bedtime stories.`,
+        prompt: `Children's book illustration style: ${characterDescriptions} ${prompt}. Soft, warm colors, friendly and cozy atmosphere, suitable for bedtime stories.`,
         n: 1,
         size: "1024x1024",
         quality: "standard"

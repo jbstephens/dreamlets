@@ -108,3 +108,6 @@ Changelog:
 - July 07, 2025. Changed app name from StoryForge to Dreamlets throughout codebase
 - July 08, 2025. Fixed routing system - stories now use unique URLs (/story/1, /story/2, etc.)
 - July 08, 2025. Switched from in-memory storage to PostgreSQL database for data persistence
+- July 08, 2025. Fixed authentication infinite loop for guest users
+- July 08, 2025. Implemented guest session system allowing one free story without signup
+- July 08, 2025. Fixed AI image generation to create consistent characters across all three story images by establishing character descriptions that are used in all image prompts
