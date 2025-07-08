@@ -1,58 +1,22 @@
-import { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Navbar } from "@/components/navbar";
 import { CharacterForm } from "@/components/character-form";
 import { StoryForm } from "@/components/story-form";
-import { StoryDisplay } from "@/components/story-display";
 import { Button } from "@/components/ui/button";
 import { History, Clock } from "lucide-react";
 import type { Story } from "@/lib/types";
 
 export default function Home() {
-  const [selectedStoryId, setSelectedStoryId] = useState<number | null>(null);
-
   const { data: stories = [], isLoading: storiesLoading } = useQuery<Story[]>({
     queryKey: ["/api/stories"],
   });
 
-  const { data: selectedStory, isLoading: storyLoading } = useQuery<Story>({
-    queryKey: ["/api/stories", selectedStoryId],
-    enabled: selectedStoryId !== null,
-  });
-
   const handleStoryGenerated = (storyId: number) => {
-    setSelectedStoryId(storyId);
+    // Story will be available in the stories list, no need to handle locally
+    // The user can click on it to view
   };
-
-  const handleBackToHome = () => {
-    setSelectedStoryId(null);
-  };
-
-  if (selectedStoryId && selectedStory) {
-    return (
-      <div className="min-h-screen bg-cream">
-        <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <StoryDisplay story={selectedStory} onBack={handleBackToHome} />
-        </div>
-      </div>
-    );
-  }
-
-  if (storyLoading) {
-    return (
-      <div className="min-h-screen bg-cream">
-        <Navbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse space-y-8">
-            <div className="h-64 bg-gray-200 rounded-2xl"></div>
-            <div className="h-64 bg-gray-200 rounded-2xl"></div>
-            <div className="h-64 bg-gray-200 rounded-2xl"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-cream">
@@ -145,24 +109,22 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {stories.map((story) => (
-                <div
-                  key={story.id}
-                  onClick={() => setSelectedStoryId(story.id)}
-                  className="bg-gradient-to-br from-coral/5 to-sunset/5 rounded-xl p-4 border border-coral/10 hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  {story.imageUrl1 && (
-                    <img
-                      src={story.imageUrl1}
-                      alt={`${story.title} illustration`}
-                      className="w-full h-32 object-cover rounded-lg mb-3"
-                    />
-                  )}
-                  <h4 className="font-nunito font-semibold text-navy mb-2">{story.title}</h4>
-                  <p className="text-sm text-gray-600 mb-2 capitalize">{story.tone} story</p>
-                  <p className="text-xs text-gray-500">
-                    {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : "Recently created"}
-                  </p>
-                </div>
+                <Link href={`/story/${story.id}`} key={story.id}>
+                  <div className="bg-gradient-to-br from-coral/5 to-sunset/5 rounded-xl p-4 border border-coral/10 hover:shadow-lg transition-shadow cursor-pointer">
+                    {story.imageUrl1 && (
+                      <img
+                        src={story.imageUrl1}
+                        alt={`${story.title} illustration`}
+                        className="w-full h-32 object-cover rounded-lg mb-3"
+                      />
+                    )}
+                    <h4 className="font-nunito font-semibold text-navy mb-2">{story.title}</h4>
+                    <p className="text-sm text-gray-600 mb-2 capitalize">{story.tone} story</p>
+                    <p className="text-xs text-gray-500">
+                      {story.createdAt ? new Date(story.createdAt).toLocaleDateString() : "Recently created"}
+                    </p>
+                  </div>
+                </Link>
               ))}
             </div>
           )}

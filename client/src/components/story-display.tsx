@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { Printer, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Story } from "@/lib/types";
@@ -9,9 +9,23 @@ interface StoryDisplayProps {
 }
 
 export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
+  console.log("StoryDisplay received story:", story);
+  
   const handlePrint = () => {
     window.print();
   };
+
+  if (!story) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <h3 className="text-xl font-nunito font-bold text-navy mb-4">Story not available</h3>
+        <Button onClick={onBack} variant="outline">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Stories
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden" id="story-display">

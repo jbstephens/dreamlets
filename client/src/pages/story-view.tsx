@@ -9,10 +9,14 @@ export default function StoryView() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
 
+  console.log("StoryView: id =", id);
+
   const { data: story, isLoading, error } = useQuery<Story>({
     queryKey: [`/api/stories/${id}`],
     enabled: !!id,
   });
+
+  console.log("StoryView: story =", story, "isLoading =", isLoading, "error =", error);
 
   const handleBack = () => {
     setLocation("/");
