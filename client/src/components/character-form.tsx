@@ -162,7 +162,7 @@ export function CharacterForm() {
                 <span className="font-nunito font-medium text-golden">Add Child</span>
               </div>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add New Child</DialogTitle>
               </DialogHeader>
@@ -313,7 +313,7 @@ export function CharacterForm() {
                 <span className="font-nunito text-golden">Add Character</span>
               </div>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add New Character</DialogTitle>
               </DialogHeader>
