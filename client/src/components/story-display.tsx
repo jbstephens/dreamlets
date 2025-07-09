@@ -180,7 +180,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <Heart className="h-6 w-6 text-cream ml-2 animate-pulse" />
             </div>
             <p className="text-lg text-cream/90 mb-6 max-w-2xl mx-auto">
-              Create an account to save this magical story forever and unlock up to 5 total stories completely free!
+              Create an account to save this magical story forever and unlock up to 5 total stories per month completely free!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
