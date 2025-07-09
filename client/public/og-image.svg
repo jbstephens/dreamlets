@@ -1,0 +1,56 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E6E6FA"/>
+      <stop offset="50%" style="stop-color:#FF6B6B"/>
+      <stop offset="100%" style="stop-color:#4ECDC4"/>
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6B6B"/>
+      <stop offset="100%" style="stop-color:#FFD93D"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="100" r="40" fill="#FFD93D" opacity="0.6"/>
+  <circle cx="1050" cy="150" r="60" fill="#4ECDC4" opacity="0.5"/>
+  <circle cx="1100" cy="500" r="45" fill="#E6E6FA" opacity="0.7"/>
+  <circle cx="100" cy="480" r="35" fill="#FF6B6B" opacity="0.6"/>
+  
+  <!-- Stars -->
+  <g fill="#FFD93D" opacity="0.8">
+    <polygon points="300,120 310,140 330,140 316,152 322,172 300,160 278,172 284,152 270,140 290,140" transform="scale(0.8)"/>
+    <polygon points="900,400 910,420 930,420 916,432 922,452 900,440 878,452 884,432 870,420 890,420" transform="scale(0.6)"/>
+    <polygon points="800,80 810,100 830,100 816,112 822,132 800,120 778,132 784,112 770,100 790,100" transform="scale(0.5)"/>
+  </g>
+  
+  <!-- Moon -->
+  <circle cx="950" cy="250" r="80" fill="#F7F3E9" opacity="0.9"/>
+  <circle cx="930" cy="230" r="8" fill="#E6E6FA" opacity="0.6"/>
+  <circle cx="970" cy="270" r="12" fill="#E6E6FA" opacity="0.5"/>
+  <circle cx="950" cy="255" r="6" fill="#E6E6FA" opacity="0.7"/>
+  
+  <!-- Main Title -->
+  <text x="600" y="250" font-family="serif" font-size="80" font-weight="bold" text-anchor="middle" fill="url(#textGradient)">
+    Dreamlets
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="320" font-family="sans-serif" font-size="36" text-anchor="middle" fill="#2D3A8C">
+    ✨ Magical Bedtime Stories ✨
+  </text>
+  
+  <!-- Description -->
+  <text x="600" y="380" font-family="sans-serif" font-size="28" text-anchor="middle" fill="#2D3A8C">
+    Personalized illustrated stories for children
+  </text>
+  
+  <!-- Call to action -->
+  <rect x="450" y="450" width="300" height="60" rx="30" fill="#FF6B6B"/>
+  <text x="600" y="490" font-family="sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">
+    Create Your Story
+  </text>
+</svg>

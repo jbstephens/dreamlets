@@ -122,3 +122,4 @@ Changelog:
 - July 09, 2025. Added delightful loading modal with progress bar and kid-friendly messages like "Wrangling unicorns" and "Teaching dragons to dance" during story generation
 - July 09, 2025. Fixed image cropping issue completely - removed height restrictions and object-cover to show full OpenAI-generated images without cutting off heads
 - July 09, 2025. Added pricing page link to navbar dropdown menu for easy access to subscription plans
+- July 09, 2025. Added comprehensive Open Graph meta tags and custom SVG image for beautiful social media sharing on iMessage, Facebook, and Twitter
