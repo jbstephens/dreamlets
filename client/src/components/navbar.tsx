@@ -1,4 +1,4 @@
-import { History, User, LogOut, Moon, Stars, ChevronDown } from "lucide-react";
+import { History, User, LogOut, Moon, Stars, ChevronDown, CreditCard } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Link } from "wouter";
 
@@ -37,6 +37,12 @@ export function Navbar() {
                 <User className="h-4 w-4 mr-3" />
                 Profile
               </DropdownMenuItem>
+              <Link href="/pricing">
+                <DropdownMenuItem className="flex items-center cursor-pointer">
+                  <CreditCard className="h-4 w-4 mr-3" />
+                  Pricing
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem 
                 className="flex items-center cursor-pointer text-red-600 hover:text-red-700"
                 onClick={() => window.location.href = "/api/logout"}
