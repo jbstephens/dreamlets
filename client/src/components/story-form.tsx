@@ -5,6 +5,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { StoryLoadingModal } from "@/components/story-loading-modal";
 import type { Kid, Character, GenerateStoryRequest } from "@/lib/types";
 
 interface StoryFormProps {
@@ -223,20 +224,16 @@ export function StoryForm({ onStoryGenerated }: StoryFormProps) {
             disabled={generateStoryMutation.isPending}
             className="bg-gradient-to-r from-coral to-sunset text-white px-8 py-4 rounded-full font-nunito font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
-            {generateStoryMutation.isPending ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                Creating your story...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-5 w-5 mr-2" />
-                Generate My Story
-              </>
-            )}
+            <>
+              <Sparkles className="h-5 w-5 mr-2" />
+              Generate My Story
+            </>
           </Button>
         </div>
       </form>
+
+      {/* Loading Modal */}
+      <StoryLoadingModal isOpen={generateStoryMutation.isPending} />
     </div>
   );
 }
