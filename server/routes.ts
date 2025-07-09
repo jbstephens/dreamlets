@@ -81,6 +81,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           name: req.body.name,
           age: req.body.age,
           description: req.body.description || null,
+          hairColor: req.body.hairColor || null,
+          eyeColor: req.body.eyeColor || null,
+          hairLength: req.body.hairLength || null,
+          skinTone: req.body.skinTone || null,
           createdAt: new Date()
         };
         
@@ -302,6 +306,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const kidNames = selectedKids.map(kid => kid.name);
       const characterNames = selectedCharacters.map(char => char.name);
       
+      // Build physical attributes for selected kids
+      const kidPhysicalAttributes = selectedKids.map(kid => ({
+        name: kid.name,
+        hairColor: kid.hairColor || undefined,
+        eyeColor: kid.eyeColor || undefined,
+        hairLength: kid.hairLength || undefined,
+        skinTone: kid.skinTone || undefined,
+      })).filter(kid => kid.hairColor || kid.eyeColor || kid.hairLength || kid.skinTone);
+      
       console.log("DEBUG - isAuthenticated:", isAuthenticated);
       console.log("DEBUG - userId:", userId);
       console.log("DEBUG - allKids:", allKids);
@@ -310,6 +323,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("DEBUG - selectedCharacters:", selectedCharacters);
       console.log("Selected kids:", kidNames);
       console.log("Selected characters:", characterNames);
+      console.log("Kid physical attributes:", kidPhysicalAttributes);
       
       // Generate story
       console.log("Starting story generation...");
@@ -317,7 +331,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         kidNames,
         characterNames,
         storyIdea: validatedData.storyIdea,
-        tone: validatedData.tone
+        tone: validatedData.tone,
+        kidPhysicalAttributes: kidPhysicalAttributes.length > 0 ? kidPhysicalAttributes : undefined
       });
       
       console.log("Story generated, now generating images...");

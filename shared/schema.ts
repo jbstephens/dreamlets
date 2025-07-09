@@ -33,6 +33,10 @@ export const kids = pgTable("kids", {
   name: text("name").notNull(),
   age: integer("age").notNull(),
   description: text("description"),
+  hairColor: text("hair_color"),
+  eyeColor: text("eye_color"),
+  hairLength: text("hair_length"),
+  skinTone: text("skin_tone"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

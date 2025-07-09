@@ -10,6 +10,13 @@ export interface StoryRequest {
   characterNames: string[];
   storyIdea: string;
   tone: string;
+  kidPhysicalAttributes?: Array<{
+    name: string;
+    hairColor?: string;
+    eyeColor?: string;
+    hairLength?: string;
+    skinTone?: string;
+  }>;
 }
 
 export interface StoryResponse {
@@ -30,17 +37,34 @@ export interface GeneratedImages {
 }
 
 export async function generateStory(request: StoryRequest): Promise<StoryResponse> {
-  const { kidNames, characterNames, storyIdea, tone } = request;
+  const { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes } = request;
   
-  console.log("Starting story generation for:", { kidNames, characterNames, storyIdea, tone });
+  console.log("Starting story generation for:", { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes });
   
   const kidNamesStr = kidNames.join(" and ");
   const characterNamesStr = characterNames.length > 0 ? ` featuring ${characterNames.join(", ")}` : "";
   
+  // Build physical attributes section
+  let physicalAttributesSection = "";
+  if (kidPhysicalAttributes && kidPhysicalAttributes.length > 0) {
+    physicalAttributesSection = "\n\nPhysical Attributes (ONLY use these if provided):\n";
+    kidPhysicalAttributes.forEach(kid => {
+      const attributes = [];
+      if (kid.hairColor) attributes.push(`${kid.hairColor} hair`);
+      if (kid.hairLength) attributes.push(`${kid.hairLength} hair`);
+      if (kid.eyeColor) attributes.push(`${kid.eyeColor} eyes`);
+      if (kid.skinTone) attributes.push(`${kid.skinTone} skin`);
+      
+      if (attributes.length > 0) {
+        physicalAttributesSection += `- ${kid.name}: ${attributes.join(", ")}\n`;
+      }
+    });
+  }
+  
   const prompt = `Create a bedtime story for ${kidNamesStr}${characterNamesStr}. 
   
 Story idea: ${storyIdea}
-Tone: ${tone}
+Tone: ${tone}${physicalAttributesSection}
 
 Please create a 3-part story with the following structure:
 1. Setup - Introduce the characters and the initial situation
@@ -49,7 +73,13 @@ Please create a 3-part story with the following structure:
 
 Each part should be suitable for children and appropriate for bedtime. The story should be engaging but calming.
 
-IMPORTANT: For consistent illustrations, first establish detailed character descriptions that will be used across all three images. Include physical appearance, clothing, and distinctive features for each character (both kids and story characters).
+CRITICAL PHYSICAL DESCRIPTION RULES:
+- ONLY use the physical attributes provided above when describing the children
+- DO NOT make up or invent physical descriptions (hair color, eye color, etc.) for any children
+- If no physical attributes are provided for a child, simply use their name without physical descriptions
+- You may describe clothing, expressions, and actions, but NOT physical features unless explicitly provided
+
+IMPORTANT: For consistent illustrations, first establish detailed character descriptions that will be used across all three images. Include physical appearance (ONLY if provided above), clothing, and distinctive features for each character (both kids and story characters).
 
 Then provide image description prompts for each part that reference these consistent character descriptions.
 
@@ -59,7 +89,7 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "characterDescriptions": "Detailed physical descriptions of all characters (kids and story characters) that will appear consistently across all illustrations...",
+  "characterDescriptions": "Detailed physical descriptions of all characters (kids and story characters) that will appear consistently across all illustrations. For children, ONLY include physical attributes that were explicitly provided above...",
   "imagePrompt1": "Description for first illustration that references the character descriptions...",
   "imagePrompt2": "Description for second illustration that references the character descriptions...",
   "imagePrompt3": "Description for third illustration that references the character descriptions..."

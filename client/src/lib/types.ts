@@ -4,6 +4,10 @@ export interface Kid {
   name: string;
   age: number;
   description?: string;
+  hairColor?: string;
+  eyeColor?: string;
+  hairLength?: string;
+  skinTone?: string;
   createdAt?: Date;
 }
 

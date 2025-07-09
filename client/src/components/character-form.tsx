@@ -13,7 +13,15 @@ import type { Kid, Character } from "@/lib/types";
 export function CharacterForm() {
   const [isKidDialogOpen, setIsKidDialogOpen] = useState(false);
   const [isCharacterDialogOpen, setIsCharacterDialogOpen] = useState(false);
-  const [kidForm, setKidForm] = useState({ name: "", age: "", description: "" });
+  const [kidForm, setKidForm] = useState({ 
+    name: "", 
+    age: "", 
+    description: "",
+    hairColor: "",
+    eyeColor: "",
+    hairLength: "",
+    skinTone: ""
+  });
   const [characterForm, setCharacterForm] = useState({ name: "", description: "" });
   const { toast } = useToast();
 
@@ -33,7 +41,7 @@ export function CharacterForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/kids"] });
       setIsKidDialogOpen(false);
-      setKidForm({ name: "", age: "", description: "" });
+      setKidForm({ name: "", age: "", description: "", hairColor: "", eyeColor: "", hairLength: "", skinTone: "" });
       toast({ title: "Kid added successfully!" });
     },
     onError: () => {
@@ -84,6 +92,10 @@ export function CharacterForm() {
         name: kidForm.name,
         age: parseInt(kidForm.age),
         description: kidForm.description || undefined,
+        hairColor: kidForm.hairColor || undefined,
+        eyeColor: kidForm.eyeColor || undefined,
+        hairLength: kidForm.hairLength || undefined,
+        skinTone: kidForm.skinTone || undefined,
       });
     }
   };
@@ -154,27 +166,120 @@ export function CharacterForm() {
               <DialogHeader>
                 <DialogTitle>Add New Child</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleKidSubmit} className="space-y-4">
-                <Input
-                  placeholder="Child's name"
-                  value={kidForm.name}
-                  onChange={(e) => setKidForm({ ...kidForm, name: e.target.value })}
-                  required
-                />
-                <Input
-                  type="number"
-                  placeholder="Age"
-                  value={kidForm.age}
-                  onChange={(e) => setKidForm({ ...kidForm, age: e.target.value })}
-                  required
-                  min="1"
-                  max="12"
-                />
-                <Textarea
-                  placeholder="Short description (e.g., 'Loves space and dinosaurs')"
-                  value={kidForm.description}
-                  onChange={(e) => setKidForm({ ...kidForm, description: e.target.value })}
-                />
+              <form onSubmit={handleKidSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Child's name"
+                    value={kidForm.name}
+                    onChange={(e) => setKidForm({ ...kidForm, name: e.target.value })}
+                    required
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Age"
+                    value={kidForm.age}
+                    onChange={(e) => setKidForm({ ...kidForm, age: e.target.value })}
+                    required
+                    min="1"
+                    max="12"
+                  />
+                  <Textarea
+                    placeholder="Short description (e.g., 'Loves space and dinosaurs')"
+                    value={kidForm.description}
+                    onChange={(e) => setKidForm({ ...kidForm, description: e.target.value })}
+                  />
+                </div>
+
+                {/* Physical Attributes */}
+                <div className="space-y-4">
+                  <h5 className="font-nunito font-semibold text-navy">Physical Attributes (Optional)</h5>
+                  <p className="text-sm text-gray-600">These help create more accurate story illustrations</p>
+                  
+                  {/* Hair Color */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Hair Color</label>
+                    <div className="flex flex-wrap gap-2">
+                      {["blonde", "brown", "black", "red", "gray", "white"].map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => setKidForm({ ...kidForm, hairColor: kidForm.hairColor === color ? "" : color })}
+                          className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                            kidForm.hairColor === color
+                              ? "bg-coral text-white border-coral"
+                              : "bg-white text-gray-700 border-gray-300 hover:border-coral"
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Eye Color */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Eye Color</label>
+                    <div className="flex flex-wrap gap-2">
+                      {["brown", "blue", "green", "hazel", "gray"].map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => setKidForm({ ...kidForm, eyeColor: kidForm.eyeColor === color ? "" : color })}
+                          className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                            kidForm.eyeColor === color
+                              ? "bg-coral text-white border-coral"
+                              : "bg-white text-gray-700 border-gray-300 hover:border-coral"
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Hair Length */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Hair Length</label>
+                    <div className="flex flex-wrap gap-2">
+                      {["short", "medium", "long", "curly", "straight", "wavy"].map((length) => (
+                        <button
+                          key={length}
+                          type="button"
+                          onClick={() => setKidForm({ ...kidForm, hairLength: kidForm.hairLength === length ? "" : length })}
+                          className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                            kidForm.hairLength === length
+                              ? "bg-coral text-white border-coral"
+                              : "bg-white text-gray-700 border-gray-300 hover:border-coral"
+                          }`}
+                        >
+                          {length}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Skin Tone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Skin Tone</label>
+                    <div className="flex flex-wrap gap-2">
+                      {["fair", "light", "medium", "olive", "tan", "dark"].map((tone) => (
+                        <button
+                          key={tone}
+                          type="button"
+                          onClick={() => setKidForm({ ...kidForm, skinTone: kidForm.skinTone === tone ? "" : tone })}
+                          className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                            kidForm.skinTone === tone
+                              ? "bg-coral text-white border-coral"
+                              : "bg-white text-gray-700 border-gray-300 hover:border-coral"
+                          }`}
+                        >
+                          {tone}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 <Button type="submit" className="w-full" disabled={createKidMutation.isPending}>
                   {createKidMutation.isPending ? "Adding..." : "Add Child"}
                 </Button>
