@@ -31,17 +31,25 @@ export function getSession() {
     ttl: sessionTtl,
     tableName: "sessions",
   });
-  return session({
+  const sessionConfig = {
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Changed to true for guest sessions
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: sessionTtl,
     },
+  };
+  
+  console.log("Session config:", { 
+    ...sessionConfig, 
+    secret: "[HIDDEN]",
+    cookie: sessionConfig.cookie 
   });
+  
+  return session(sessionConfig);
 }
 
 function updateUserSession(

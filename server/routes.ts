@@ -44,9 +44,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Authenticated user - get from database
         const userId = req.user.claims.sub;
         kids = await storage.getKidsByUserId(userId);
+        console.log("DEBUG - Authenticated user kids:", kids);
       } else {
         // Guest user - get from session
         kids = req.session.guestKids || [];
+        console.log("DEBUG - Guest session kids:", kids);
+        console.log("DEBUG - Full session:", JSON.stringify(req.session, null, 2));
       }
       
       res.json(kids);
@@ -83,6 +86,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         guestKids.push(newKid);
         req.session.guestKids = guestKids;
+        console.log("DEBUG - Saved guest kid:", newKid);
+        console.log("DEBUG - Guest kids now:", req.session.guestKids);
         res.json(newKid);
       }
     } catch (error) {
@@ -390,10 +395,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Test endpoint for OpenAI connection
+  // Test endpoint for OpenAI text generation
   app.post("/api/test-openai", async (req, res) => {
     try {
-      console.log("Testing OpenAI connection...");
+      console.log("Testing OpenAI text generation...");
       const storyResponse = await generateStory({
         kidNames: ["Test Child"],
         characterNames: [],
@@ -402,7 +407,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       res.json({ success: true, title: storyResponse.title });
     } catch (error: any) {
-      console.error("OpenAI test failed:", error);
+      console.error("OpenAI text test failed:", error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message || "Unknown error" 
+      });
+    }
+  });
+
+  // Test endpoint for DALL-E image generation
+  app.post("/api/test-images", async (req, res) => {
+    try {
+      console.log("Testing DALL-E image generation...");
+      const { generateImages } = await import("./services/openai");
+      const images = await generateImages([
+        "A cozy bedroom scene with a child reading a book"
+      ], "A young child with brown hair wearing pajamas");
+      res.json({ success: true, imageUrl: images.imageUrl1 });
+    } catch (error: any) {
+      console.error("DALL-E test failed:", error);
       res.status(500).json({ 
         success: false, 
         error: error.message || "Unknown error" 
