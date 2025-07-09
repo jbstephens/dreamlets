@@ -1,6 +1,7 @@
 
-import { Printer, ArrowLeft } from "lucide-react";
+import { Printer, ArrowLeft, Heart, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import type { Story } from "@/lib/types";
 
 interface StoryDisplayProps {
@@ -10,6 +11,7 @@ interface StoryDisplayProps {
 
 export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
   console.log("StoryDisplay received story:", story);
+  const { isAuthenticated } = useAuth();
   
   const handlePrint = () => {
     window.print();
@@ -163,6 +165,38 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           </div>
         </div>
       </div>
+
+      {/* Account Creation Stripe for Non-Logged In Users */}
+      {!isAuthenticated && (
+        <div className="no-print bg-gradient-to-r from-coral via-sunset to-golden p-6 border-t-4 border-lavender">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Heart className="h-6 w-6 text-cream mr-2 animate-pulse" />
+              <Sparkles className="h-5 w-5 text-cream mr-3" />
+              <h3 className="text-2xl font-nunito font-bold text-cream">
+                Love this story?
+              </h3>
+              <Sparkles className="h-5 w-5 text-cream ml-3" />
+              <Heart className="h-6 w-6 text-cream ml-2 animate-pulse" />
+            </div>
+            <p className="text-lg text-cream/90 mb-6 max-w-2xl mx-auto">
+              Create an account to save this magical story forever and unlock up to 5 total stories completely free!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                onClick={() => window.location.href = "/api/login"}
+                className="bg-cream text-coral hover:bg-cream/90 font-nunito font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Save My Story
+              </Button>
+              <p className="text-cream/80 text-sm font-nunito">
+                No credit card required • Free account • Instant access
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
