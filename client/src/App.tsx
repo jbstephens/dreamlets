@@ -30,16 +30,15 @@ function Router() {
           <Route path="/guest" component={Home} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/story/:id" component={StoryView} />
-          <Route component={NotFound} />
         </>
       ) : (
         <>
           <Route path="/" component={Home} />
           <Route path="/pricing" component={Pricing} />
           <Route path="/story/:id" component={StoryView} />
-          <Route component={NotFound} />
         </>
       )}
+      <Route component={NotFound} />
     </Switch>
   );
 }
