@@ -111,3 +111,9 @@ Changelog:
 - July 08, 2025. Fixed authentication infinite loop for guest users
 - July 08, 2025. Implemented guest session system allowing one free story without signup
 - July 08, 2025. Fixed AI image generation to create consistent characters across all three story images by establishing character descriptions that are used in all image prompts
+- July 09, 2025. Fixed critical guest user story generation - kid and character names now properly retrieved from session storage and passed to OpenAI
+- July 09, 2025. Simplified character creation form - removed type dropdown, now only requires name and description
+- July 09, 2025. Improved image display - stories now show beautiful gradient placeholders when AI image generation fails instead of broken images
+- July 09, 2025. Changed "Try Free Story" to "Create Your Story" button on landing page for reduced friction
+- July 09, 2025. Moved pricing to separate /pricing page with no navigation links to reduce sales pressure
+- July 09, 2025. Removed guest notification component to eliminate friction for first story creation

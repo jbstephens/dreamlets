@@ -69,11 +69,17 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           
           <div className="flex-1 flex items-center justify-center mb-8">
             <div className="relative w-full">
-              <img
-                src={story.imageUrl1}
-                alt="Story illustration - Chapter 1"
-                className="w-full h-96 object-cover rounded-xl shadow-lg"
-              />
+              {story.imageUrl1 ? (
+                <img
+                  src={story.imageUrl1}
+                  alt="Story illustration - Chapter 1"
+                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                />
+              ) : (
+                <div className="w-full h-96 bg-gradient-to-br from-lavender to-mint rounded-xl shadow-lg flex items-center justify-center">
+                  <p className="text-navy/60 text-lg">Story illustration - Chapter 1</p>
+                </div>
+              )}
             </div>
           </div>
           
@@ -97,11 +103,17 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           
           <div className="flex-1 flex items-center justify-center mb-8">
             <div className="relative w-full">
-              <img
-                src={story.imageUrl2}
-                alt="Story illustration - Chapter 2"
-                className="w-full h-96 object-cover rounded-xl shadow-lg"
-              />
+              {story.imageUrl2 ? (
+                <img
+                  src={story.imageUrl2}
+                  alt="Story illustration - Chapter 2"
+                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                />
+              ) : (
+                <div className="w-full h-96 bg-gradient-to-br from-coral to-sunset rounded-xl shadow-lg flex items-center justify-center">
+                  <p className="text-white/80 text-lg">Story illustration - Chapter 2</p>
+                </div>
+              )}
             </div>
           </div>
           
@@ -125,11 +137,17 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           
           <div className="flex-1 flex items-center justify-center mb-8">
             <div className="relative w-full">
-              <img
-                src={story.imageUrl3}
-                alt="Story illustration - Chapter 3"
-                className="w-full h-96 object-cover rounded-xl shadow-lg"
-              />
+              {story.imageUrl3 ? (
+                <img
+                  src={story.imageUrl3}
+                  alt="Story illustration - Chapter 3"
+                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                />
+              ) : (
+                <div className="w-full h-96 bg-gradient-to-br from-mint to-golden rounded-xl shadow-lg flex items-center justify-center">
+                  <p className="text-navy/60 text-lg">Story illustration - Chapter 3</p>
+                </div>
+              )}
             </div>
           </div>
           
