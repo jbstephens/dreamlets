@@ -14,7 +14,7 @@ export function CharacterForm() {
   const [isKidDialogOpen, setIsKidDialogOpen] = useState(false);
   const [isCharacterDialogOpen, setIsCharacterDialogOpen] = useState(false);
   const [kidForm, setKidForm] = useState({ name: "", age: "", description: "" });
-  const [characterForm, setCharacterForm] = useState({ name: "", type: "manual", description: "" });
+  const [characterForm, setCharacterForm] = useState({ name: "", description: "" });
   const { toast } = useToast();
 
   const { data: kids = [], isLoading: kidsLoading } = useQuery<Kid[]>({
@@ -49,7 +49,7 @@ export function CharacterForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/characters"] });
       setIsCharacterDialogOpen(false);
-      setCharacterForm({ name: "", type: "manual", description: "" });
+      setCharacterForm({ name: "", description: "" });
       toast({ title: "Character added successfully!" });
     },
     onError: () => {
@@ -90,10 +90,10 @@ export function CharacterForm() {
 
   const handleCharacterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (characterForm.name && characterForm.type) {
+    if (characterForm.name) {
       createCharacterMutation.mutate({
         name: characterForm.name,
-        type: characterForm.type,
+        type: "character", // Default type since we removed the dropdown
         description: characterForm.description || undefined,
       });
     }
@@ -219,21 +219,12 @@ export function CharacterForm() {
                   onChange={(e) => setCharacterForm({ ...characterForm, name: e.target.value })}
                   required
                 />
-                <Select value={characterForm.type} onValueChange={(value) => setCharacterForm({ ...characterForm, type: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Character type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="manual">Manual</SelectItem>
-                    <SelectItem value="cat">Cat</SelectItem>
-                    <SelectItem value="dragon">Crown</SelectItem>
-                    <SelectItem value="teddy">Teddy Bear</SelectItem>
-                  </SelectContent>
-                </Select>
+
                 <Textarea
-                  placeholder="Character description"
+                  placeholder="Character description (e.g., 'A friendly teddy bear who loves adventures')"
                   value={characterForm.description}
                   onChange={(e) => setCharacterForm({ ...characterForm, description: e.target.value })}
+                  required
                 />
                 <Button type="submit" className="w-full" disabled={createCharacterMutation.isPending}>
                   {createCharacterMutation.isPending ? "Adding..." : "Add Character"}

@@ -23,25 +23,16 @@ export default function Landing() {
             Create magical, personalized bedtime stories for your children with AI-powered illustrations and storytelling
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col gap-4 justify-center items-center">
             <Button 
               size="lg" 
               className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
               onClick={() => window.location.href = "/guest"}
             >
               <Heart className="mr-2 h-5 w-5" />
-              Try Free Story
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
-              onClick={() => window.location.href = "/api/login"}
-            >
-              Sign Up Free
+              Create Your Story
             </Button>
           </div>
-          <p className="text-cream/80 text-sm mt-4">Create one story as a guest, or sign up for 5 free stories</p>
         </div>
 
         {/* Features */}
@@ -83,124 +74,18 @@ export default function Landing() {
           </Card>
         </div>
 
-        {/* Pricing */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-cream mb-8">Choose Your Plan</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            
-            {/* Free Plan */}
-            <Card className="bg-white/90 border-2 border-gray-200">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-navy">Free</CardTitle>
-                <div className="text-4xl font-bold text-navy">$0</div>
-                <CardDescription>Perfect for trying out Dreamlets</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Up to 5 stories total</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>AI-generated illustrations</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Personalized characters</span>
-                </div>
-                <Button 
-                  className="w-full mt-6" 
-                  variant="outline"
-                  onClick={() => window.location.href = "/api/login"}
-                >
-                  Get Started Free
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Premium 15 Plan */}
-            <Card className="bg-white/90 border-2 border-sunset relative">
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-sunset text-white">
-                Most Popular
-              </Badge>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-navy">Premium</CardTitle>
-                <div className="text-4xl font-bold text-navy">$19.99</div>
-                <CardDescription>per month</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>15 stories per month</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>AI-generated illustrations</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Unlimited characters</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Priority support</span>
-                </div>
-                <Button 
-                  className="w-full mt-6 bg-sunset hover:bg-sunset/90" 
-                  onClick={() => window.location.href = "/api/login"}
-                >
-                  Start Premium
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Unlimited Plan */}
-            <Card className="bg-white/90 border-2 border-golden">
-              <CardHeader className="text-center">
-                <Crown className="h-8 w-8 text-golden mx-auto mb-2" />
-                <CardTitle className="text-2xl text-navy">Unlimited</CardTitle>
-                <div className="text-4xl font-bold text-navy">$29.99</div>
-                <CardDescription>per month</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="font-semibold">Unlimited stories</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>AI-generated illustrations</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Unlimited characters</span>
-                </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-500 mr-3" />
-                  <span>Premium support</span>
-                </div>
-                <Button 
-                  className="w-full mt-6 bg-golden hover:bg-golden/90 text-navy" 
-                  onClick={() => window.location.href = "/api/login"}
-                >
-                  Go Unlimited
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* CTA */}
+        {/* Bottom CTA */}
         <div className="text-center">
           <p className="text-cream/90 text-lg mb-6">
-            Ready to create magical bedtime stories?
+            Want to save your stories and create more?
           </p>
           <Button 
             size="lg" 
-            className="bg-white text-sunset hover:bg-white/90 px-8 py-4 text-lg shadow-xl"
+            variant="outline"
+            className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
             onClick={() => window.location.href = "/api/login"}
           >
-            Sign In with Replit
+            Sign Up Free
           </Button>
         </div>
       </div>

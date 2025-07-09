@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
+import Pricing from "@/pages/pricing";
 import StoryView from "@/pages/story-view";
 import NotFound from "@/pages/not-found";
 
@@ -27,12 +28,14 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/guest" component={Home} />
+          <Route path="/pricing" component={Pricing} />
           <Route path="/story/:id" component={StoryView} />
           <Route component={NotFound} />
         </>
       ) : (
         <>
           <Route path="/" component={Home} />
+          <Route path="/pricing" component={Pricing} />
           <Route path="/story/:id" component={StoryView} />
           <Route component={NotFound} />
         </>

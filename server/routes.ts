@@ -279,8 +279,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Get kid and character names
-      const allKids = await storage.getKidsByUserId(userId);
-      const allCharacters = await storage.getCharactersByUserId(userId);
+      let allKids, allCharacters;
+      
+      if (isAuthenticated) {
+        // Authenticated user - get from database
+        allKids = await storage.getKidsByUserId(userId);
+        allCharacters = await storage.getCharactersByUserId(userId);
+      } else {
+        // Guest user - get from session
+        allKids = req.session.guestKids || [];
+        allCharacters = req.session.guestCharacters || [];
+      }
       
       const selectedKids = allKids.filter(kid => validatedData.kidIds.includes(kid.id));
       const selectedCharacters = allCharacters.filter(char => validatedData.characterIds.includes(char.id));
@@ -288,6 +297,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const kidNames = selectedKids.map(kid => kid.name);
       const characterNames = selectedCharacters.map(char => char.name);
       
+      console.log("DEBUG - isAuthenticated:", isAuthenticated);
+      console.log("DEBUG - userId:", userId);
+      console.log("DEBUG - allKids:", allKids);
+      console.log("DEBUG - allCharacters:", allCharacters);
+      console.log("DEBUG - selectedKids:", selectedKids);
+      console.log("DEBUG - selectedCharacters:", selectedCharacters);
       console.log("Selected kids:", kidNames);
       console.log("Selected characters:", characterNames);
       
