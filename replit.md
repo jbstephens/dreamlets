@@ -38,8 +38,8 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 
 ### Core Features
 1. **Character Management**: Add and manage kids and story characters
-2. **Story Generation**: AI-powered story creation with customizable tone
-3. **Image Generation**: AI-generated illustrations for each story part
+2. **Story Generation**: Personalized story creation with customizable tone
+3. **Image Generation**: Custom illustrations for each story part
 4. **Story Display**: Formatted 3-page story view with print capability
 5. **Story History**: View and access previously generated stories
 
@@ -53,8 +53,8 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 
 1. **User Setup**: Parents create profiles for their children and recurring characters
 2. **Story Request**: User selects kids, characters, enters story idea, and chooses tone
-3. **AI Processing**: OpenAI generates story text in three parts plus image prompts
-4. **Image Generation**: AI creates illustrations based on story content
+3. **Story Processing**: OpenAI generates story text in three parts plus image prompts
+4. **Image Generation**: System creates illustrations based on story content
 5. **Story Storage**: Complete story with text and images saved to database
 6. **Story Display**: Formatted presentation with print functionality
 
@@ -110,10 +110,12 @@ Changelog:
 - July 08, 2025. Switched from in-memory storage to PostgreSQL database for data persistence
 - July 08, 2025. Fixed authentication infinite loop for guest users
 - July 08, 2025. Implemented guest session system allowing one free story without signup
-- July 08, 2025. Fixed AI image generation to create consistent characters across all three story images by establishing character descriptions that are used in all image prompts
+- July 08, 2025. Fixed image generation to create consistent characters across all three story images by establishing character descriptions that are used in all image prompts
 - July 09, 2025. Fixed critical guest user story generation - kid and character names now properly retrieved from session storage and passed to OpenAI
 - July 09, 2025. Simplified character creation form - removed type dropdown, now only requires name and description
-- July 09, 2025. Improved image display - stories now show beautiful gradient placeholders when AI image generation fails instead of broken images
+- July 09, 2025. Improved image display - stories now show beautiful gradient placeholders when image generation fails instead of broken images
 - July 09, 2025. Changed "Try Free Story" to "Create Your Story" button on landing page for reduced friction
 - July 09, 2025. Moved pricing to separate /pricing page with no navigation links to reduce sales pressure
 - July 09, 2025. Removed guest notification component to eliminate friction for first story creation
+- July 09, 2025. Made logo/navbar text clickable to link to homepage always
+- July 09, 2025. Removed "AI" terminology throughout app - replaced with parent-friendly terms like "Personalized" and "Custom"

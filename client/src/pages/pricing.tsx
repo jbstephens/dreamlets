@@ -44,7 +44,7 @@ export default function Pricing() {
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>AI-generated illustrations</span>
+                <span>Personalized illustrations</span>
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
@@ -77,7 +77,7 @@ export default function Pricing() {
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>AI-generated illustrations</span>
+                <span>Personalized illustrations</span>
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
@@ -111,7 +111,7 @@ export default function Pricing() {
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>AI-generated illustrations</span>
+                <span>Personalized illustrations</span>
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
@@ -137,7 +137,7 @@ export default function Pricing() {
             Questions? We're here to help!
           </h3>
           <p className="text-cream/80 mb-8">
-            All plans include beautiful AI illustrations, personalized stories, and the ability to save your creations.
+            All plans include beautiful personalized illustrations, custom stories, and the ability to save your creations.
           </p>
           <Button 
             variant="outline"

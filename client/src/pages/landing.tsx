@@ -20,7 +20,7 @@ export default function Landing() {
             Dreamlets
           </h1>
           <p className="text-xl text-cream/90 mb-8 max-w-2xl mx-auto">
-            Create magical, personalized bedtime stories for your children with AI-powered illustrations and storytelling
+            Create magical, personalized bedtime stories for your children with custom illustrations and storytelling
           </p>
           
           <div className="flex flex-col gap-4 justify-center items-center">
@@ -52,11 +52,11 @@ export default function Landing() {
           <Card className="bg-white/20 backdrop-blur-sm border-white/30 text-center">
             <CardHeader>
               <Palette className="h-12 w-12 text-sunset mx-auto mb-4" />
-              <CardTitle className="text-cream">AI Illustrations</CardTitle>
+              <CardTitle className="text-cream">Custom Illustrations</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription className="text-cream/80">
-                Beautiful, AI-generated images bring every story to life with stunning visuals
+                Beautiful, personalized images bring every story to life with stunning visuals
               </CardDescription>
             </CardContent>
           </Card>
