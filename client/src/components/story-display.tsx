@@ -73,7 +73,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                 <img
                   src={story.imageUrl1}
                   alt="Story illustration - Chapter 1"
-                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                  className="w-full rounded-xl shadow-lg"
                 />
               ) : (
                 <div className="w-full h-96 bg-gradient-to-br from-lavender to-mint rounded-xl shadow-lg flex items-center justify-center">
@@ -107,7 +107,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                 <img
                   src={story.imageUrl2}
                   alt="Story illustration - Chapter 2"
-                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                  className="w-full rounded-xl shadow-lg"
                 />
               ) : (
                 <div className="w-full h-96 bg-gradient-to-br from-coral to-sunset rounded-xl shadow-lg flex items-center justify-center">
@@ -141,7 +141,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
                 <img
                   src={story.imageUrl3}
                   alt="Story illustration - Chapter 3"
-                  className="w-full h-96 object-cover rounded-xl shadow-lg"
+                  className="w-full rounded-xl shadow-lg"
                 />
               ) : (
                 <div className="w-full h-96 bg-gradient-to-br from-mint to-golden rounded-xl shadow-lg flex items-center justify-center">

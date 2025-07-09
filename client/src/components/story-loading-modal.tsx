@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Sparkles, Rocket, Crown, Heart, Star, Wand2 } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface StoryLoadingModalProps {
   isOpen: boolean;
@@ -77,6 +78,10 @@ export function StoryLoadingModal({ isOpen, onComplete }: StoryLoadingModalProps
   return (
     <Dialog open={isOpen}>
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-lavender/10 to-coral/10 border-2 border-coral/20 backdrop-blur-sm">
+        <VisuallyHidden>
+          <DialogTitle>Creating Your Story</DialogTitle>
+          <DialogDescription>Please wait while we generate your magical story</DialogDescription>
+        </VisuallyHidden>
         <div className="text-center space-y-6 py-4">
           {/* Animated Icon */}
           <div className="flex justify-center">

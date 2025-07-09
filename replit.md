@@ -120,3 +120,4 @@ Changelog:
 - July 09, 2025. Made logo/navbar text clickable to link to homepage always
 - July 09, 2025. Removed "AI" terminology throughout app - replaced with parent-friendly terms like "Personalized" and "Custom"
 - July 09, 2025. Added delightful loading modal with progress bar and kid-friendly messages like "Wrangling unicorns" and "Teaching dragons to dance" during story generation
+- July 09, 2025. Fixed image cropping issue completely - removed height restrictions and object-cover to show full OpenAI-generated images without cutting off heads
