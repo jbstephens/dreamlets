@@ -26,6 +26,13 @@ export interface IStorage {
   // Subscription management
   canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }>;
   incrementUserStoryCount(userId: string): Promise<void>;
+  
+  // Guest session migration
+  migrateGuestDataToUser(userId: string, guestData: {
+    kids?: any[];
+    characters?: any[];
+    story?: any;
+  }): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -151,6 +158,24 @@ export class MemStorage implements IStorage {
 
   async deleteStory(id: number): Promise<void> {
     this.stories.delete(id);
+  }
+
+  async canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }> {
+    // Memory storage - simple implementation for guest sessions
+    return { canCreate: true, storiesUsed: 0, limit: 5 };
+  }
+
+  async incrementUserStoryCount(userId: string): Promise<void> {
+    // Memory storage - no-op for guest sessions
+  }
+
+  async migrateGuestDataToUser(userId: string, guestData: {
+    kids?: any[];
+    characters?: any[];
+    story?: any;
+  }): Promise<void> {
+    // Memory storage - no-op since it's only used for testing
+    console.log("MemStorage: Guest data migration not implemented");
   }
 }
 
@@ -287,6 +312,73 @@ class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
+  }
+
+  async migrateGuestDataToUser(userId: string, guestData: {
+    kids?: any[];
+    characters?: any[];
+    story?: any;
+  }): Promise<void> {
+    console.log("Starting guest data migration for user:", userId);
+    console.log("Guest data to migrate:", guestData);
+
+    try {
+      // Migrate kids
+      if (guestData.kids && guestData.kids.length > 0) {
+        for (const guestKid of guestData.kids) {
+          await this.createKid({
+            userId,
+            name: guestKid.name,
+            age: guestKid.age,
+            description: guestKid.description,
+            hairColor: guestKid.hairColor,
+            eyeColor: guestKid.eyeColor,
+            hairLength: guestKid.hairLength,
+            skinTone: guestKid.skinTone,
+          });
+          console.log("Migrated kid:", guestKid.name);
+        }
+      }
+
+      // Migrate characters
+      if (guestData.characters && guestData.characters.length > 0) {
+        for (const guestCharacter of guestData.characters) {
+          await this.createCharacter({
+            userId,
+            name: guestCharacter.name,
+            type: guestCharacter.type,
+            description: guestCharacter.description,
+          });
+          console.log("Migrated character:", guestCharacter.name);
+        }
+      }
+
+      // Migrate story
+      if (guestData.story) {
+        await this.createStory({
+          userId,
+          title: guestData.story.title,
+          kidIds: guestData.story.kidIds || [],
+          characterIds: guestData.story.characterIds || [],
+          storyPart1: guestData.story.storyPart1,
+          storyPart2: guestData.story.storyPart2,
+          storyPart3: guestData.story.storyPart3,
+          imageUrl1: guestData.story.imageUrl1,
+          imageUrl2: guestData.story.imageUrl2,
+          imageUrl3: guestData.story.imageUrl3,
+          tone: guestData.story.tone,
+        });
+        console.log("Migrated story:", guestData.story.title);
+
+        // Increment story count for the user
+        await this.incrementUserStoryCount(userId);
+      }
+
+      console.log("Guest data migration completed successfully for user:", userId);
+    } catch (error) {
+      console.error("Error migrating guest data:", error);
+      throw error;
+    }
   }
 }
 

@@ -125,3 +125,4 @@ Changelog:
 - July 09, 2025. Added comprehensive Open Graph meta tags and custom SVG image for beautiful social media sharing on iMessage, Facebook, and Twitter
 - July 09, 2025. Added classy account creation stripe at bottom of story pages for non-logged in users with "Save My Story" call-to-action
 - July 09, 2025. Updated account creation messaging to clarify "5 total stories per month" instead of just "5 total stories" for accuracy
+- July 09, 2025. Fixed critical issue where guest users lost their first story after creating accounts - implemented guest session data migration system that transfers kids, characters, and stories from guest sessions to newly authenticated user accounts

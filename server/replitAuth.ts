@@ -116,11 +116,45 @@ export async function setupAuth(app: Express) {
     })(req, res, next);
   });
 
-  app.get("/api/callback", (req, res, next) => {
+  app.get("/api/callback", (req: any, res, next) => {
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
-    })(req, res, next);
+    })(req, res, async (err: any) => {
+      if (err) {
+        return next(err);
+      }
+      
+      // After successful authentication, migrate guest data if it exists
+      if (req.user?.claims?.sub) {
+        const userId = req.user.claims.sub;
+        const guestData = {
+          kids: req.session.guestKids,
+          characters: req.session.guestCharacters,
+          story: req.session.guestStory
+        };
+        
+        // Only migrate if there's guest data
+        if (guestData.kids?.length > 0 || guestData.characters?.length > 0 || guestData.story) {
+          try {
+            console.log("Migrating guest data for newly authenticated user:", userId);
+            await storage.migrateGuestDataToUser(userId, guestData);
+            
+            // Clear guest session data after successful migration
+            delete req.session.guestKids;
+            delete req.session.guestCharacters;
+            delete req.session.guestStory;
+            
+            console.log("Guest data migration completed and session cleared");
+          } catch (error) {
+            console.error("Failed to migrate guest data:", error);
+            // Don't fail authentication, just log the error
+          }
+        }
+      }
+      
+      res.redirect("/");
+    });
   });
 
   app.get("/api/logout", (req, res) => {
