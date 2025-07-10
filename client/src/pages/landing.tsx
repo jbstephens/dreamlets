@@ -3,9 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Moon, Stars, Sparkles, Heart, BookOpen, Palette, Crown, Check } from "lucide-react";
 import { useLocation } from "wouter";
+import { AuthModal } from "@/components/auth-modal";
+import { useState } from "react";
 
 export default function Landing() {
   const [location, navigate] = useLocation();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
       {/* Hero Section */}
@@ -85,12 +89,19 @@ export default function Landing() {
             size="lg" 
             variant="outline"
             className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
-            onClick={() => navigate("/create")}
+            onClick={() => setShowAuthModal(true)}
           >
             Sign Up Free
           </Button>
         </div>
       </div>
+      
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Save Your Stories"
+        description="Create an account to keep your stories safe and create unlimited stories!"
+      />
     </div>
   );
 }
