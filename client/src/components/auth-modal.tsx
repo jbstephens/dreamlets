@@ -34,14 +34,11 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       console.log("Making request to:", endpoint, "with data:", data);
       
-      const response = await apiRequest(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("POST", endpoint, data);
+      const result = await response.json();
       
-      console.log("Auth response:", response);
-      return response;
+      console.log("Auth response:", result);
+      return result;
     },
     onSuccess: () => {
       console.log("Auth success!");
@@ -111,7 +108,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-coral-600">{title}</DialogTitle>
           <DialogDescription className="text-gray-600">
@@ -178,7 +175,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
 
             <Button 
               type="submit" 
-              className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold"
+              className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 mt-6"
               disabled={authMutation.isPending}
             >
               {authMutation.isPending 
