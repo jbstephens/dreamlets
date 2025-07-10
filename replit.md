@@ -127,3 +127,5 @@ Changelog:
 - July 09, 2025. Updated account creation messaging to clarify "5 total stories per month" instead of just "5 total stories" for accuracy
 - July 09, 2025. Fixed critical issue where guest users lost their first story after creating accounts - implemented guest session data migration system that transfers kids, characters, and stories from guest sessions to newly authenticated user accounts
 - July 10, 2025. Increased story limit for non-logged users from 1 to 5 stories within first 30 days - guests can now create up to 5 stories before needing to authenticate, with automatic 30-day expiration of old stories
+- July 10, 2025. Replaced Replit OAuth with simple email/password authentication to fix guest data migration issues and improve user experience
+- July 10, 2025. Restored proper page structure: `/` for homepage/marketing, `/create` for story creation interface (shared by guests and authenticated users), with stories persisting permanently only for authenticated users

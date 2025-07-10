@@ -29,7 +29,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/create")}
             >
               <Heart className="mr-2 h-5 w-5" />
               Create Your Story
@@ -85,7 +85,7 @@ export default function Landing() {
             size="lg" 
             variant="outline"
             className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/create")}
           >
             Sign Up Free
           </Button>

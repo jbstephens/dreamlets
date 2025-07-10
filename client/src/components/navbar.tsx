@@ -45,7 +45,7 @@ export function Navbar() {
     <nav className="bg-gradient-to-r from-lavender via-coral to-mint shadow-lg sticky top-0 z-50 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href="/">
+          <Link href="/create">
             <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
               <div className="relative">
                 <Moon className="h-8 w-8 text-cream animate-pulse" />

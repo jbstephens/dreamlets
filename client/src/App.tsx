@@ -24,8 +24,8 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/landing" component={Landing} />
-      <Route path="/" component={Home} />
+      <Route path="/" component={Landing} />
+      <Route path="/create" component={Home} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/story/:id" component={StoryView} />
       <Route component={NotFound} />
