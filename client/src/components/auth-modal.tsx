@@ -108,109 +108,117 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-coral-600">{title}</DialogTitle>
-          <DialogDescription className="text-gray-600">
+      <DialogContent className="sm:max-w-md w-full max-h-[95vh] overflow-y-auto p-6">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold text-coral-600 text-center">{title}</DialogTitle>
+          <DialogDescription className="text-gray-600 text-center">
             {description}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={isLogin ? "login" : "register"} onValueChange={(value) => setIsLogin(value === "login")}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="register">Create Account</TabsTrigger>
-            <TabsTrigger value="login">Log In</TabsTrigger>
-          </TabsList>
+        <div className="mt-6">
+          <Tabs value={isLogin ? "login" : "register"} onValueChange={(value) => setIsLogin(value === "login")}>
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="register">Create Account</TabsTrigger>
+              <TabsTrigger value="login">Log In</TabsTrigger>
+            </TabsList>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            {!isLogin && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    value={formData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
-                    placeholder="Your first name"
-                    required
-                  />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                      placeholder="Your first name"
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange("lastName", e.target.value)}
+                      placeholder="Your last name"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
-                    placeholder="Your last name"
-                  />
-                </div>
+              )}
+
+              <div>
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  placeholder="your@email.com"
+                  className="mt-1"
+                  required
+                />
               </div>
-            )}
 
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="your@email.com"
-                required
-              />
-            </div>
+              <div>
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  placeholder="Choose a secure password"
+                  className="mt-1"
+                  required
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                placeholder="Choose a secure password"
-                required
-              />
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 mt-6"
-              disabled={authMutation.isPending}
-            >
-              {authMutation.isPending 
-                ? (isLogin ? "Logging in..." : "Creating account...")
-                : (isLogin ? "Log In" : "Create Account & Save Stories")
-              }
-            </Button>
-          </form>
-
-          <div className="text-center text-sm text-gray-500 mt-4">
-            {isLogin ? (
-              <>
-                Don't have an account?{" "}
-                <button 
-                  type="button"
-                  onClick={() => setIsLogin(false)}
-                  className="text-coral-600 hover:underline"
+              <div className="pt-4">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold py-3 text-base"
+                  disabled={authMutation.isPending}
                 >
-                  Create one now
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <button 
-                  type="button"
-                  onClick={() => setIsLogin(true)}
-                  className="text-coral-600 hover:underline"
-                >
-                  Log in instead
-                </button>
-              </>
-            )}
-          </div>
-        </Tabs>
+                  {authMutation.isPending 
+                    ? (isLogin ? "Logging in..." : "Creating account...")
+                    : (isLogin ? "Log In" : "Create Account & Save Stories")
+                  }
+                </Button>
+              </div>
+
+              <div className="text-center text-sm text-gray-500 pt-2">
+                {isLogin ? (
+                  <>
+                    Don't have an account?{" "}
+                    <button 
+                      type="button"
+                      onClick={() => setIsLogin(false)}
+                      className="text-coral-600 hover:underline font-medium"
+                    >
+                      Create one now
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <button 
+                      type="button"
+                      onClick={() => setIsLogin(true)}
+                      className="text-coral-600 hover:underline font-medium"
+                    >
+                      Log in instead
+                    </button>
+                  </>
+                )}
+              </div>
+            </form>
+          </Tabs>
+        </div>
       </DialogContent>
     </Dialog>
   );
