@@ -32,13 +32,20 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
   const authMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      return await apiRequest(endpoint, {
+      console.log("Making request to:", endpoint, "with data:", data);
+      
+      const response = await apiRequest(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      
+      console.log("Auth response:", response);
+      return response;
     },
     onSuccess: () => {
+      console.log("Auth success!");
+      
       // Refresh user data and other queries
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
@@ -62,6 +69,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
       }
     },
     onError: (error: any) => {
+      console.error("Auth error:", error);
       toast({
         title: "Authentication failed",
         description: error.message || "Please check your information and try again.",
@@ -72,6 +80,8 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log("Form submitted:", { isLogin, formData });
     
     if (!formData.email || !formData.password) {
       toast({
@@ -91,6 +101,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
       return;
     }
 
+    console.log("About to submit auth mutation");
     authMutation.mutate(formData);
   };
 
@@ -115,7 +126,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
           </TabsList>
 
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <TabsContent value="register" className="space-y-4">
+            {!isLogin && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName">First Name</Label>
@@ -139,7 +150,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
                   />
                 </div>
               </div>
-            </TabsContent>
+            )}
 
             <div>
               <Label htmlFor="email">Email</Label>
@@ -167,7 +178,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
 
             <Button 
               type="submit" 
-              className="w-full bg-coral-500 hover:bg-coral-600"
+              className="w-full bg-coral-500 hover:bg-coral-600 text-white font-semibold"
               disabled={authMutation.isPending}
             >
               {authMutation.isPending 
