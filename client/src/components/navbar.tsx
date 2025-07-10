@@ -1,8 +1,46 @@
-import { History, User, LogOut, Moon, Stars, ChevronDown, CreditCard } from "lucide-react";
+import { History, User, LogOut, Moon, Stars, ChevronDown, CreditCard, LogIn } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { AuthModal } from "./auth-modal";
+import { useState } from "react";
 
 export function Navbar() {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/auth/logout", {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Logged out",
+        description: "You've been successfully logged out.",
+      });
+      
+      // Clear all user data from cache
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/kids"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters"] });
+    },
+    onError: () => {
+      toast({
+        title: "Logout failed", 
+        description: "There was an error logging out.",
+        variant: "destructive",
+      });
+    },
+  });
   return (
     <nav className="bg-gradient-to-r from-lavender via-coral to-mint shadow-lg sticky top-0 z-50 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,38 +58,59 @@ export function Navbar() {
             </div>
           </Link>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="text-cream hover:text-golden transition-colors flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm shadow-lg">
-                <User className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">Menu</span>
-                <ChevronDown className="h-4 w-4 ml-1" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-sm border-white/20">
-              <DropdownMenuItem className="flex items-center cursor-pointer">
-                <History className="h-4 w-4 mr-3" />
-                My Stories
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center cursor-pointer">
-                <User className="h-4 w-4 mr-3" />
-                Profile
-              </DropdownMenuItem>
-              <Link href="/pricing">
-                <DropdownMenuItem className="flex items-center cursor-pointer">
-                  <CreditCard className="h-4 w-4 mr-3" />
-                  Pricing
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem 
-                className="flex items-center cursor-pointer text-red-600 hover:text-red-700"
-                onClick={() => window.location.href = "/api/logout"}
-              >
-                <LogOut className="h-4 w-4 mr-3" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {!isLoading && (
+            <>
+              {isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-cream hover:text-golden transition-colors flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm shadow-lg">
+                      <User className="h-5 w-5 mr-2" />
+                      <span className="hidden sm:inline">{user?.firstName || "Menu"}</span>
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-sm border-white/20">
+                    <DropdownMenuItem className="flex items-center cursor-pointer">
+                      <History className="h-4 w-4 mr-3" />
+                      My Stories
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex items-center cursor-pointer">
+                      <User className="h-4 w-4 mr-3" />
+                      Profile
+                    </DropdownMenuItem>
+                    <Link href="/pricing">
+                      <DropdownMenuItem className="flex items-center cursor-pointer">
+                        <CreditCard className="h-4 w-4 mr-3" />
+                        Pricing
+                      </DropdownMenuItem>
+                    </Link>
+                    <DropdownMenuItem 
+                      className="flex items-center cursor-pointer text-red-600 hover:text-red-700"
+                      onClick={() => logoutMutation.mutate()}
+                      disabled={logoutMutation.isPending}
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  onClick={() => setShowAuthModal(true)}
+                  className="bg-white/20 text-cream hover:bg-white/30 backdrop-blur-sm shadow-lg border-white/20"
+                  variant="outline"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign In
+                </Button>
+              )}
+              
+              <AuthModal 
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+              />
+            </>
+          )}
         </div>
       </div>
     </nav>

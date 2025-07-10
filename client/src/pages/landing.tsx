@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Moon, Stars, Sparkles, Heart, BookOpen, Palette, Crown, Check } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Landing() {
+  const [location, navigate] = useLocation();
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
       {/* Hero Section */}
@@ -27,7 +29,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
-              onClick={() => window.location.href = "/guest"}
+              onClick={() => navigate("/")}
             >
               <Heart className="mr-2 h-5 w-5" />
               Create Your Story

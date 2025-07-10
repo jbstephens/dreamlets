@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertKidSchema, insertCharacterSchema, insertStorySchema } from "@shared/schema";
 import { generateStory, generateImages } from "./services/openai";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupSimpleAuth, isAuthenticated } from "./simpleAuth";
 import { z } from "zod";
 
 const generateStorySchema = z.object({
@@ -15,22 +15,9 @@ const generateStorySchema = z.object({
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
-  await setupAuth(app);
+  await setupSimpleAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Auth routes are now handled in setupSimpleAuth
 
   // Guest session management (for demo purposes)
   const GUEST_USER_ID = "guest-session";
@@ -40,9 +27,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let kids = [];
       
-      if (req.user?.claims?.sub) {
+      if (req.session?.userId) {
         // Authenticated user - get from database
-        const userId = req.user.claims.sub;
+        const userId = req.session.userId;
         kids = await storage.getKidsByUserId(userId);
         console.log("DEBUG - Authenticated user kids:", kids);
       } else {
@@ -61,8 +48,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/kids", async (req: any, res) => {
     try {
-      const isAuthenticated = !!req.user?.claims?.sub;
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const isAuthenticated = !!req.session?.userId;
+      const userId = req.session?.userId || GUEST_USER_ID;
       
       if (isAuthenticated) {
         // Authenticated user - save to database
@@ -129,9 +116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let characters = [];
       
-      if (req.user?.claims?.sub) {
+      if (req.session?.userId) {
         // Authenticated user - get from database
-        const userId = req.user.claims.sub;
+        const userId = req.session.userId;
         characters = await storage.getCharactersByUserId(userId);
       } else {
         // Guest user - get from session
@@ -147,8 +134,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/characters", async (req: any, res) => {
     try {
-      const isAuthenticated = !!req.user?.claims?.sub;
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const isAuthenticated = !!req.session?.userId;
+      const userId = req.session?.userId || GUEST_USER_ID;
       
       if (isAuthenticated) {
         // Authenticated user - save to database
@@ -209,9 +196,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       let stories = [];
       
-      if (req.user?.claims?.sub) {
+      if (req.session?.userId) {
         // Authenticated user - get from database
-        const userId = req.user.claims.sub;
+        const userId = req.session.userId;
         stories = await storage.getStoriesByUserId(userId);
       } else {
         // Guest user - get from session
@@ -229,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       
-      if (req.user?.claims?.sub) {
+      if (req.session?.userId) {
         // Authenticated user - get from database
         const story = await storage.getStoryById(id);
         if (!story) {
@@ -237,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Check if user owns this story
-        const userId = req.user.claims.sub;
+        const userId = req.session.userId;
         if (story.userId !== userId) {
           return res.status(403).json({ message: "Access denied" });
         }
@@ -263,8 +250,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Received story generation request:", req.body);
       const validatedData = generateStorySchema.parse(req.body);
-      const isAuthenticated = !!req.user?.claims?.sub;
-      const userId = req.user?.claims?.sub || GUEST_USER_ID;
+      const isAuthenticated = !!req.session?.userId;
+      const userId = req.session?.userId || GUEST_USER_ID;
       
       // Check story limits
       if (isAuthenticated) {

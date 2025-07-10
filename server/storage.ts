@@ -4,8 +4,10 @@ import { eq, desc, sql } from "drizzle-orm";
 import { users, kids, characters, stories, type User, type UpsertUser, type Kid, type InsertKid, type Character, type InsertCharacter, type Story, type InsertStory } from "@shared/schema";
 
 export interface IStorage {
-  // User operations for Replit Auth
+  // User operations for simple auth
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: { email: string; password: string; firstName?: string | null; lastName?: string | null }): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   
   getKidsByUserId(userId: string): Promise<Kid[]>;
@@ -165,6 +167,31 @@ export class MemStorage implements IStorage {
     return { canCreate: true, storiesUsed: 0, limit: 5 };
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    // Memory storage - no-op for testing
+    return undefined;
+  }
+
+  async createUser(userData: { email: string; password: string; firstName?: string | null; lastName?: string | null }): Promise<User> {
+    // Memory storage - simple implementation for testing
+    const id = this.currentUserId++;
+    const user: User = { 
+      id: id.toString(), 
+      email: userData.email,
+      password: userData.password,
+      firstName: userData.firstName || null,
+      lastName: userData.lastName || null,
+      profileImageUrl: null,
+      subscriptionTier: "free",
+      storiesThisMonth: 0,
+      monthlyResetDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(id, user);
+    return user;
+  }
+
   async incrementUserStoryCount(userId: string): Promise<void> {
     // Memory storage - no-op for guest sessions
   }
@@ -185,6 +212,29 @@ class DatabaseStorage implements IStorage {
 
   async getUser(id: string): Promise<User | undefined> {
     const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    return result[0];
+  }
+
+  async createUser(userData: { email: string; password: string; firstName?: string | null; lastName?: string | null }): Promise<User> {
+    const id = crypto.randomUUID(); // Generate UUID for new users
+    const result = await this.db
+      .insert(users)
+      .values({
+        id,
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName || null,
+        lastName: userData.lastName || null,
+        subscriptionTier: "free",
+        storiesThisMonth: 0,
+        monthlyResetDate: new Date(),
+      })
+      .returning();
     return result[0];
   }
 

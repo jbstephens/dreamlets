@@ -128,6 +128,15 @@ export async function setupAuth(app: Express) {
       // After successful authentication, migrate guest data if it exists
       if (req.user?.claims?.sub) {
         const userId = req.user.claims.sub;
+        
+        console.log("=== MIGRATION DEBUG ===");
+        console.log("User ID:", userId);
+        console.log("Session ID:", req.sessionID);
+        console.log("Full session data:", JSON.stringify(req.session, null, 2));
+        console.log("Guest kids:", req.session.guestKids);
+        console.log("Guest characters:", req.session.guestCharacters);
+        console.log("Guest stories:", req.session.guestStories);
+        
         const guestData = {
           kids: req.session.guestKids,
           characters: req.session.guestCharacters,
@@ -137,7 +146,10 @@ export async function setupAuth(app: Express) {
         // Only migrate if there's guest data
         if (guestData.kids?.length > 0 || guestData.characters?.length > 0 || guestData.stories?.length > 0) {
           try {
+            console.log("=== STARTING MIGRATION ===");
             console.log("Migrating guest data for newly authenticated user:", userId);
+            console.log("Guest data to migrate:", guestData);
+            
             await storage.migrateGuestDataToUser(userId, guestData);
             
             // Clear guest session data after successful migration
@@ -145,12 +157,20 @@ export async function setupAuth(app: Express) {
             delete req.session.guestCharacters;
             delete req.session.guestStories;
             
+            console.log("=== MIGRATION COMPLETED ===");
             console.log("Guest data migration completed and session cleared");
           } catch (error) {
+            console.error("=== MIGRATION FAILED ===");
             console.error("Failed to migrate guest data:", error);
             // Don't fail authentication, just log the error
           }
+        } else {
+          console.log("=== NO GUEST DATA TO MIGRATE ===");
+          console.log("No guest data found to migrate");
         }
+      } else {
+        console.log("=== NO USER FOUND ===");
+        console.log("No authenticated user found for migration");
       }
       
       res.redirect("/");
