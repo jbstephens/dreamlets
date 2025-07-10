@@ -215,9 +215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stories = await storage.getStoriesByUserId(userId);
       } else {
         // Guest user - get from session
-        if (req.session.guestStory) {
-          stories = [req.session.guestStory];
-        }
+        stories = req.session.guestStories || [];
       }
       
       res.json(stories);
@@ -247,8 +245,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(story);
       } else {
         // Guest user - get from session
-        if (req.session.guestStory && req.session.guestStory.id === id) {
-          res.json(req.session.guestStory);
+        const guestStories = req.session.guestStories || [];
+        const story = guestStories.find((s: any) => s.id === id);
+        if (story) {
+          res.json(story);
         } else {
           res.status(404).json({ message: "Story not found" });
         }
@@ -278,11 +278,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       } else {
-        // Guest user - only allow one story
-        if (req.session.guestStory) {
+        // Guest user - allow up to 5 stories in first 30 days
+        const guestStories = req.session.guestStories || [];
+        const now = new Date();
+        const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+        
+        // Filter out stories older than 30 days
+        const recentStories = guestStories.filter((story: any) => 
+          new Date(story.createdAt) > thirtyDaysAgo
+        );
+        
+        // Update session with only recent stories
+        req.session.guestStories = recentStories;
+        
+        if (recentStories.length >= 5) {
           return res.status(403).json({ 
-            message: "You can only create one story as a guest. Sign up to create more!",
-            isGuest: true
+            message: "You've reached your 5 story limit for the first 30 days. Create an account to continue with 5 stories per month!",
+            isGuest: true,
+            storiesUsed: recentStories.length,
+            limit: 5
           });
         }
       }
@@ -395,8 +409,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdAt: new Date()
         };
         
-        // Store in session
-        req.session.guestStory = story;
+        // Store in session array
+        const guestStories = req.session.guestStories || [];
+        guestStories.push(story);
+        req.session.guestStories = guestStories;
         console.log("Story saved to session successfully:", story.id);
       }
       

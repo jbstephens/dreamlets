@@ -41,7 +41,13 @@ export function StoryForm({ onStoryGenerated }: StoryFormProps) {
       console.error("Error generating story:", error);
       
       // Check if this is a guest limit error
-      if (error.message?.includes("one story as a guest")) {
+      if (error.message?.includes("5 story limit for the first 30 days")) {
+        toast({ 
+          title: "Guest Story Limit Reached", 
+          description: "You've created 5 stories! Create an account to continue with 5 stories per month.",
+          variant: "destructive" 
+        });
+      } else if (error.message?.includes("one story as a guest")) {
         toast({ 
           title: "Guest Story Limit Reached", 
           description: "Sign up to create more stories!",

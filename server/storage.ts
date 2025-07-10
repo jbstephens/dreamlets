@@ -31,7 +31,7 @@ export interface IStorage {
   migrateGuestDataToUser(userId: string, guestData: {
     kids?: any[];
     characters?: any[];
-    story?: any;
+    stories?: any[];
   }): Promise<void>;
 }
 
@@ -172,7 +172,7 @@ export class MemStorage implements IStorage {
   async migrateGuestDataToUser(userId: string, guestData: {
     kids?: any[];
     characters?: any[];
-    story?: any;
+    stories?: any[];
   }): Promise<void> {
     // Memory storage - no-op since it's only used for testing
     console.log("MemStorage: Guest data migration not implemented");
@@ -317,7 +317,7 @@ class DatabaseStorage implements IStorage {
   async migrateGuestDataToUser(userId: string, guestData: {
     kids?: any[];
     characters?: any[];
-    story?: any;
+    stories?: any[];
   }): Promise<void> {
     console.log("Starting guest data migration for user:", userId);
     console.log("Guest data to migrate:", guestData);
@@ -353,25 +353,27 @@ class DatabaseStorage implements IStorage {
         }
       }
 
-      // Migrate story
-      if (guestData.story) {
-        await this.createStory({
-          userId,
-          title: guestData.story.title,
-          kidIds: guestData.story.kidIds || [],
-          characterIds: guestData.story.characterIds || [],
-          storyPart1: guestData.story.storyPart1,
-          storyPart2: guestData.story.storyPart2,
-          storyPart3: guestData.story.storyPart3,
-          imageUrl1: guestData.story.imageUrl1,
-          imageUrl2: guestData.story.imageUrl2,
-          imageUrl3: guestData.story.imageUrl3,
-          tone: guestData.story.tone,
-        });
-        console.log("Migrated story:", guestData.story.title);
+      // Migrate stories
+      if (guestData.stories && guestData.stories.length > 0) {
+        for (const guestStory of guestData.stories) {
+          await this.createStory({
+            userId,
+            title: guestStory.title,
+            kidIds: guestStory.kidIds || [],
+            characterIds: guestStory.characterIds || [],
+            storyPart1: guestStory.storyPart1,
+            storyPart2: guestStory.storyPart2,
+            storyPart3: guestStory.storyPart3,
+            imageUrl1: guestStory.imageUrl1,
+            imageUrl2: guestStory.imageUrl2,
+            imageUrl3: guestStory.imageUrl3,
+            tone: guestStory.tone,
+          });
+          console.log("Migrated story:", guestStory.title);
 
-        // Increment story count for the user
-        await this.incrementUserStoryCount(userId);
+          // Increment story count for each migrated story
+          await this.incrementUserStoryCount(userId);
+        }
       }
 
       console.log("Guest data migration completed successfully for user:", userId);
