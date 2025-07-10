@@ -27,7 +27,7 @@ export default function Register() {
       const response = await apiRequest("POST", "/api/auth/register", data);
       const result = await response.json();
       
-      console.log("Register response:", result);
+      console.log("Registration response:", result);
       return result;
     },
     onSuccess: () => {
@@ -40,18 +40,18 @@ export default function Register() {
       queryClient.invalidateQueries({ queryKey: ["/api/characters"] });
       
       toast({
-        title: "Account created!",
-        description: "Welcome to Dreamlets! Your stories are now saved permanently.",
+        title: "Welcome to Dreamlets!",
+        description: "Your account has been created successfully. Your stories are now saved!",
       });
       
-      // Navigate to create page with welcome parameter
-      navigate("/create?welcome=true");
+      // Navigate to create page 
+      navigate("/create");
     },
     onError: (error: any) => {
-      console.error("Register error:", error);
+      console.error("Registration error:", error);
       toast({
         title: "Registration failed",
-        description: error.message || "Please check your information and try again.",
+        description: error.message || "Please try again with different information.",
         variant: "destructive",
       });
     },
@@ -83,9 +83,9 @@ export default function Register() {
     <div className="min-h-screen bg-gradient-to-br from-coral-50 to-lavender-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-coral-600">Create Account</CardTitle>
+          <CardTitle className="text-3xl font-bold text-coral-600">Create Your Account</CardTitle>
           <CardDescription className="text-gray-600">
-            Join Dreamlets to save your stories and create unlimited adventures!
+            Save your stories and create magical adventures for your little ones!
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -100,7 +100,7 @@ export default function Register() {
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => handleInputChange("firstName", e.target.value)}
-                  placeholder="Your first name"
+                  placeholder="Sarah"
                   className="mt-1"
                   required
                 />
@@ -114,7 +114,7 @@ export default function Register() {
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => handleInputChange("lastName", e.target.value)}
-                  placeholder="Your last name"
+                  placeholder="Smith"
                   className="mt-1"
                 />
               </div>
@@ -122,14 +122,14 @@ export default function Register() {
 
             <div>
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email *
+                Email Address *
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="your@email.com"
+                placeholder="sarah@example.com"
                 className="mt-1"
                 required
               />
@@ -144,7 +144,7 @@ export default function Register() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
-                placeholder="Choose a secure password"
+                placeholder="Create a secure password"
                 className="mt-1"
                 required
               />
@@ -156,8 +156,8 @@ export default function Register() {
               disabled={registerMutation.isPending}
             >
               {registerMutation.isPending 
-                ? "Creating account..." 
-                : "Create Account & Save Stories"
+                ? "Creating Account..." 
+                : "Create Account"
               }
             </Button>
           </form>
@@ -165,8 +165,14 @@ export default function Register() {
           <div className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{" "}
             <Link href="/login" className="text-coral-600 hover:underline font-medium">
-              Log in instead
+              Sign in here
             </Link>
+          </div>
+
+          <div className="mt-6 p-4 bg-mint-50 rounded-lg border border-mint-200">
+            <p className="text-sm text-gray-600 text-center">
+              <strong>Free forever:</strong> 5 stories per month • No credit card required • Cancel anytime
+            </p>
           </div>
         </CardContent>
       </Card>

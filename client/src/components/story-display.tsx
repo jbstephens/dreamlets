@@ -175,7 +175,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <Heart className="h-6 w-6 text-cream mr-2 animate-pulse" />
               <Sparkles className="h-5 w-5 text-cream mr-3" />
               <h3 className="text-2xl font-nunito font-bold text-cream">
-                Love this story?
+                Love this story? NEW FLOW!
               </h3>
               <Sparkles className="h-5 w-5 text-cream ml-3" />
               <Heart className="h-6 w-6 text-cream ml-2 animate-pulse" />
@@ -184,14 +184,13 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               Create an account to save this magical story forever and unlock up to 5 total stories per month completely free!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/register">
-                <Button
-                  className="bg-cream text-coral hover:bg-cream/90 font-nunito font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                >
-                  <Heart className="h-5 w-5 mr-2" />
-                  Save My Story
-                </Button>
-              </Link>
+              <Button
+                onClick={() => window.location.href = "/register"}
+                className="bg-cream text-coral hover:bg-cream/90 font-nunito font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Create Account & Save Story
+              </Button>
               <p className="text-cream/80 text-sm font-nunito">
                 No credit card required • Free account • Instant access
               </p>
