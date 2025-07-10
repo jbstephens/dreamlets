@@ -175,7 +175,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <Heart className="h-6 w-6 text-cream mr-2 animate-pulse" />
               <Sparkles className="h-5 w-5 text-cream mr-3" />
               <h3 className="text-2xl font-nunito font-bold text-cream">
-                Love this story? NEW FLOW!
+                Love this story?
               </h3>
               <Sparkles className="h-5 w-5 text-cream ml-3" />
               <Heart className="h-6 w-6 text-cream ml-2 animate-pulse" />

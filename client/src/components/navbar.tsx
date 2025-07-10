@@ -6,12 +6,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { AuthModal } from "./auth-modal";
-import { useState } from "react";
 
 export function Navbar() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -95,20 +92,25 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button
-                  onClick={() => setShowAuthModal(true)}
-                  className="bg-white/20 text-cream hover:bg-white/30 backdrop-blur-sm shadow-lg border-white/20"
-                  variant="outline"
-                >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Sign In
-                </Button>
+                <div className="flex items-center space-x-3">
+                  <Link href="/login">
+                    <Button
+                      className="bg-white/20 text-cream hover:bg-white/30 backdrop-blur-sm shadow-lg border-white/20"
+                      variant="outline"
+                    >
+                      <LogIn className="h-4 w-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button
+                      className="bg-cream text-coral hover:bg-cream/90 shadow-lg font-semibold"
+                    >
+                      Create Account
+                    </Button>
+                  </Link>
+                </div>
               )}
-              
-              <AuthModal 
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-              />
             </>
           )}
         </div>
