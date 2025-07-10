@@ -2,6 +2,8 @@
 import { Printer, ArrowLeft, Heart, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { AuthModal } from "@/components/auth-modal";
+import { useState } from "react";
 import type { Story } from "@/lib/types";
 
 interface StoryDisplayProps {
@@ -12,6 +14,7 @@ interface StoryDisplayProps {
 export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
   console.log("StoryDisplay received story:", story);
   const { isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   
   const handlePrint = () => {
     window.print();
@@ -184,7 +187,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
-                onClick={() => window.location.href = "/api/login"}
+                onClick={() => setShowAuthModal(true)}
                 className="bg-cream text-coral hover:bg-cream/90 font-nunito font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
                 <Heart className="h-5 w-5 mr-2" />
@@ -197,6 +200,13 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           </div>
         </div>
       )}
+      
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Save Your Stories"
+        description="Create an account to keep your stories safe and create more amazing adventures!"
+      />
     </div>
   );
 }

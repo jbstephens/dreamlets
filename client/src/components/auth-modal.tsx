@@ -7,15 +7,17 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   description?: string;
+  onSuccessfulRegistration?: () => void;
 }
 
-export function AuthModal({ isOpen, onClose, title = "Save Your Stories", description = "Create an account to keep your stories safe and create more!" }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, title = "Save Your Stories", description = "Create an account to keep your stories safe and create more!", onSuccessfulRegistration }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -25,6 +27,7 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
 
   const authMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -36,11 +39,6 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
       });
     },
     onSuccess: () => {
-      toast({
-        title: isLogin ? "Welcome back!" : "Account created!",
-        description: isLogin ? "You're now logged in." : "Your stories are now saved safely.",
-      });
-      
       // Refresh user data and other queries
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
@@ -48,6 +46,20 @@ export function AuthModal({ isOpen, onClose, title = "Save Your Stories", descri
       queryClient.invalidateQueries({ queryKey: ["/api/characters"] });
       
       onClose();
+      
+      if (!isLogin) {
+        // For new registrations, navigate to create page with welcome parameter
+        navigate("/create?welcome=true");
+        if (onSuccessfulRegistration) {
+          onSuccessfulRegistration();
+        }
+      } else {
+        // For login, just show a success toast
+        toast({
+          title: "Welcome back!",
+          description: "You're now logged in.",
+        });
+      }
     },
     onError: (error: any) => {
       toast({

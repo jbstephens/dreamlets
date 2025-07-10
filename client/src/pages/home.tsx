@@ -6,16 +6,29 @@ import { CharacterForm } from "@/components/character-form";
 import { StoryForm } from "@/components/story-form";
 import { SubscriptionStatus } from "@/components/subscription-status";
 import { GuestNotification } from "@/components/guest-notification";
+import { WelcomeModal } from "@/components/welcome-modal";
 import { Button } from "@/components/ui/button";
 import { History, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
 import type { Story } from "@/lib/types";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const { data: stories = [], isLoading: storiesLoading } = useQuery<Story[]>({
     queryKey: ["/api/stories"],
   });
+
+  // Check if this is a new user (just registered)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('welcome') === 'true' && isAuthenticated) {
+      setShowWelcomeModal(true);
+      // Clean up the URL parameter
+      window.history.replaceState({}, '', '/create');
+    }
+  }, [isAuthenticated]);
 
   const handleStoryGenerated = (storyId: number) => {
     // Story will be available in the stories list, no need to handle locally
@@ -174,6 +187,9 @@ export default function Home() {
           <p className="text-gray-300 mb-4">Creating magical bedtime stories, one adventure at a time.</p>
         </div>
       </footer>
+
+      {/* Welcome Modal */}
+      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />
     </div>
   );
 }
