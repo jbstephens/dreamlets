@@ -85,7 +85,7 @@ export default function Landing() {
             size="lg" 
             variant="outline"
             className="border-cream text-cream hover:bg-cream hover:text-navy px-8 py-4 text-lg shadow-xl"
-            onClick={() => window.location.href = "/api/login"}
+            onClick={() => navigate("/")}
           >
             Sign Up Free
           </Button>

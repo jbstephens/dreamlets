@@ -24,20 +24,10 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <>
-          <Route path="/" component={Landing} />
-          <Route path="/guest" component={Home} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/story/:id" component={StoryView} />
-        </>
-      ) : (
-        <>
-          <Route path="/" component={Home} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/story/:id" component={StoryView} />
-        </>
-      )}
+      <Route path="/landing" component={Landing} />
+      <Route path="/" component={Home} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/story/:id" component={StoryView} />
       <Route component={NotFound} />
     </Switch>
   );
