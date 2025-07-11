@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { StoryLoadingModal } from "@/components/story-loading-modal";
 import type { Kid, Character, GenerateStoryRequest } from "@/lib/types";
+import { trackEvent } from "@/lib/analytics";
 
 interface StoryFormProps {
   onStoryGenerated: (storyId: number) => void;
@@ -33,6 +34,9 @@ export function StoryForm({ onStoryGenerated }: StoryFormProps) {
       return response.json();
     },
     onSuccess: (story) => {
+      // Track successful story generation
+      trackEvent('story_generated', 'content', 'story_creation_completed');
+      
       queryClient.invalidateQueries({ queryKey: ["/api/stories"] });
       onStoryGenerated(story.id);
       toast({ title: "Story generated successfully!" });

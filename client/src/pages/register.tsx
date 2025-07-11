@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -32,6 +33,9 @@ export default function Register() {
     },
     onSuccess: () => {
       console.log("Registration success!");
+      
+      // Track successful registration
+      trackEvent('user_registration', 'account', 'registration_completed');
       
       // Refresh user data and other queries
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });

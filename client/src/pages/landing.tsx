@@ -5,6 +5,7 @@ import { Moon, Stars, Sparkles, Heart, BookOpen, Palette, Crown, Check } from "l
 import { useLocation } from "wouter";
 import { AuthModal } from "@/components/auth-modal";
 import { useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Landing() {
   const [location, navigate] = useLocation();
@@ -33,7 +34,10 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
-              onClick={() => navigate("/create")}
+              onClick={() => {
+                trackEvent('cta_click', 'engagement', 'create_story_hero');
+                navigate("/create");
+              }}
             >
               <Heart className="mr-2 h-5 w-5" />
               Create Your Story
