@@ -5,6 +5,8 @@ import { insertKidSchema, insertCharacterSchema, insertStorySchema } from "@shar
 import { generateStory, generateImages } from "./services/openai";
 import { setupSimpleAuth, isAuthenticated } from "./simpleAuth";
 import { z } from "zod";
+import express from "express";
+import path from "path";
 
 const generateStorySchema = z.object({
   kidIds: z.array(z.number()),
@@ -14,6 +16,9 @@ const generateStorySchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from public directory
+  app.use(express.static(path.join(process.cwd(), 'public')));
+
   // Auth middleware
   await setupSimpleAuth(app);
 
