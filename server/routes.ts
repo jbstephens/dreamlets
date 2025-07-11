@@ -497,7 +497,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             quantity: 1,
           },
         ],
-        success_url: `${req.protocol}://${req.get('host')}/create?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${req.protocol}://${req.get('host')}/api/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.protocol}://${req.get('host')}/pricing`,
         metadata: {
           userId: userId,
@@ -565,7 +565,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (session.payment_status === 'paid') {
           // Update user subscription status
           await storage.updateUserSubscription(userId, 'premium_unlimited');
-          console.log(`Updated user ${userId} to premium subscription`);
+          console.log(`✓ Updated user ${userId} to premium subscription via checkout success`);
         }
       }
       
@@ -573,6 +573,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error handling checkout success:", error);
       res.redirect('/create');
+    }
+  });
+
+  // Stripe webhook handler for production reliability
+  app.post("/api/webhook/stripe", async (req, res) => {
+    try {
+      const event = req.body;
+      
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          const userId = session.metadata?.userId;
+          
+          if (userId && session.payment_status === 'paid') {
+            await storage.updateUserSubscription(userId, 'premium_unlimited');
+            console.log(`✓ Updated user ${userId} to premium via webhook`);
+          }
+          break;
+          
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated':
+          const subscription = event.data.object;
+          if (subscription.status === 'active') {
+            // Find user by customer ID and upgrade
+            const customer = await stripe.customers.retrieve(subscription.customer);
+            if (customer && !customer.deleted && customer.email) {
+              const user = await storage.getUserByEmail(customer.email);
+              if (user) {
+                await storage.updateUserSubscription(user.id, 'premium_unlimited');
+                console.log(`✓ Updated user ${user.id} to premium via subscription webhook`);
+              }
+            }
+          }
+          break;
+          
+        case 'customer.subscription.deleted':
+          const canceledSub = event.data.object;
+          const canceledCustomer = await stripe.customers.retrieve(canceledSub.customer);
+          if (canceledCustomer && !canceledCustomer.deleted && canceledCustomer.email) {
+            const user = await storage.getUserByEmail(canceledCustomer.email);
+            if (user) {
+              await storage.updateUserSubscription(user.id, 'free');
+              console.log(`✓ Downgraded user ${user.id} to free via cancellation webhook`);
+            }
+          }
+          break;
+          
+        default:
+          console.log(`Unhandled Stripe event type: ${event.type}`);
+      }
+      
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error("Stripe webhook error:", error);
+      res.status(400).json({ error: error.message });
     }
   });
 
