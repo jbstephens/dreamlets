@@ -491,19 +491,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customer_email: user.email,
         line_items: [
           {
-            // Use a proper Stripe Price ID - you'll need to create this in your Stripe dashboard
-            // For now, using price_data as fallback, but you should replace this with: price: 'price_XXXXXXXX'
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'Dreamlets Premium',
-                description: 'Unlimited personalized bedtime stories for your children',
-              },
-              unit_amount: 1999, // $19.99 in cents
-              recurring: {
-                interval: 'month',
-              },
-            },
+            // Use the Stripe Price ID from your dashboard
+            // You'll need to create a price for product prod_SeOo5WigYEkAFI
+            price: process.env.STRIPE_PRICE_ID || 'price_PLACEHOLDER', // Set this in your environment
             quantity: 1,
           },
         ],
