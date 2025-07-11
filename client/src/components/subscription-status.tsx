@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Star, Zap } from "lucide-react";
+import { Link } from "wouter";
 
 interface SubscriptionStatusProps {
   storiesUsed?: number;
@@ -75,6 +76,22 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 5 }: SubscriptionS
               </div>
             )}
           </div>
+
+          {/* Get More Stories Button for non-premium users */}
+          {!isPremium && (
+            <div className="flex justify-center">
+              <Link href="/pricing">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-coral text-coral hover:bg-coral hover:text-white"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Get More Stories
+                </Button>
+              </Link>
+            </div>
+          )}
 
           {!isPremium && storiesUsed >= limit * 0.8 && (
             <div className="p-3 bg-sunset/10 rounded-lg border border-sunset/20">
