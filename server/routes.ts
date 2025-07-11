@@ -7,6 +7,14 @@ import { setupSimpleAuth, isAuthenticated } from "./simpleAuth";
 import { z } from "zod";
 import express from "express";
 import path from "path";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
 
 const generateStorySchema = z.object({
   kidIds: z.array(z.number()),
@@ -463,6 +471,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete story" });
+    }
+  });
+
+  // Stripe routes for subscription management
+  app.post("/api/create-checkout-session", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.email) {
+        return res.status(400).json({ error: "User email is required" });
+      }
+
+      // Create Stripe checkout session
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'subscription',
+        customer_email: user.email,
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Dreamlets Premium',
+                description: 'Unlimited personalized bedtime stories for your children',
+              },
+              unit_amount: 1999, // $19.99 in cents
+              recurring: {
+                interval: 'month',
+              },
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: `${req.protocol}://${req.get('host')}/create?success=true`,
+        cancel_url: `${req.protocol}://${req.get('host')}/pricing`,
+        metadata: {
+          userId: userId,
+        },
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error("Error creating checkout session:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Check subscription status
+  app.get("/api/subscription-status", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.email) {
+        return res.json({ hasActiveSubscription: false });
+      }
+
+      // Get customer from Stripe by email
+      const customers = await stripe.customers.list({
+        email: user.email,
+        limit: 1,
+      });
+
+      if (customers.data.length === 0) {
+        return res.json({ hasActiveSubscription: false });
+      }
+
+      // Get active subscriptions for this customer
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customers.data[0].id,
+        status: 'active',
+        limit: 1,
+      });
+
+      const hasActiveSubscription = subscriptions.data.length > 0;
+      res.json({ hasActiveSubscription });
+    } catch (error: any) {
+      console.error("Error checking subscription status:", error);
+      res.json({ hasActiveSubscription: false });
     }
   });
 

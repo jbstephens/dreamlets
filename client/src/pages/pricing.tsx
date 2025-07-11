@@ -2,8 +2,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, ArrowLeft } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export default function Pricing() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleUpgrade = async () => {
+    try {
+      setIsLoading(true);
+      const response = await apiRequest("POST", "/api/create-checkout-session");
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      toast({
+        title: "Error",
+        description: "Please log in first to upgrade to premium",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
       <div className="container mx-auto px-4 py-16">
@@ -67,7 +96,7 @@ export default function Pricing() {
             </Badge>
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-navy">Dreamlets Premium</CardTitle>
-              <div className="text-4xl font-bold text-navy">$29.99</div>
+              <div className="text-4xl font-bold text-navy">$19.99</div>
               <CardDescription>per month</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -85,9 +114,10 @@ export default function Pricing() {
               </div>
               <Button 
                 className="w-full mt-6 bg-sunset hover:bg-sunset/90" 
-                onClick={() => window.location.href = "/api/login"}
+                onClick={handleUpgrade}
+                disabled={isLoading}
               >
-                Start Premium
+                {isLoading ? "Loading..." : "Start Premium"}
               </Button>
             </CardContent>
           </Card>
