@@ -175,7 +175,7 @@ export default function Register() {
 
           <div className="mt-6 p-4 bg-mint-50 rounded-lg border border-mint-200">
             <p className="text-sm text-gray-600 text-center">
-              <strong>Free forever:</strong> 5 stories per month • No credit card required • Cancel anytime
+              <strong>Save your stories forever, for free!</strong>
             </p>
           </div>
         </CardContent>
