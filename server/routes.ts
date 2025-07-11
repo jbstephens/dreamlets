@@ -491,6 +491,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customer_email: user.email,
         line_items: [
           {
+            // Use a proper Stripe Price ID - you'll need to create this in your Stripe dashboard
+            // For now, using price_data as fallback, but you should replace this with: price: 'price_XXXXXXXX'
             price_data: {
               currency: 'usd',
               product_data: {
@@ -505,7 +507,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             quantity: 1,
           },
         ],
-        success_url: `${req.protocol}://${req.get('host')}/create?success=true`,
+        success_url: `${req.protocol}://${req.get('host')}/create?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.protocol}://${req.get('host')}/pricing`,
         metadata: {
           userId: userId,
@@ -547,10 +549,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const hasActiveSubscription = subscriptions.data.length > 0;
+      
+      // If user has active subscription but our DB shows free, update it
+      if (hasActiveSubscription && user.subscriptionTier === 'free') {
+        await storage.updateUserSubscription(userId, 'premium_unlimited');
+      }
+      
       res.json({ hasActiveSubscription });
     } catch (error: any) {
       console.error("Error checking subscription status:", error);
       res.json({ hasActiveSubscription: false });
+    }
+  });
+
+  // Handle successful checkout completion
+  app.get("/api/checkout-success", isAuthenticated, async (req: any, res) => {
+    try {
+      const sessionId = req.query.session_id;
+      const userId = req.session.userId;
+      
+      if (sessionId) {
+        // Retrieve the session from Stripe
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        
+        if (session.payment_status === 'paid') {
+          // Update user subscription status
+          await storage.updateUserSubscription(userId, 'premium_unlimited');
+          console.log(`Updated user ${userId} to premium subscription`);
+        }
+      }
+      
+      res.redirect('/create?success=true');
+    } catch (error: any) {
+      console.error("Error handling checkout success:", error);
+      res.redirect('/create');
     }
   });
 

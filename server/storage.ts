@@ -28,6 +28,7 @@ export interface IStorage {
   // Subscription management
   canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }>;
   incrementUserStoryCount(userId: string): Promise<void>;
+  updateUserSubscription(userId: string, subscriptionTier: string): Promise<void>;
   
   // Guest session migration
   migrateGuestDataToUser(userId: string, guestData: {
@@ -196,6 +197,10 @@ export class MemStorage implements IStorage {
     // Memory storage - no-op for guest sessions
   }
 
+  async updateUserSubscription(userId: string, subscriptionTier: string): Promise<void> {
+    // Memory storage - no-op for testing
+  }
+
   async migrateGuestDataToUser(userId: string, guestData: {
     kids?: any[];
     characters?: any[];
@@ -359,6 +364,15 @@ class DatabaseStorage implements IStorage {
     await this.db.update(users)
       .set({ 
         storiesThisMonth: sql`${users.storiesThisMonth} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async updateUserSubscription(userId: string, subscriptionTier: string): Promise<void> {
+    await this.db.update(users)
+      .set({ 
+        subscriptionTier,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
