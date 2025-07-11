@@ -28,7 +28,7 @@ export default function Pricing() {
         </div>
 
         {/* Pricing */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
           
           {/* Free Plan */}
           <Card className="bg-white/90 border-2 border-gray-200">
@@ -60,47 +60,13 @@ export default function Pricing() {
             </CardContent>
           </Card>
 
-          {/* Premium 15 Plan */}
+          {/* Dreamlets Premium Plan */}
           <Card className="bg-white/90 border-2 border-sunset relative">
             <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-sunset text-white">
               Most Popular
             </Badge>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-navy">Premium</CardTitle>
-              <div className="text-4xl font-bold text-navy">$19.99</div>
-              <CardDescription>per month</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center">
-                <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>15 stories per month</span>
-              </div>
-              <div className="flex items-center">
-                <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>Personalized illustrations</span>
-              </div>
-              <div className="flex items-center">
-                <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>Unlimited characters</span>
-              </div>
-              <div className="flex items-center">
-                <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>Priority support</span>
-              </div>
-              <Button 
-                className="w-full mt-6 bg-sunset hover:bg-sunset/90" 
-                onClick={() => window.location.href = "/api/login"}
-              >
-                Start Premium
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Unlimited Plan */}
-          <Card className="bg-white/90 border-2 border-golden">
-            <CardHeader className="text-center">
-              <Crown className="h-8 w-8 text-golden mx-auto mb-2" />
-              <CardTitle className="text-2xl text-navy">Unlimited</CardTitle>
+              <CardTitle className="text-2xl text-navy">Dreamlets Premium</CardTitle>
               <div className="text-4xl font-bold text-navy">$29.99</div>
               <CardDescription>per month</CardDescription>
             </CardHeader>
@@ -117,15 +83,11 @@ export default function Pricing() {
                 <Check className="h-5 w-5 text-green-500 mr-3" />
                 <span>Unlimited characters</span>
               </div>
-              <div className="flex items-center">
-                <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>Premium support</span>
-              </div>
               <Button 
-                className="w-full mt-6 bg-golden hover:bg-golden/90 text-navy" 
+                className="w-full mt-6 bg-sunset hover:bg-sunset/90" 
                 onClick={() => window.location.href = "/api/login"}
               >
-                Go Unlimited
+                Start Premium
               </Button>
             </CardContent>
           </Card>
@@ -133,9 +95,6 @@ export default function Pricing() {
 
         {/* FAQ */}
         <div className="text-center mt-16">
-          <h3 className="text-2xl font-bold text-cream mb-6">
-            Questions? We're here to help!
-          </h3>
           <p className="text-cream/80 mb-8">
             All plans include beautiful personalized illustrations, custom stories, and the ability to save your creations.
           </p>
