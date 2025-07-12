@@ -88,21 +88,25 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link href="/login">
                     <Button
-                      className="bg-white/20 text-cream hover:bg-white/30 backdrop-blur-sm shadow-lg border-white/20"
+                      className="bg-white/20 text-cream hover:bg-white/30 backdrop-blur-sm shadow-lg border-white/20 text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
                       variant="outline"
+                      size="sm"
                     >
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Sign In
+                      <LogIn className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <span className="hidden sm:inline">Sign In</span>
+                      <span className="sm:hidden">In</span>
                     </Button>
                   </Link>
                   <Link href="/register">
                     <Button
-                      className="bg-cream text-coral hover:bg-cream/90 shadow-lg font-semibold"
+                      className="bg-cream text-coral hover:bg-cream/90 shadow-lg font-semibold text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+                      size="sm"
                     >
-                      Create Account
+                      <span className="hidden sm:inline">Create Account</span>
+                      <span className="sm:hidden">Sign Up</span>
                     </Button>
                   </Link>
                 </div>

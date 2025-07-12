@@ -85,15 +85,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-coral-50 to-lavender-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-coral-600">Create Your Account</CardTitle>
-          <CardDescription className="text-gray-600">
-            Save your stories and create magical adventures for your little ones!
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-gradient-to-br from-coral-50 to-lavender-50 flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl font-bold text-coral-600">Create Your Account</CardTitle>
+            <CardDescription className="text-gray-600">
+              Save your stories and create magical adventures for your little ones!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -180,7 +181,8 @@ export default function Register() {
             </p>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
       <Footer />
     </div>
   );

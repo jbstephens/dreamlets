@@ -83,15 +83,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-coral-50 to-lavender-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-coral-600">Welcome Back</CardTitle>
-          <CardDescription className="text-gray-600">
-            Log in to access your saved stories and create new adventures!
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-gradient-to-br from-coral-50 to-lavender-50 flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl font-bold text-coral-600">Welcome Back</CardTitle>
+            <CardDescription className="text-gray-600">
+              Log in to access your saved stories and create new adventures!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -142,7 +143,8 @@ export default function Login() {
             </Link>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
       <Footer />
     </div>
   );
