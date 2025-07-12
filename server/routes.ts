@@ -262,6 +262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/stories/generate", async (req: any, res) => {
     try {
       console.log("Received story generation request:", req.body);
+      console.log("DEBUG - COOKIES:", req.headers.cookie);
       const validatedData = generateStorySchema.parse(req.body);
       const isAuthenticated = !!req.session?.userId;
       const userId = req.session?.userId || GUEST_USER_ID;
@@ -329,10 +330,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         skinTone: kid.skinTone || undefined,
       })).filter(kid => kid.hairColor || kid.eyeColor || kid.hairLength || kid.skinTone);
       
+      console.log("DEBUG - req.session:", JSON.stringify(req.session, null, 2));
+      console.log("DEBUG - req.session?.userId:", req.session?.userId);
+      console.log("DEBUG - req.user:", req.user);
       console.log("DEBUG - isAuthenticated:", isAuthenticated);
       console.log("DEBUG - userId:", userId);
-      console.log("DEBUG - allKids:", allKids);
-      console.log("DEBUG - allCharacters:", allCharacters);
       console.log("DEBUG - selectedKids:", selectedKids);
       console.log("DEBUG - selectedCharacters:", selectedCharacters);
       console.log("Selected kids:", kidNames);
