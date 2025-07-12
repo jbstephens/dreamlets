@@ -65,10 +65,6 @@ export function Navbar() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48 bg-white/95 backdrop-blur-sm border-white/20">
-                    <DropdownMenuItem className="flex items-center cursor-pointer">
-                      <History className="h-4 w-4 mr-3" />
-                      My Stories
-                    </DropdownMenuItem>
                     <Link href="/profile">
                       <DropdownMenuItem className="flex items-center cursor-pointer w-full">
                         <User className="h-4 w-4 mr-3" />
