@@ -552,6 +552,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create Stripe customer portal session for subscription management
+  app.post("/api/create-customer-portal", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user || !user.email) {
+        return res.status(400).json({ error: "User email is required" });
+      }
+
+      // Get or create customer in Stripe
+      let customers = await stripe.customers.list({
+        email: user.email,
+        limit: 1,
+      });
+
+      let customerId;
+      if (customers.data.length === 0) {
+        // Create customer if they don't exist
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName || user.lastName || undefined,
+        });
+        customerId = customer.id;
+      } else {
+        customerId = customers.data[0].id;
+      }
+
+      // Create customer portal session
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${req.protocol}://${req.get('host')}/profile`,
+      });
+
+      res.json({ url: portalSession.url });
+    } catch (error: any) {
+      console.error("Error creating customer portal session:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Handle successful checkout completion
   app.get("/api/checkout-success", isAuthenticated, async (req: any, res) => {
     try {

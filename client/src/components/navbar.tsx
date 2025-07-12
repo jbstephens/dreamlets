@@ -71,10 +71,12 @@ export function Navbar() {
                       <History className="h-4 w-4 mr-3" />
                       My Stories
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="flex items-center cursor-pointer">
-                      <User className="h-4 w-4 mr-3" />
-                      Profile
-                    </DropdownMenuItem>
+                    <Link href="/profile">
+                      <DropdownMenuItem className="flex items-center cursor-pointer w-full">
+                        <User className="h-4 w-4 mr-3" />
+                        Profile
+                      </DropdownMenuItem>
+                    </Link>
                     <Link href="/pricing">
                       <DropdownMenuItem className="flex items-center cursor-pointer">
                         <CreditCard className="h-4 w-4 mr-3" />
