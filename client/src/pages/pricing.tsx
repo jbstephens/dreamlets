@@ -5,6 +5,7 @@ import { Check, Crown, ArrowLeft } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Footer } from "@/components/footer";
 
 export default function Pricing() {
   const { toast } = useToast();
@@ -137,6 +138,7 @@ export default function Pricing() {
           </Button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

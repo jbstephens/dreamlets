@@ -12,6 +12,7 @@ import { History, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import type { Story } from "@/lib/types";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -177,16 +178,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-navy text-white py-8 mt-16 no-print">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="h-6 w-6 text-coral mr-3">📚</div>
-            <h3 className="text-xl font-nunito font-bold">Dreamlets</h3>
-          </div>
-          <p className="text-gray-300 mb-4">Creating magical bedtime stories, one adventure at a time.</p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Welcome Modal */}
       <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} />

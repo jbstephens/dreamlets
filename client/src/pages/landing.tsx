@@ -6,6 +6,7 @@ import { useLocation } from "wouter";
 import { AuthModal } from "@/components/auth-modal";
 import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { Footer } from "@/components/footer";
 
 export default function Landing() {
   const [location, navigate] = useLocation();
@@ -106,6 +107,7 @@ export default function Landing() {
         title="Save Your Stories"
         description="Create an account to keep your stories safe and create unlimited stories!"
       />
+      <Footer />
     </div>
   );
 }

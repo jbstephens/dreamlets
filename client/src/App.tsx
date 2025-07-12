@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import Landing from "@/pages/landing";
 import Pricing from "@/pages/pricing";
 import Profile from "@/pages/profile";
+import Terms from "@/pages/terms";
 import StoryView from "@/pages/story-view";
 import Register from "@/pages/register";
 import Login from "@/pages/login";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/create" component={Home} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/profile" component={Profile} />
+      <Route path="/terms" component={Terms} />
       <Route path="/register" component={Register} />
       <Route path="/login" component={Login} />
       <Route path="/story/:id" component={StoryView} />

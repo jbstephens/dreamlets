@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { StoryDisplay } from "@/components/story-display";
 import { useLocation } from "wouter";
 import type { Story } from "@/lib/types";
+import { Footer } from "@/components/footer";
 
 export default function StoryView() {
   const { id } = useParams<{ id: string }>();
@@ -62,6 +63,7 @@ export default function StoryView() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StoryDisplay story={story} onBack={handleBack} />
       </div>
+      <Footer />
     </div>
   );
 }

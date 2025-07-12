@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { Footer } from "@/components/footer";
 
 export default function Profile() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -251,6 +252,7 @@ export default function Profile() {
           </Card>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

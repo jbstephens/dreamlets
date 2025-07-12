@@ -1,0 +1,68 @@
+Terms & Conditions
+Last updated: July 11, 2025
+
+Welcome to Dreamlets, a product of Q5 Labs, LLC (“we,” “our,” or “us”). By accessing or using Dreamlets, you agree to these Terms and Conditions (“Terms”). Please read them carefully.
+
+1. Overview
+Dreamlets is an AI-powered storytelling platform designed to create short, imaginative bedtime stories. The content is intended for entertainment purposes only and should not be considered educational, therapeutic, or advisory.
+
+2. Use Restrictions
+You agree to use Dreamlets responsibly. You may not use the service to:
+
+Generate stories or images that are harmful, profane, obscene, or otherwise inappropriate
+
+Upload offensive or illegal material as prompts or character descriptions
+
+Harass, impersonate, or violate the rights of others
+
+Attempt to reverse engineer or misuse the platform
+
+We reserve the right to suspend or terminate accounts that violate these guidelines.
+
+3. AI-Generated Content
+All stories and illustrations are generated using artificial intelligence. While we take steps to promote safe, wholesome output, we cannot guarantee that all content will be suitable for every child or household.
+
+If you see something concerning, please use the “Report” feature or contact us directly.
+
+4. Similarity Disclaimer
+Any resemblance to real persons, characters (fictional or otherwise), or events is entirely coincidental and unintentional. Dreamlets does not knowingly replicate copyrighted characters or personalities.
+
+5. Intellectual Property
+You retain full ownership of the story ideas, character names, and custom inputs you provide. We retain the rights to the generated content for the purpose of operating the service.
+
+You are free to download, print, and share your stories for personal use. You may not resell or redistribute Dreamlets-generated content without written permission from Q5 Labs, LLC.
+
+6. Account & Data Privacy
+You must create an account to save stories or access premium features.
+
+Your stories, characters, and images are stored privately and securely, tied to your account.
+
+You can delete any or all of your data at any time by visiting your account settings.
+
+We will never sell your data or share it outside the scope of providing the Dreamlets experience.
+
+For details, see our [Privacy Policy].
+
+7. Subscription & Billing
+Dreamlets offers a free tier and a paid subscription plan. All billing is handled securely through Stripe.
+
+By subscribing, you authorize us to charge your selected payment method on a recurring basis. You can manage or cancel your subscription at any time through your account or the Stripe billing portal.
+
+8. Termination
+You may delete your account at any time. We reserve the right to terminate or suspend your account if you violate these Terms or misuse the platform.
+
+9. Limitation of Liability
+To the fullest extent permitted by law, Q5 Labs, LLC shall not be liable for any indirect, incidental, or consequential damages arising from the use of Dreamlets.
+
+All content is provided “as is” with no warranties, express or implied.
+
+10. Changes to Terms
+We may update these Terms from time to time. If we make material changes, we’ll notify you by email or through the app. Continued use of Dreamlets after changes constitutes your acceptance.
+
+11. Contact
+Dreamlets is a product of:
+
+Q5 Labs, LLC
+John Stephens
+301 Soule Ave
+Pleasant Hill, CA 94523

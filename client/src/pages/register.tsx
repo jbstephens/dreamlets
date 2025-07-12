@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { trackEvent } from "@/lib/analytics";
+import { Footer } from "@/components/footer";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -180,6 +181,7 @@ export default function Register() {
           </div>
         </CardContent>
       </Card>
+      <Footer />
     </div>
   );
 }
