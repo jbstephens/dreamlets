@@ -482,6 +482,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create Stripe checkout session
+      const priceId = process.env.STRIPE_PRICE_ID || 'price_PLACEHOLDER';
+      console.log("DEBUG - Using STRIPE_PRICE_ID:", priceId);
+      
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'subscription',
@@ -490,7 +493,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           {
             // Use the Stripe Price ID from your dashboard
             // You'll need to create a price for product prod_SeOo5WigYEkAFI
-            price: process.env.STRIPE_PRICE_ID || 'price_PLACEHOLDER', // Set this in your environment
+            price: priceId,
             quantity: 1,
           },
         ],
