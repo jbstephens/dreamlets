@@ -84,7 +84,8 @@ First, establish EXACT character descriptions that must remain identical across 
 
 For each child character:
 - Use ONLY the attributes provided above (age, skin tone, hair color, eye color, hair length)
-- Age is CRITICAL - ensure each child appears the correct age with appropriate proportions and maturity
+- Age consistency: Maintain the stated age UNLESS the story specifically involves age progression (birthdays, time travel, growing up themes, etc.)
+- If the story involves intentional aging, show appropriate age changes while maintaining other physical features
 - If gender is not explicitly provided, infer it carefully from the name and maintain it consistently
 - DO NOT invent any physical features not provided above
 
@@ -100,7 +101,7 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes, showing age-appropriate size and maturity. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images with consistent ages.",
+  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes, showing age-appropriate size and maturity. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images UNLESS the story specifically involves age progression themes.",
   "imagePrompt1": "First scene description referencing the exact character descriptions above...",
   "imagePrompt2": "Second scene description referencing the exact character descriptions above...",
   "imagePrompt3": "Third scene description referencing the exact character descriptions above..."
@@ -148,10 +149,11 @@ CHARACTER REQUIREMENTS (MUST MAINTAIN EXACTLY): ${characterDescriptions}
 SCENE: ${prompt}
 
 CRITICAL CONSISTENCY RULES:
-- Keep ALL character physical features identical across scenes (age, skin tone, hair color, eye color, hair length, facial features)
-- Characters must remain the same gender and EXACT age throughout (age-appropriate size and maturity)
-- Ensure each child shows consistent age-appropriate proportions and development
-- Only clothing and expressions may change between scenes
+- Keep ALL character physical features identical across scenes (skin tone, hair color, eye color, hair length, facial features)
+- Age consistency: Maintain EXACT age throughout UNLESS the story specifically involves age progression (birthdays, time travel, growing up, etc.)
+- If story involves intentional aging, show appropriate age changes while keeping other physical features consistent
+- Characters must remain the same gender throughout
+- Only clothing, expressions, and intentional age changes may vary between scenes
 - Maintain consistent art style and proportions
 
 Style: Soft, warm colors, friendly and cozy atmosphere, children's book illustration, suitable for bedtime stories.`;
