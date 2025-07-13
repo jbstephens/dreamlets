@@ -66,11 +66,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (isAuthenticated) {
         // Authenticated user - save to database
-        const validatedData = insertKidSchema.parse(req.body);
-        const kid = await storage.createKid({
-          ...validatedData,
-          userId,
+        const validatedData = insertKidSchema.parse({
+          ...req.body,
+          userId, // Add userId to validation data
         });
+        const kid = await storage.createKid(validatedData);
         res.json(kid);
       } else {
         // Guest user - save to session
