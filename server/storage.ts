@@ -165,7 +165,7 @@ export class MemStorage implements IStorage {
 
   async canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }> {
     // Memory storage - simple implementation for guest sessions
-    return { canCreate: true, storiesUsed: 0, limit: 5 };
+    return { canCreate: true, storiesUsed: 0, limit: 3 };
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {

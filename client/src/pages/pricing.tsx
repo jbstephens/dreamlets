@@ -70,7 +70,7 @@ export default function Pricing() {
             <CardContent className="space-y-4">
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />
-                <span>Up to 5 stories total</span>
+                <span>Up to 3 free stories</span>
               </div>
               <div className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-3" />

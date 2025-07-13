@@ -277,7 +277,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       } else {
-        // Guest user - allow up to 5 stories in first 30 days
+        // Guest user - allow up to 3 free stories
         const guestStories = req.session.guestStories || [];
         const now = new Date();
         const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
@@ -290,12 +290,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update session with only recent stories
         req.session.guestStories = recentStories;
         
-        if (recentStories.length >= 5) {
+        if (recentStories.length >= 3) {
           return res.status(403).json({ 
-            message: "You've reached your 5 story limit for the first 30 days. Create an account to continue with 5 stories per month!",
+            message: "You've reached your 3 free story limit. Create an account to continue with 5 stories per month!",
             isGuest: true,
             storiesUsed: recentStories.length,
-            limit: 5
+            limit: 3
           });
         }
       }

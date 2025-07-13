@@ -44,7 +44,7 @@ export default function Home() {
   });
 
   const getStoriesLimit = () => {
-    if (!user) return 5;
+    if (!user) return 3;
     switch (user.subscriptionTier) {
       case "premium_15": return 15;
       case "premium_unlimited": return Infinity;

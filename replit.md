@@ -126,7 +126,7 @@ Changelog:
 - July 09, 2025. Added classy account creation stripe at bottom of story pages for non-logged in users with "Save My Story" call-to-action
 - July 09, 2025. Updated account creation messaging to clarify "5 total stories per month" instead of just "5 total stories" for accuracy
 - July 09, 2025. Fixed critical issue where guest users lost their first story after creating accounts - implemented guest session data migration system that transfers kids, characters, and stories from guest sessions to newly authenticated user accounts
-- July 10, 2025. Increased story limit for non-logged users from 1 to 5 stories within first 30 days - guests can now create up to 5 stories before needing to authenticate, with automatic 30-day expiration of old stories
+- July 10, 2025. Increased story limit for non-logged users from 1 to 5 stories within first 30 days - guests can now create up to 5 stories before needing to authenticate, with automatic 30-day expiration of old stories (later reduced to 3 free stories)
 - July 10, 2025. Replaced Replit OAuth with simple email/password authentication to fix guest data migration issues and improve user experience
 - July 10, 2025. Restored proper page structure: `/` for homepage/marketing, `/create` for story creation interface (shared by guests and authenticated users), with stories persisting permanently only for authenticated users
 - July 11, 2025. Implemented comprehensive Google Analytics tracking across all pages with automatic page view tracking, custom event tracking for user actions (registration, login, story creation, CTA clicks), and proper GA4 integration
@@ -134,3 +134,4 @@ Changelog:
 - July 11, 2025. Completed Stripe-managed billing integration with production Price ID (price_1Rj60z2cvO7jK0BO92TxjE0c) for $19.99/month Premium subscriptions - added checkout session creation, subscription status checking, and "Get More Stories" upgrade button for seamless payment flow
 - July 11, 2025. Fixed critical subscription upgrade bug - corrected Stripe success URL to properly trigger user upgrade after payment completion, added comprehensive webhook handling for production reliability, and manually upgraded user jbstephens+5@gmail.com to premium_unlimited status
 - July 12, 2025. Added comprehensive Terms and Conditions page with Q5 Labs contact information and footer links on all pages for legal compliance
+- July 13, 2025. Reduced free story limit from 5 to 3 stories for better conversion - updated all messaging, error handling, and story counters throughout the app

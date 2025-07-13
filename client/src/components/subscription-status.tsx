@@ -10,7 +10,7 @@ interface SubscriptionStatusProps {
   limit?: number;
 }
 
-export function SubscriptionStatus({ storiesUsed = 0, limit = 5 }: SubscriptionStatusProps) {
+export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionStatusProps) {
   const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated || !user) {
