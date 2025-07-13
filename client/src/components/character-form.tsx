@@ -44,8 +44,9 @@ export function CharacterForm() {
       setKidForm({ name: "", age: "", description: "", hairColor: "", eyeColor: "", hairLength: "", skinTone: "" });
       toast({ title: "Kid added successfully!" });
     },
-    onError: () => {
-      toast({ title: "Failed to add kid", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Failed to add kid:", error);
+      toast({ title: "Failed to add kid", description: error?.message || "Unknown error", variant: "destructive" });
     },
   });
 
@@ -87,17 +88,30 @@ export function CharacterForm() {
 
   const handleKidSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (kidForm.name && kidForm.age) {
-      createKidMutation.mutate({
-        name: kidForm.name,
-        age: parseInt(kidForm.age),
-        description: kidForm.description || undefined,
-        hairColor: kidForm.hairColor || undefined,
-        eyeColor: kidForm.eyeColor || undefined,
-        hairLength: kidForm.hairLength || undefined,
-        skinTone: kidForm.skinTone || undefined,
-      });
+    console.log("Kid form submitted:", kidForm);
+    
+    if (!kidForm.name?.trim()) {
+      toast({ title: "Please enter a name", variant: "destructive" });
+      return;
     }
+    
+    if (!kidForm.age || parseInt(kidForm.age) < 1 || parseInt(kidForm.age) > 12) {
+      toast({ title: "Please enter a valid age (1-12)", variant: "destructive" });
+      return;
+    }
+    
+    const kidData = {
+      name: kidForm.name.trim(),
+      age: parseInt(kidForm.age),
+      description: kidForm.description?.trim() || undefined,
+      hairColor: kidForm.hairColor || undefined,
+      eyeColor: kidForm.eyeColor || undefined,
+      hairLength: kidForm.hairLength || undefined,
+      skinTone: kidForm.skinTone || undefined,
+    };
+    
+    console.log("Submitting kid data:", kidData);
+    createKidMutation.mutate(kidData);
   };
 
   const handleCharacterSubmit = (e: React.FormEvent) => {
