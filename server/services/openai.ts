@@ -12,6 +12,7 @@ export interface StoryRequest {
   tone: string;
   kidPhysicalAttributes?: Array<{
     name: string;
+    age: number;
     hairColor?: string;
     eyeColor?: string;
     hairLength?: string;
@@ -47,17 +48,16 @@ export async function generateStory(request: StoryRequest): Promise<StoryRespons
   // Build physical attributes section
   let physicalAttributesSection = "";
   if (kidPhysicalAttributes && kidPhysicalAttributes.length > 0) {
-    physicalAttributesSection = "\n\nPhysical Attributes (ONLY use these if provided):\n";
+    physicalAttributesSection = "\n\nCharacter Details (ONLY use these if provided):\n";
     kidPhysicalAttributes.forEach(kid => {
       const attributes = [];
+      attributes.push(`${kid.age} years old`);
       if (kid.hairColor) attributes.push(`${kid.hairColor} hair`);
       if (kid.hairLength) attributes.push(`${kid.hairLength} hair`);
       if (kid.eyeColor) attributes.push(`${kid.eyeColor} eyes`);
       if (kid.skinTone) attributes.push(`${kid.skinTone} skin`);
       
-      if (attributes.length > 0) {
-        physicalAttributesSection += `- ${kid.name}: ${attributes.join(", ")}\n`;
-      }
+      physicalAttributesSection += `- ${kid.name}: ${attributes.join(", ")}\n`;
     });
   }
   
@@ -83,9 +83,9 @@ CRITICAL CHARACTER CONSISTENCY FOR ILLUSTRATIONS:
 First, establish EXACT character descriptions that must remain identical across all three images:
 
 For each child character:
-- Use ONLY the physical attributes provided above (skin tone, hair color, eye color, hair length)
+- Use ONLY the attributes provided above (age, skin tone, hair color, eye color, hair length)
+- Age is CRITICAL - ensure each child appears the correct age with appropriate proportions and maturity
 - If gender is not explicitly provided, infer it carefully from the name and maintain it consistently
-- Specify age-appropriate proportions based on stated age
 - DO NOT invent any physical features not provided above
 
 For story characters (animals, magical creatures, etc.):
@@ -100,7 +100,7 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images.",
+  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes, showing age-appropriate size and maturity. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images with consistent ages.",
   "imagePrompt1": "First scene description referencing the exact character descriptions above...",
   "imagePrompt2": "Second scene description referencing the exact character descriptions above...",
   "imagePrompt3": "Third scene description referencing the exact character descriptions above..."
@@ -148,8 +148,9 @@ CHARACTER REQUIREMENTS (MUST MAINTAIN EXACTLY): ${characterDescriptions}
 SCENE: ${prompt}
 
 CRITICAL CONSISTENCY RULES:
-- Keep ALL character physical features identical across scenes (skin tone, hair color, eye color, hair length, facial features)
-- Characters must remain the same gender and age throughout
+- Keep ALL character physical features identical across scenes (age, skin tone, hair color, eye color, hair length, facial features)
+- Characters must remain the same gender and EXACT age throughout (age-appropriate size and maturity)
+- Ensure each child shows consistent age-appropriate proportions and development
 - Only clothing and expressions may change between scenes
 - Maintain consistent art style and proportions
 

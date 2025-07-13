@@ -322,11 +322,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Build physical attributes for selected kids
       const kidPhysicalAttributes = selectedKids.map(kid => ({
         name: kid.name,
+        age: kid.age,
         hairColor: kid.hairColor || undefined,
         eyeColor: kid.eyeColor || undefined,
         hairLength: kid.hairLength || undefined,
         skinTone: kid.skinTone || undefined,
-      })).filter(kid => kid.hairColor || kid.eyeColor || kid.hairLength || kid.skinTone);
+      }));
       
       // Generate story
       const storyResponse = await generateStory({
@@ -334,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         characterNames,
         storyIdea: validatedData.storyIdea,
         tone: validatedData.tone,
-        kidPhysicalAttributes: kidPhysicalAttributes.length > 0 ? kidPhysicalAttributes : undefined
+        kidPhysicalAttributes
       });
       
       console.log("Story generated, now generating images...");
