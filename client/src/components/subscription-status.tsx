@@ -60,7 +60,7 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
         <div className="space-y-4">
           <div>
             <div className="flex justify-between text-sm mb-2">
-              <span>Stories this month</span>
+              <span>Free stories</span>
               <span className="font-medium">
                 {storiesUsed} {isUnlimited ? "" : `/ ${limit}`}
               </span>
@@ -119,7 +119,7 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
                 <div>
                   <p className="font-medium text-red-700">Story limit reached</p>
                   <p className="text-sm text-red-600 mb-3">
-                    You've used all {limit} stories for this month. Upgrade to continue creating!
+                    You've used all {limit} free stories. Upgrade to continue creating!
                   </p>
                   <div className="flex gap-2">
                     <Button size="sm" className="bg-sunset hover:bg-sunset/90">

@@ -336,7 +336,7 @@ class DatabaseStorage implements IStorage {
     let limit: number;
     switch (user.subscriptionTier) {
       case "free":
-        limit = 5;
+        limit = 3;
         break;
       case "premium_15":
         limit = 15;
@@ -344,7 +344,7 @@ class DatabaseStorage implements IStorage {
       case "premium_unlimited":
         return { canCreate: true, storiesUsed: user.storiesThisMonth || 0, limit: Infinity };
       default:
-        limit = 5;
+        limit = 3;
     }
 
     const storiesUsed = user.storiesThisMonth || 0;

@@ -48,7 +48,7 @@ export default function Home() {
     switch (user.subscriptionTier) {
       case "premium_15": return 15;
       case "premium_unlimited": return Infinity;
-      default: return 5;
+      default: return 3;
     }
   };
 

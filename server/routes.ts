@@ -292,7 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (recentStories.length >= 3) {
           return res.status(403).json({ 
-            message: "You've reached your 3 free story limit. Create an account to continue with 5 stories per month!",
+            message: "You've reached your 3 free story limit. Create an account to continue with unlimited stories!",
             isGuest: true,
             storiesUsed: recentStories.length,
             limit: 3
