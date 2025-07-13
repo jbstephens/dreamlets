@@ -79,9 +79,20 @@ CRITICAL PHYSICAL DESCRIPTION RULES:
 - If no physical attributes are provided for a child, simply use their name without physical descriptions
 - You may describe clothing, expressions, and actions, but NOT physical features unless explicitly provided
 
-IMPORTANT: For consistent illustrations, first establish detailed character descriptions that will be used across all three images. Include physical appearance (ONLY if provided above), clothing, and distinctive features for each character (both kids and story characters).
+CRITICAL CHARACTER CONSISTENCY FOR ILLUSTRATIONS:
+First, establish EXACT character descriptions that must remain identical across all three images:
 
-Then provide image description prompts for each part that reference these consistent character descriptions.
+For each child character:
+- Use ONLY the physical attributes provided above (skin tone, hair color, eye color, hair length)
+- If gender is not explicitly provided, infer it carefully from the name and maintain it consistently
+- Specify age-appropriate proportions based on stated age
+- DO NOT invent any physical features not provided above
+
+For story characters (animals, magical creatures, etc.):
+- Create specific physical descriptions that will remain consistent
+- Include distinctive features (colors, size, clothing, etc.)
+
+Then create three image prompts that reference these exact character descriptions, ensuring the characters look identical in all three scenes.
 
 Respond in JSON format with this structure:
 {
@@ -89,10 +100,10 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "characterDescriptions": "Detailed physical descriptions of all characters (kids and story characters) that will appear consistently across all illustrations. For children, ONLY include physical attributes that were explicitly provided above...",
-  "imagePrompt1": "Description for first illustration that references the character descriptions...",
-  "imagePrompt2": "Description for second illustration that references the character descriptions...",
-  "imagePrompt3": "Description for third illustration that references the character descriptions..."
+  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images.",
+  "imagePrompt1": "First scene description referencing the exact character descriptions above...",
+  "imagePrompt2": "Second scene description referencing the exact character descriptions above...",
+  "imagePrompt3": "Third scene description referencing the exact character descriptions above..."
 }`;
 
   try {
@@ -128,9 +139,25 @@ export async function generateImages(imagePrompts: string[], characterDescriptio
     
     const imagePromises = imagePrompts.map(async (prompt, index) => {
       console.log(`Generating image ${index + 1}...`);
+      
+      // Enhanced prompt with stronger consistency requirements
+      const enhancedPrompt = `CONSISTENT CHARACTER ILLUSTRATION - Children's book style: 
+      
+CHARACTER REQUIREMENTS (MUST MAINTAIN EXACTLY): ${characterDescriptions}
+
+SCENE: ${prompt}
+
+CRITICAL CONSISTENCY RULES:
+- Keep ALL character physical features identical across scenes (skin tone, hair color, eye color, hair length, facial features)
+- Characters must remain the same gender and age throughout
+- Only clothing and expressions may change between scenes
+- Maintain consistent art style and proportions
+
+Style: Soft, warm colors, friendly and cozy atmosphere, children's book illustration, suitable for bedtime stories.`;
+
       const response = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `Children's book illustration style: ${characterDescriptions} ${prompt}. Soft, warm colors, friendly and cozy atmosphere, suitable for bedtime stories.`,
+        prompt: enhancedPrompt,
         n: 1,
         size: "1024x1024",
         quality: "standard"
