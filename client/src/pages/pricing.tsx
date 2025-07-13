@@ -97,7 +97,7 @@ export default function Pricing() {
             </Badge>
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-navy">Dreamlets Premium</CardTitle>
-              <div className="text-4xl font-bold text-navy">$19.99</div>
+              <div className="text-4xl font-bold text-navy">$5.99</div>
               <CardDescription>per month</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
