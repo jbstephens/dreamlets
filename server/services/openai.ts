@@ -13,10 +13,15 @@ export interface StoryRequest {
   kidPhysicalAttributes?: Array<{
     name: string;
     age: number;
+    description?: string;
     hairColor?: string;
     eyeColor?: string;
     hairLength?: string;
     skinTone?: string;
+  }>;
+  characterDescriptions?: Array<{
+    name: string;
+    description?: string;
   }>;
 }
 
@@ -38,17 +43,19 @@ export interface GeneratedImages {
 }
 
 export async function generateStory(request: StoryRequest): Promise<StoryResponse> {
-  const { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes } = request;
+  const { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes, characterDescriptions } = request;
   
-  console.log("Starting story generation for:", { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes });
+  console.log("Starting story generation for:", { kidNames, characterNames, storyIdea, tone, kidPhysicalAttributes, characterDescriptions });
   
   const kidNamesStr = kidNames.join(" and ");
   const characterNamesStr = characterNames.length > 0 ? ` featuring ${characterNames.join(", ")}` : "";
   
-  // Build physical attributes section
-  let physicalAttributesSection = "";
+  // Build character details section
+  let characterDetailsSection = "";
+  
+  // Add kid details
   if (kidPhysicalAttributes && kidPhysicalAttributes.length > 0) {
-    physicalAttributesSection = "\n\nCharacter Details (ONLY use these if provided):\n";
+    characterDetailsSection = "\n\nCharacter Details (ONLY use these if provided):\n\nChildren:\n";
     kidPhysicalAttributes.forEach(kid => {
       const attributes = [];
       attributes.push(`${kid.age} years old`);
@@ -57,14 +64,27 @@ export async function generateStory(request: StoryRequest): Promise<StoryRespons
       if (kid.eyeColor) attributes.push(`${kid.eyeColor} eyes`);
       if (kid.skinTone) attributes.push(`${kid.skinTone} skin`);
       
-      physicalAttributesSection += `- ${kid.name}: ${attributes.join(", ")}\n`;
+      const personalityDescription = kid.description ? ` - ${kid.description}` : "";
+      characterDetailsSection += `- ${kid.name}: ${attributes.join(", ")}${personalityDescription}\n`;
+    });
+  }
+  
+  // Add story character descriptions
+  if (characterDescriptions && characterDescriptions.length > 0) {
+    if (!characterDetailsSection) {
+      characterDetailsSection = "\n\nCharacter Details (ONLY use these if provided):\n";
+    }
+    characterDetailsSection += "\nStory Characters:\n";
+    characterDescriptions.forEach(char => {
+      const description = char.description ? ` - ${char.description}` : "";
+      characterDetailsSection += `- ${char.name}${description}\n`;
     });
   }
   
   const prompt = `Create a bedtime story for ${kidNamesStr}${characterNamesStr}. 
   
 Story idea: ${storyIdea}
-Tone: ${tone}${physicalAttributesSection}
+Tone: ${tone}${characterDetailsSection}
 
 Please create a 3-part story with the following structure:
 1. Setup - Introduce the characters and the initial situation

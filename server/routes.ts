@@ -323,10 +323,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const kidPhysicalAttributes = selectedKids.map(kid => ({
         name: kid.name,
         age: kid.age,
+        description: kid.description || undefined,
         hairColor: kid.hairColor || undefined,
         eyeColor: kid.eyeColor || undefined,
         hairLength: kid.hairLength || undefined,
         skinTone: kid.skinTone || undefined,
+      }));
+      
+      // Build character descriptions for selected characters
+      const characterDescriptions = selectedCharacters.map(char => ({
+        name: char.name,
+        description: char.description || undefined,
       }));
       
       // Generate story
@@ -335,7 +342,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         characterNames,
         storyIdea: validatedData.storyIdea,
         tone: validatedData.tone,
-        kidPhysicalAttributes
+        kidPhysicalAttributes,
+        characterDescriptions
       });
       
       console.log("Story generated, now generating images...");
