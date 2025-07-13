@@ -135,3 +135,5 @@ Changelog:
 - July 11, 2025. Fixed critical subscription upgrade bug - corrected Stripe success URL to properly trigger user upgrade after payment completion, added comprehensive webhook handling for production reliability, and manually upgraded user jbstephens+5@gmail.com to premium_unlimited status
 - July 12, 2025. Added comprehensive Terms and Conditions page with Q5 Labs contact information and footer links on all pages for legal compliance
 - July 13, 2025. Reduced free story limit from 5 to 3 stories for better conversion - updated all messaging, error handling, and story counters throughout the app
+- July 13, 2025. Fixed critical "failed to add kid" authentication bug - resolved Zod validation error where userId wasn't properly included for authenticated users
+- July 13, 2025. Updated Premium pricing from $19.99 to $5.99/month for better market fit - updated pricing page display and new Stripe price ID (price_1RkWpsGRcygDG6rXARfLqABr)
