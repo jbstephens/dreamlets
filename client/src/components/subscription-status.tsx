@@ -58,14 +58,14 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span>Free stories</span>
-              <span className="font-medium">
-                {storiesUsed} {isUnlimited ? "" : `/ ${limit}`}
-              </span>
-            </div>
-            {!isUnlimited && (
+          {!isPremium && (
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>Free stories</span>
+                <span className="font-medium">
+                  {storiesUsed} / {limit}
+                </span>
+              </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
                   className={`h-2 rounded-full transition-all duration-300 ${
@@ -74,8 +74,8 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
                   style={{ width: `${percentage}%` }}
                 />
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Get More Stories Button for non-premium users */}
           {!isPremium && (
