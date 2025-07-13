@@ -34,7 +34,15 @@ export function CharacterForm() {
   });
 
   const createKidMutation = useMutation({
-    mutationFn: async (kid: { name: string; age: number; description?: string }) => {
+    mutationFn: async (kid: { 
+      name: string; 
+      age: number; 
+      description?: string;
+      hairColor?: string;
+      eyeColor?: string;
+      hairLength?: string;
+      skinTone?: string;
+    }) => {
       const response = await apiRequest("POST", "/api/kids", kid);
       return response.json();
     },
