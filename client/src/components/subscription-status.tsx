@@ -103,9 +103,11 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
                     Upgrade to keep creating magical stories for your children.
                   </p>
                   <div className="flex gap-2">
-                    <Button size="sm" className="bg-sunset hover:bg-sunset/90">
-                      Upgrade Now
-                    </Button>
+                    <Link href="/pricing">
+                      <Button size="sm" className="bg-sunset hover:bg-sunset/90">
+                        Upgrade Now
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -122,10 +124,12 @@ export function SubscriptionStatus({ storiesUsed = 0, limit = 3 }: SubscriptionS
                     You've used all {limit} free stories. Upgrade to continue creating!
                   </p>
                   <div className="flex gap-2">
-                    <Button size="sm" className="bg-sunset hover:bg-sunset/90">
-                      <Crown className="h-4 w-4 mr-1" />
-                      Upgrade to Premium
-                    </Button>
+                    <Link href="/pricing">
+                      <Button size="sm" className="bg-sunset hover:bg-sunset/90">
+                        <Crown className="h-4 w-4 mr-1" />
+                        Upgrade to Premium
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

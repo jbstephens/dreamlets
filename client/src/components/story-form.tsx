@@ -48,7 +48,7 @@ export function StoryForm({ onStoryGenerated }: StoryFormProps) {
       if (error.message?.includes("3 free story limit")) {
         toast({ 
           title: "Free Story Limit Reached", 
-          description: "You've created 3 free stories! Create an account to continue with 5 stories per month.",
+          description: "You've created 3 free stories! Create an account to continue with unlimited stories.",
           variant: "destructive" 
         });
       } else if (error.message?.includes("one story as a guest")) {
