@@ -140,3 +140,4 @@ Changelog:
 - July 14, 2025. Fixed critical character creation bug for authenticated users - userId validation was failing because userId wasn't included in request validation (same issue as kids creation)
 - July 14, 2025. Simplified OpenAI image generation prompts to eliminate unwanted text in images and reduce complexity - focused on simple, clean children's book illustrations without text, labels, or complex multi-panel layouts
 - July 14, 2025. Enhanced landing page with comprehensive salesmanship elements: sample story section with real AI-generated illustration, "How It Works" 3-step process, pricing cards moved from separate page, and multiple strategic CTAs throughout for better conversion
+- July 14, 2025. Fixed sample image loading issue by implementing static image serving from /public directory - eliminated expensive OpenAI API calls on every landing page visit and replaced with locally stored PNG files for instant loading

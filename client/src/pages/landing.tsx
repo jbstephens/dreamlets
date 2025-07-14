@@ -19,13 +19,13 @@ const sampleStories = [
     id: '2', 
     title: 'Max\'s Pirate Adventure',
     text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!',
-    imageUrl: '/sample-max-pirate.svg'
+    imageUrl: '/sample-max-pirate.png'
   },
   {
     id: '3',
     title: 'Luna\'s Dream Kingdom',
     text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!',
-    imageUrl: '/sample-luna-clouds.svg'
+    imageUrl: '/sample-luna-clouds.png'
   }
 ];
 
@@ -151,25 +151,7 @@ export default function Landing() {
                       src={sampleStories[currentStoryIndex].imageUrl} 
                       alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
                       className="w-full h-full object-contain rounded-lg"
-                      onLoad={() => console.log(`Loaded: ${sampleStories[currentStoryIndex].imageUrl}`)}
-                      onError={(e) => {
-                        console.error(`Failed to load: ${sampleStories[currentStoryIndex].imageUrl}`);
-                        // Fallback to gradient background if SVG fails
-                        e.currentTarget.style.display = 'none';
-                        const parent = e.currentTarget.parentElement;
-                        if (parent) {
-                          parent.innerHTML = `
-                            <div class="text-center text-gray-500 h-full flex flex-col items-center justify-center bg-gradient-to-br from-coral to-mint">
-                              <div class="h-16 w-16 mx-auto mb-2 flex items-center justify-center bg-white/20 rounded-full">
-                                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                              </div>
-                              <p class="text-white font-medium">Sample Story Illustration</p>
-                            </div>
-                          `;
-                        }
-                      }}
+
                     />
                   </div>
                 </div>
