@@ -552,6 +552,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate sample image for landing page
+  app.get("/api/sample-image", async (req, res) => {
+    try {
+      const { generateImages } = await import("./services/openai");
+      
+      const samplePrompt = 'Emma, a 5-year-old girl with curly brown hair and bright eyes, sitting in a magical garden with flowers and butterflies. She is looking up at a small, friendly purple dragon with shimmering scales who is gracefully dancing among the rose bushes. The scene is warm and enchanting with soft sunlight filtering through the garden.';
+      
+      const characterDescription = 'Emma: 5-year-old girl with curly brown hair, bright brown eyes, wearing a colorful dress. Purple Dragon: small, friendly dragon with shimmering purple and silver scales, graceful movements, kind expression.';
+      
+      const result = await generateImages([samplePrompt], characterDescription);
+      res.json({ imageUrl: result.imageUrl1 });
+    } catch (error: any) {
+      console.error("Error generating sample image:", error);
+      res.status(500).json({ error: "Failed to generate sample image" });
+    }
+  });
+
   // Create Stripe customer portal session for subscription management
   app.post("/api/create-customer-portal", isAuthenticated, async (req: any, res) => {
     try {

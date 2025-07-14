@@ -4,13 +4,33 @@ import { Badge } from "@/components/ui/badge";
 import { Moon, Stars, Sparkles, Heart, BookOpen, Palette, Crown, Check } from "lucide-react";
 import { useLocation } from "wouter";
 import { AuthModal } from "@/components/auth-modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Footer } from "@/components/footer";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Landing() {
   const [location, navigate] = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [sampleImageUrl, setSampleImageUrl] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  useEffect(() => {
+    // Load sample image
+    const loadSampleImage = async () => {
+      try {
+        const response = await apiRequest("GET", "/api/sample-image");
+        const data = await response.json();
+        setSampleImageUrl(data.imageUrl);
+      } catch (error) {
+        console.error("Failed to load sample image:", error);
+      } finally {
+        setImageLoading(false);
+      }
+    };
+
+    loadSampleImage();
+  }, []);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
@@ -111,11 +131,24 @@ export default function Landing() {
                       A small, friendly dragon with shimmering purple scales was practicing dance moves!"
                     </p>
                   </div>
-                  <div className="bg-mint/20 p-4 rounded-xl h-48 flex items-center justify-center">
-                    <div className="text-center text-gray-500">
-                      <Palette className="h-16 w-16 mx-auto mb-2" />
-                      <p>Beautiful illustration would appear here</p>
-                    </div>
+                  <div className="bg-mint/20 p-4 rounded-xl h-48 flex items-center justify-center overflow-hidden">
+                    {imageLoading ? (
+                      <div className="text-center text-gray-500">
+                        <div className="animate-spin w-8 h-8 border-4 border-coral border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p>Creating sample illustration...</p>
+                      </div>
+                    ) : sampleImageUrl ? (
+                      <img 
+                        src={sampleImageUrl} 
+                        alt="Sample story illustration showing Emma and a dancing dragon in a magical garden"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <Palette className="h-16 w-16 mx-auto mb-2" />
+                        <p>Beautiful illustration would appear here</p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
