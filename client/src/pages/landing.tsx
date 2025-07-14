@@ -7,23 +7,25 @@ import { AuthModal } from "@/components/auth-modal";
 import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Footer } from "@/components/footer";
-import { apiRequest } from "@/lib/queryClient";
 
 const sampleStories = [
   {
     id: '1',
     title: 'Emma and the Dancing Dragon',
-    text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!'
+    text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!',
+    imageUrl: '/sample-emma-dragon.svg'
   },
   {
     id: '2', 
     title: 'Max\'s Pirate Adventure',
-    text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!'
+    text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!',
+    imageUrl: '/sample-max-pirate.svg'
   },
   {
     id: '3',
     title: 'Luna\'s Dream Kingdom',
-    text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!'
+    text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!',
+    imageUrl: '/sample-luna-clouds.svg'
   }
 ];
 
@@ -31,28 +33,6 @@ export default function Landing() {
   const [location, navigate] = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-  const [sampleImages, setSampleImages] = useState<{[key: string]: string}>({});
-  const [imageLoading, setImageLoading] = useState<{[key: string]: boolean}>({});
-
-  useEffect(() => {
-    // Load all sample images once on component mount
-    const loadSampleImages = async () => {
-      for (const story of sampleStories) {
-        setImageLoading(prev => ({ ...prev, [story.id]: true }));
-        try {
-          const response = await apiRequest("GET", `/api/sample-image/${story.id}`);
-          const data = await response.json();
-          setSampleImages(prev => ({ ...prev, [story.id]: data.imageUrl }));
-        } catch (error) {
-          console.error(`Failed to load sample image for story ${story.id}:`, error);
-        } finally {
-          setImageLoading(prev => ({ ...prev, [story.id]: false }));
-        }
-      }
-    };
-
-    loadSampleImages();
-  }, []);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
@@ -167,23 +147,28 @@ export default function Landing() {
                     </p>
                   </div>
                   <div className="bg-mint/20 p-4 rounded-xl h-80 flex items-center justify-center overflow-hidden">
-                    {imageLoading[sampleStories[currentStoryIndex].id] ? (
-                      <div className="text-center text-gray-500">
-                        <div className="animate-spin w-8 h-8 border-4 border-coral border-t-transparent rounded-full mx-auto mb-2"></div>
-                        <p>Loading sample illustration...</p>
-                      </div>
-                    ) : sampleImages[sampleStories[currentStoryIndex].id] ? (
-                      <img 
-                        src={sampleImages[sampleStories[currentStoryIndex].id]} 
-                        alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="text-center text-gray-500">
-                        <Palette className="h-16 w-16 mx-auto mb-2" />
-                        <p>Beautiful illustration would appear here</p>
-                      </div>
-                    )}
+                    <img 
+                      src={sampleStories[currentStoryIndex].imageUrl} 
+                      alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        // Fallback to gradient background if SVG fails
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `
+                            <div class="text-center text-gray-500 h-full flex flex-col items-center justify-center bg-gradient-to-br from-coral to-mint">
+                              <div class="h-16 w-16 mx-auto mb-2 flex items-center justify-center bg-white/20 rounded-full">
+                                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                              <p class="text-white font-medium">Sample Story Illustration</p>
+                            </div>
+                          `;
+                        }
+                      }}
+                    />
                   </div>
                 </div>
                 

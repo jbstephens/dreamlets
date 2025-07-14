@@ -552,29 +552,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Static sample images - no dynamic generation
-  app.get("/api/sample-image/:storyId", async (req, res) => {
-    const storyId = req.params.storyId;
-    
-    const sampleImages = {
-      '1': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-JGxpKkmqLMhWfnX7XfYiZnFe.png?st=2025-01-14T22%3A58%3A43Z&se=2025-01-15T00%3A58%3A43Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=hI70WPDwb1nnCE/CNLYOmIQhEOzCgpf4MNOCv4iXyls%3D',
-      '2': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-rAp7aJfShsXqIKNp3RJCDx6F.png?st=2025-01-14T23%3A02%3A35Z&se=2025-01-15T01%3A02%3A35Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T23%3A16%3A48Z&ske=2025-01-15T23%3A16%3A48Z&sks=b&skv=2024-08-04&sig=Q3/hWt3/OJCqUDo9vI8wTcfG8BVOgRFRy9cVrSP5Xug%3D',
-      '3': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-KI0WX9DSmGMcS7ZI2ivkYsRP.png?st=2025-01-14T23%3A02%3A52Z&se=2025-01-15T01%3A02%3A52Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=ByILR4f%2BZfNNBAmJ7cKAJxQrwUOXJ3DwqO%2BWQFxGrZc%3D'
-    };
-    
-    const imageUrl = sampleImages[storyId];
-    if (!imageUrl) {
-      return res.status(404).json({ error: "Story not found" });
-    }
-    
-    res.json({ imageUrl });
-  });
 
-  // Keep old endpoint for backward compatibility
-  app.get("/api/sample-image", async (req, res) => {
-    // Redirect to story 1
-    res.redirect(307, "/api/sample-image/1");
-  });
 
   // Create Stripe customer portal session for subscription management
   app.post("/api/create-customer-portal", isAuthenticated, async (req: any, res) => {
