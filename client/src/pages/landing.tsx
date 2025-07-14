@@ -125,7 +125,6 @@ export default function Landing() {
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
                   <div className="bg-gradient-to-br from-sunset/20 to-golden/20 p-6 rounded-xl">
-                    <h3 className="font-bold text-navy mb-3">Page 1</h3>
                     <p className="text-gray-700">
                       "Emma was playing in her garden when she noticed something magical behind the rose bushes. 
                       A small, friendly dragon with shimmering purple scales was practicing dance moves!"
@@ -173,13 +172,13 @@ export default function Landing() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
             <Card className="bg-white/80 backdrop-blur-sm text-center">
               <CardHeader>
                 <div className="bg-coral text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   1
                 </div>
-                <CardTitle className="text-navy">Add Your Children</CardTitle>
+                <CardTitle className="text-navy">Add Kids</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600">
@@ -191,8 +190,23 @@ export default function Landing() {
 
             <Card className="bg-white/80 backdrop-blur-sm text-center">
               <CardHeader>
-                <div className="bg-sunset text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                <div className="bg-lavender text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   2
+                </div>
+                <CardTitle className="text-navy">Add Characters</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600">
+                  Create recurring characters like beloved pets, favorite stuffed animals, 
+                  or imaginary friends to appear in your stories.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 backdrop-blur-sm text-center">
+              <CardHeader>
+                <div className="bg-sunset text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                  3
                 </div>
                 <CardTitle className="text-navy">Share Your Idea</CardTitle>
               </CardHeader>
@@ -207,7 +221,7 @@ export default function Landing() {
             <Card className="bg-white/80 backdrop-blur-sm text-center">
               <CardHeader>
                 <div className="bg-golden text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                  3
+                  4
                 </div>
                 <CardTitle className="text-navy">Enjoy the Magic</CardTitle>
               </CardHeader>
@@ -230,7 +244,7 @@ export default function Landing() {
               }}
             >
               <Sparkles className="mr-2 h-5 w-5" />
-              Try It Now - Free!
+              Try It Now!
             </Button>
           </div>
         </div>
