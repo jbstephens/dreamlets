@@ -121,7 +121,7 @@ Respond in JSON format with this structure:
   "part1": "First part of the story...",
   "part2": "Second part of the story...",
   "part3": "Third part of the story...",
-  "characterDescriptions": "EXACT physical descriptions for consistent illustration: [Child's name]: [age]-year-old [gender if clear from name] with [specific skin tone] skin, [specific hair color] [hair length] hair, [eye color] eyes, showing age-appropriate size and maturity. [Story character]: [detailed consistent physical description]. ALL characters must appear IDENTICAL across all three images UNLESS the story specifically involves age progression themes.",
+  "characterDescriptions": "MANDATORY CHARACTER REFERENCE SHEET (must remain IDENTICAL in all 3 images): [Child's name]: [age]-year-old [gender if clear from name], [specific skin tone] skin tone, [specific hair color] [hair length] hair, [eye color] eyes, [height description like 'shorter than average' or 'tall for age']. [Story character]: [detailed physical description including size, colors, distinctive features]. CHARACTER POSITIONING: List which character appears on left vs right in group scenes. ALL characters must look EXACTLY the same in each image - only expressions and poses may change.",
   "imagePrompt1": "First scene description referencing the exact character descriptions above...",
   "imagePrompt2": "Second scene description referencing the exact character descriptions above...",
   "imagePrompt3": "Third scene description referencing the exact character descriptions above..."
@@ -162,21 +162,30 @@ export async function generateImages(imagePrompts: string[], characterDescriptio
       console.log(`Generating image ${index + 1}...`);
       
       // Enhanced prompt with stronger consistency requirements
-      const enhancedPrompt = `CONSISTENT CHARACTER ILLUSTRATION - Children's book style: 
-      
-CHARACTER REQUIREMENTS (MUST MAINTAIN EXACTLY): ${characterDescriptions}
+      const enhancedPrompt = `CONSISTENT CHARACTER REFERENCE SHEET - Children's book illustration:
 
-SCENE: ${prompt}
+MANDATORY CHARACTER CONSISTENCY: ${characterDescriptions}
 
-CRITICAL CONSISTENCY RULES:
-- Keep ALL character physical features identical across scenes (skin tone, hair color, eye color, hair length, facial features)
-- Age consistency: Maintain EXACT age throughout UNLESS the story specifically involves age progression (birthdays, time travel, growing up, etc.)
-- If story involves intentional aging, show appropriate age changes while keeping other physical features consistent
-- Characters must remain the same gender throughout
-- Only clothing, expressions, and intentional age changes may vary between scenes
-- Maintain consistent art style and proportions
+SCENE TO ILLUSTRATE: ${prompt}
 
-Style: Soft, warm colors, friendly and cozy atmosphere, children's book illustration, suitable for bedtime stories.`;
+CONSISTENCY ENFORCEMENT:
+- Each named character MUST appear IDENTICAL in all images with EXACTLY the same:
+  * Facial features and proportions
+  * Skin tone (use specific values: fair/light/medium/olive/tan/dark)
+  * Hair color and length (use specific values: blonde/brown/black/red, short/medium/long)
+  * Eye color (use specific values: brown/blue/green/hazel/gray)
+  * Age-appropriate body proportions and height differences
+- ONLY expressions, poses, and clothing may change between scenes
+- Use consistent character placement: if there are 2 kids, keep the same one on left/right in each image
+- Maintain identical art style: soft children's book illustration with warm, dreamy colors
+
+TECHNICAL REQUIREMENTS:
+- Generate as one cohesive scene, not multiple panels
+- Focus on clear character definition over background complexity
+- Ensure all characters are visible and recognizable
+- Use consistent lighting and color palette across the series
+
+Style: Gentle watercolor children's book illustration, soft pastels, cozy bedtime story atmosphere, high detail on character faces.`;
 
       const response = await openai.images.generate({
         model: "dall-e-3",
