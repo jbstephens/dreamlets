@@ -137,3 +137,5 @@ Changelog:
 - July 13, 2025. Reduced free story limit from 5 to 3 stories for better conversion - updated all messaging, error handling, and story counters throughout the app
 - July 13, 2025. Fixed critical "failed to add kid" authentication bug - resolved Zod validation error where userId wasn't properly included for authenticated users
 - July 13, 2025. Updated Premium pricing from $19.99 to $5.99/month for better market fit - updated pricing page display and new Stripe price ID (price_1RkWpsGRcygDG6rXARfLqABr)
+- July 14, 2025. Fixed critical character creation bug for authenticated users - userId validation was failing because userId wasn't included in request validation (same issue as kids creation)
+- July 14, 2025. Simplified OpenAI image generation prompts to eliminate unwanted text in images and reduce complexity - focused on simple, clean children's book illustrations without text, labels, or complex multi-panel layouts

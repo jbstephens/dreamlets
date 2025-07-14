@@ -161,31 +161,23 @@ export async function generateImages(imagePrompts: string[], characterDescriptio
     const imagePromises = imagePrompts.map(async (prompt, index) => {
       console.log(`Generating image ${index + 1}...`);
       
-      // Enhanced prompt with stronger consistency requirements
-      const enhancedPrompt = `CONSISTENT CHARACTER REFERENCE SHEET - Children's book illustration:
+      // Simplified prompt focusing on consistency and no text
+      const enhancedPrompt = `Simple children's book illustration - NO TEXT OR WORDS anywhere in image.
 
-MANDATORY CHARACTER CONSISTENCY: ${characterDescriptions}
+Characters: ${characterDescriptions}
 
-SCENE TO ILLUSTRATE: ${prompt}
+Scene: ${prompt}
 
-CONSISTENCY ENFORCEMENT:
-- Each named character MUST appear IDENTICAL in all images with EXACTLY the same:
-  * Facial features and proportions
-  * Skin tone (use specific values: fair/light/medium/olive/tan/dark)
-  * Hair color and length (use specific values: blonde/brown/black/red, short/medium/long)
-  * Eye color (use specific values: brown/blue/green/hazel/gray)
-  * Age-appropriate body proportions and height differences
-- ONLY expressions, poses, and clothing may change between scenes
-- Use consistent character placement: if there are 2 kids, keep the same one on left/right in each image
-- Maintain identical art style: soft children's book illustration with warm, dreamy colors
+Requirements:
+- Simple, clean composition with clear focus
+- Characters must look identical to previous images
+- Soft children's book art style
+- Warm, gentle colors
+- NO TEXT, WORDS, LETTERS, or LABELS anywhere
+- Single scene only, no panels or frames
+- Focus on characters and simple background
 
-TECHNICAL REQUIREMENTS:
-- Generate as one cohesive scene, not multiple panels
-- Focus on clear character definition over background complexity
-- Ensure all characters are visible and recognizable
-- Use consistent lighting and color palette across the series
-
-Style: Gentle watercolor children's book illustration, soft pastels, cozy bedtime story atmosphere, high detail on character faces.`;
+Style: Simple children's book illustration, soft watercolor, warm colors, peaceful bedtime story feel.`;
 
       const response = await openai.images.generate({
         model: "dall-e-3",
