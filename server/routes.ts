@@ -552,38 +552,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate sample images for landing page
+  // Static sample images - no dynamic generation
   app.get("/api/sample-image/:storyId", async (req, res) => {
-    try {
-      const { generateImages } = await import("./services/openai");
-      const storyId = req.params.storyId;
-      
-      const sampleStories = {
-        '1': {
-          prompt: 'Emma, a 5-year-old girl with curly brown hair and bright eyes, sitting in a magical garden with flowers and butterflies. She is looking up at a small, friendly purple dragon with shimmering scales who is gracefully dancing among the rose bushes. The scene is warm and enchanting with soft sunlight filtering through the garden.',
-          description: 'Emma: 5-year-old girl with curly brown hair, bright brown eyes, wearing a colorful dress. Purple Dragon: small, friendly dragon with shimmering purple and silver scales, graceful movements, kind expression.'
-        },
-        '2': {
-          prompt: 'Max, a 7-year-old boy with short blonde hair, standing on a pirate ship deck under a starry night sky. He is wearing a small pirate hat and holding a treasure map. A friendly parrot with bright green and red feathers sits on his shoulder. The ocean sparkles with moonlight and distant islands are visible.',
-          description: 'Max: 7-year-old boy with short blonde hair, blue eyes, wearing a striped shirt and small pirate hat. Captain Squawk: colorful parrot with bright green body, red wing tips, yellow beak, friendly expression.'
-        },
-        '3': {
-          prompt: 'Luna, a 6-year-old girl with long black hair in braids, floating gently through a dreamy cloud kingdom. She is wearing a flowing nightgown and surrounded by smiling star creatures that glow softly. The clouds are pastel colors - pink, lavender, and mint green - creating a magical bedtime atmosphere.',
-          description: 'Luna: 6-year-old girl with long black hair in braids, dark eyes, wearing a flowing white nightgown. Star Creatures: small, glowing beings with friendly faces, golden light emanating from them, various sizes floating around Luna.'
-        }
-      };
-      
-      const story = sampleStories[storyId];
-      if (!story) {
-        return res.status(404).json({ error: "Story not found" });
-      }
-      
-      const result = await generateImages([story.prompt], story.description);
-      res.json({ imageUrl: result.imageUrl1 });
-    } catch (error: any) {
-      console.error("Error generating sample image:", error);
-      res.status(500).json({ error: "Failed to generate sample image" });
+    const storyId = req.params.storyId;
+    
+    const sampleImages = {
+      '1': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-JGxpKkmqLMhWfnX7XfYiZnFe.png?st=2025-01-14T22%3A58%3A43Z&se=2025-01-15T00%3A58%3A43Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=hI70WPDwb1nnCE/CNLYOmIQhEOzCgpf4MNOCv4iXyls%3D',
+      '2': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-rAp7aJfShsXqIKNp3RJCDx6F.png?st=2025-01-14T23%3A02%3A35Z&se=2025-01-15T01%3A02%3A35Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T23%3A16%3A48Z&ske=2025-01-15T23%3A16%3A48Z&sks=b&skv=2024-08-04&sig=Q3/hWt3/OJCqUDo9vI8wTcfG8BVOgRFRy9cVrSP5Xug%3D',
+      '3': 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-KI0WX9DSmGMcS7ZI2ivkYsRP.png?st=2025-01-14T23%3A02%3A52Z&se=2025-01-15T01%3A02%3A52Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=ByILR4f%2BZfNNBAmJ7cKAJxQrwUOXJ3DwqO%2BWQFxGrZc%3D'
+    };
+    
+    const imageUrl = sampleImages[storyId];
+    if (!imageUrl) {
+      return res.status(404).json({ error: "Story not found" });
     }
+    
+    res.json({ imageUrl });
   });
 
   // Keep old endpoint for backward compatibility

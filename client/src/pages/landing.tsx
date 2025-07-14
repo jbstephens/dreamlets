@@ -187,30 +187,25 @@ export default function Landing() {
                   </div>
                 </div>
                 
-                <div className="text-center space-y-4">
-                  <Badge className="bg-sunset text-white px-4 py-2">
-                    + 2 more illustrated pages
-                  </Badge>
-                  <div>
-                    <Button 
-                      variant="outline"
-                      onClick={() => setCurrentStoryIndex((prev) => (prev + 1) % sampleStories.length)}
-                      className="text-coral border-coral hover:bg-coral hover:text-white mr-4"
-                    >
-                      See Next Sample
-                    </Button>
-                    <Button 
-                      size="lg" 
-                      className="bg-coral hover:bg-coral/90 text-white font-semibold"
-                      onClick={() => {
-                        trackEvent('cta_click', 'engagement', 'try_now_sample');
-                        navigate("/create");
-                      }}
-                    >
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Create Your Story
-                    </Button>
-                  </div>
+                <div className="text-center">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setCurrentStoryIndex((prev) => (prev + 1) % sampleStories.length)}
+                    className="text-coral border-coral hover:bg-coral hover:text-white mr-4"
+                  >
+                    See Next Sample
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    className="bg-coral hover:bg-coral/90 text-white font-semibold"
+                    onClick={() => {
+                      trackEvent('cta_click', 'engagement', 'try_now_sample');
+                      navigate("/create");
+                    }}
+                  >
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Create Your Story
+                  </Button>
                 </div>
               </CardContent>
             </Card>
