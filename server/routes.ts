@@ -152,11 +152,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (isAuthenticated) {
         // Authenticated user - save to database
-        const validatedData = insertCharacterSchema.parse(req.body);
-        const character = await storage.createCharacter({
-          ...validatedData,
+        const validatedData = insertCharacterSchema.parse({
+          ...req.body,
           userId,
         });
+        const character = await storage.createCharacter(validatedData);
         res.json(character);
       } else {
         // Guest user - save to session
