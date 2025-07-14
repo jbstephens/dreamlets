@@ -150,8 +150,10 @@ export default function Landing() {
                     <img 
                       src={sampleStories[currentStoryIndex].imageUrl} 
                       alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-contain rounded-lg"
+                      onLoad={() => console.log(`Loaded: ${sampleStories[currentStoryIndex].imageUrl}`)}
                       onError={(e) => {
+                        console.error(`Failed to load: ${sampleStories[currentStoryIndex].imageUrl}`);
                         // Fallback to gradient background if SVG fails
                         e.currentTarget.style.display = 'none';
                         const parent = e.currentTarget.parentElement;
