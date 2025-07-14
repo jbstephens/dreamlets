@@ -166,7 +166,7 @@ export default function Landing() {
                       "{sampleStories[currentStoryIndex].text}"
                     </p>
                   </div>
-                  <div className="bg-mint/20 p-4 rounded-xl h-48 flex items-center justify-center overflow-hidden">
+                  <div className="bg-mint/20 p-4 rounded-xl h-80 flex items-center justify-center overflow-hidden">
                     {imageLoading[sampleStories[currentStoryIndex].id] ? (
                       <div className="text-center text-gray-500">
                         <div className="animate-spin w-8 h-8 border-4 border-coral border-t-transparent rounded-full mx-auto mb-2"></div>
