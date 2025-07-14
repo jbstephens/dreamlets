@@ -552,21 +552,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate sample image for landing page
-  app.get("/api/sample-image", async (req, res) => {
+  // Generate sample images for landing page
+  app.get("/api/sample-image/:storyId", async (req, res) => {
     try {
       const { generateImages } = await import("./services/openai");
+      const storyId = req.params.storyId;
       
-      const samplePrompt = 'Emma, a 5-year-old girl with curly brown hair and bright eyes, sitting in a magical garden with flowers and butterflies. She is looking up at a small, friendly purple dragon with shimmering scales who is gracefully dancing among the rose bushes. The scene is warm and enchanting with soft sunlight filtering through the garden.';
+      const sampleStories = {
+        '1': {
+          prompt: 'Emma, a 5-year-old girl with curly brown hair and bright eyes, sitting in a magical garden with flowers and butterflies. She is looking up at a small, friendly purple dragon with shimmering scales who is gracefully dancing among the rose bushes. The scene is warm and enchanting with soft sunlight filtering through the garden.',
+          description: 'Emma: 5-year-old girl with curly brown hair, bright brown eyes, wearing a colorful dress. Purple Dragon: small, friendly dragon with shimmering purple and silver scales, graceful movements, kind expression.'
+        },
+        '2': {
+          prompt: 'Max, a 7-year-old boy with short blonde hair, standing on a pirate ship deck under a starry night sky. He is wearing a small pirate hat and holding a treasure map. A friendly parrot with bright green and red feathers sits on his shoulder. The ocean sparkles with moonlight and distant islands are visible.',
+          description: 'Max: 7-year-old boy with short blonde hair, blue eyes, wearing a striped shirt and small pirate hat. Captain Squawk: colorful parrot with bright green body, red wing tips, yellow beak, friendly expression.'
+        },
+        '3': {
+          prompt: 'Luna, a 6-year-old girl with long black hair in braids, floating gently through a dreamy cloud kingdom. She is wearing a flowing nightgown and surrounded by smiling star creatures that glow softly. The clouds are pastel colors - pink, lavender, and mint green - creating a magical bedtime atmosphere.',
+          description: 'Luna: 6-year-old girl with long black hair in braids, dark eyes, wearing a flowing white nightgown. Star Creatures: small, glowing beings with friendly faces, golden light emanating from them, various sizes floating around Luna.'
+        }
+      };
       
-      const characterDescription = 'Emma: 5-year-old girl with curly brown hair, bright brown eyes, wearing a colorful dress. Purple Dragon: small, friendly dragon with shimmering purple and silver scales, graceful movements, kind expression.';
+      const story = sampleStories[storyId];
+      if (!story) {
+        return res.status(404).json({ error: "Story not found" });
+      }
       
-      const result = await generateImages([samplePrompt], characterDescription);
+      const result = await generateImages([story.prompt], story.description);
       res.json({ imageUrl: result.imageUrl1 });
     } catch (error: any) {
       console.error("Error generating sample image:", error);
       res.status(500).json({ error: "Failed to generate sample image" });
     }
+  });
+
+  // Keep old endpoint for backward compatibility
+  app.get("/api/sample-image", async (req, res) => {
+    // Redirect to story 1
+    res.redirect(307, "/api/sample-image/1");
   });
 
   // Create Stripe customer portal session for subscription management

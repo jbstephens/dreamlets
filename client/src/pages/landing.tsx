@@ -9,27 +9,49 @@ import { trackEvent } from "@/lib/analytics";
 import { Footer } from "@/components/footer";
 import { apiRequest } from "@/lib/queryClient";
 
+const sampleStories = [
+  {
+    id: '1',
+    title: 'Emma and the Dancing Dragon',
+    text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!'
+  },
+  {
+    id: '2', 
+    title: 'Max\'s Pirate Adventure',
+    text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!'
+  },
+  {
+    id: '3',
+    title: 'Luna\'s Dream Kingdom',
+    text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!'
+  }
+];
+
 export default function Landing() {
   const [location, navigate] = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [sampleImageUrl, setSampleImageUrl] = useState<string | null>(null);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [sampleImages, setSampleImages] = useState<{[key: string]: string}>({});
+  const [imageLoading, setImageLoading] = useState<{[key: string]: boolean}>({});
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
   useEffect(() => {
-    // Load sample image
-    const loadSampleImage = async () => {
-      try {
-        const response = await apiRequest("GET", "/api/sample-image");
-        const data = await response.json();
-        setSampleImageUrl(data.imageUrl);
-      } catch (error) {
-        console.error("Failed to load sample image:", error);
-      } finally {
-        setImageLoading(false);
+    // Load all sample images
+    const loadSampleImages = async () => {
+      for (const story of sampleStories) {
+        setImageLoading(prev => ({ ...prev, [story.id]: true }));
+        try {
+          const response = await apiRequest("GET", `/api/sample-image/${story.id}`);
+          const data = await response.json();
+          setSampleImages(prev => ({ ...prev, [story.id]: data.imageUrl }));
+        } catch (error) {
+          console.error(`Failed to load sample image for story ${story.id}:`, error);
+        } finally {
+          setImageLoading(prev => ({ ...prev, [story.id]: false }));
+        }
       }
     };
 
-    loadSampleImage();
+    loadSampleImages();
   }, []);
   
   return (
@@ -107,39 +129,53 @@ export default function Landing() {
 
       </div>
 
-      {/* Sample Story Section */}
+      {/* Sample Stories Section */}
       <div className="bg-white py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-navy mb-4">See a Sample Story</h2>
+            <h2 className="text-4xl font-bold text-navy mb-4">See Sample Stories</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Here's how your personalized bedtime story might look
+              Here's how your personalized bedtime stories might look
             </p>
+          </div>
+          
+          {/* Story Navigation */}
+          <div className="flex justify-center mb-8 space-x-4">
+            {sampleStories.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentStoryIndex(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  currentStoryIndex === index ? 'bg-coral' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
           
           <div className="max-w-4xl mx-auto">
             <Card className="bg-gradient-to-br from-lavender/10 to-coral/10 border-coral/20">
               <CardHeader>
-                <CardTitle className="text-2xl text-navy text-center">Emma and the Dancing Dragon</CardTitle>
+                <CardTitle className="text-2xl text-navy text-center">
+                  {sampleStories[currentStoryIndex].title}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
                   <div className="bg-gradient-to-br from-sunset/20 to-golden/20 p-6 rounded-xl">
                     <p className="text-gray-700">
-                      "Emma was playing in her garden when she noticed something magical behind the rose bushes. 
-                      A small, friendly dragon with shimmering purple scales was practicing dance moves!"
+                      "{sampleStories[currentStoryIndex].text}"
                     </p>
                   </div>
                   <div className="bg-mint/20 p-4 rounded-xl h-48 flex items-center justify-center overflow-hidden">
-                    {imageLoading ? (
+                    {imageLoading[sampleStories[currentStoryIndex].id] ? (
                       <div className="text-center text-gray-500">
                         <div className="animate-spin w-8 h-8 border-4 border-coral border-t-transparent rounded-full mx-auto mb-2"></div>
                         <p>Creating sample illustration...</p>
                       </div>
-                    ) : sampleImageUrl ? (
+                    ) : sampleImages[sampleStories[currentStoryIndex].id] ? (
                       <img 
-                        src={sampleImageUrl} 
-                        alt="Sample story illustration showing Emma and a dancing dragon in a magical garden"
+                        src={sampleImages[sampleStories[currentStoryIndex].id]} 
+                        alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
                         className="w-full h-full object-cover rounded-lg"
                       />
                     ) : (
@@ -151,10 +187,30 @@ export default function Landing() {
                   </div>
                 </div>
                 
-                <div className="text-center">
+                <div className="text-center space-y-4">
                   <Badge className="bg-sunset text-white px-4 py-2">
                     + 2 more illustrated pages
                   </Badge>
+                  <div>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setCurrentStoryIndex((prev) => (prev + 1) % sampleStories.length)}
+                      className="text-coral border-coral hover:bg-coral hover:text-white mr-4"
+                    >
+                      See Next Sample
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      className="bg-coral hover:bg-coral/90 text-white font-semibold"
+                      onClick={() => {
+                        trackEvent('cta_click', 'engagement', 'try_now_sample');
+                        navigate("/create");
+                      }}
+                    >
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Create Your Story
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
