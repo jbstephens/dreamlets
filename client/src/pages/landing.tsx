@@ -13,20 +13,17 @@ const sampleStories = [
   {
     id: '1',
     title: 'Emma and the Dancing Dragon',
-    text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!',
-    imageUrl: 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-JGxpKkmqLMhWfnX7XfYiZnFe.png?st=2025-01-14T22%3A58%3A43Z&se=2025-01-15T00%3A58%3A43Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=hI70WPDwb1nnCE/CNLYOmIQhEOzCgpf4MNOCv4iXyls%3D'
+    text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!'
   },
   {
     id: '2', 
     title: 'Max\'s Pirate Adventure',
-    text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!',
-    imageUrl: 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-rAp7aJfShsXqIKNp3RJCDx6F.png?st=2025-01-14T23%3A02%3A35Z&se=2025-01-15T01%3A02%3A35Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T23%3A16%3A48Z&ske=2025-01-15T23%3A16%3A48Z&sks=b&skv=2024-08-04&sig=Q3/hWt3/OJCqUDo9vI8wTcfG8BVOgRFRy9cVrSP5Xug%3D'
+    text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!'
   },
   {
     id: '3',
     title: 'Luna\'s Dream Kingdom',
-    text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!',
-    imageUrl: 'https://oaidalleapiprodscu.blob.core.windows.net/private/org-3HwuUjPOwireW5gey8P3pQ7h/user-7YqZHnrrWexHJcofhGkYKNf9/img-KI0WX9DSmGMcS7ZI2ivkYsRP.png?st=2025-01-14T23%3A02%3A52Z&se=2025-01-15T01%3A02%3A52Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-14T22%3A33%3A13Z&ske=2025-01-15T22%3A33%3A13Z&sks=b&skv=2024-08-04&sig=ByILR4f%2BZfNNBAmJ7cKAJxQrwUOXJ3DwqO%2BWQFxGrZc%3D'
+    text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!'
   }
 ];
 
@@ -34,6 +31,28 @@ export default function Landing() {
   const [location, navigate] = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const [sampleImages, setSampleImages] = useState<{[key: string]: string}>({});
+  const [imageLoading, setImageLoading] = useState<{[key: string]: boolean}>({});
+
+  useEffect(() => {
+    // Load all sample images once on component mount
+    const loadSampleImages = async () => {
+      for (const story of sampleStories) {
+        setImageLoading(prev => ({ ...prev, [story.id]: true }));
+        try {
+          const response = await apiRequest("GET", `/api/sample-image/${story.id}`);
+          const data = await response.json();
+          setSampleImages(prev => ({ ...prev, [story.id]: data.imageUrl }));
+        } catch (error) {
+          console.error(`Failed to load sample image for story ${story.id}:`, error);
+        } finally {
+          setImageLoading(prev => ({ ...prev, [story.id]: false }));
+        }
+      }
+    };
+
+    loadSampleImages();
+  }, []);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender via-coral to-mint">
@@ -148,11 +167,23 @@ export default function Landing() {
                     </p>
                   </div>
                   <div className="bg-mint/20 p-4 rounded-xl h-80 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={sampleStories[currentStoryIndex].imageUrl} 
-                      alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    {imageLoading[sampleStories[currentStoryIndex].id] ? (
+                      <div className="text-center text-gray-500">
+                        <div className="animate-spin w-8 h-8 border-4 border-coral border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p>Loading sample illustration...</p>
+                      </div>
+                    ) : sampleImages[sampleStories[currentStoryIndex].id] ? (
+                      <img 
+                        src={sampleImages[sampleStories[currentStoryIndex].id]} 
+                        alt={`Sample story illustration for ${sampleStories[currentStoryIndex].title}`}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <Palette className="h-16 w-16 mx-auto mb-2" />
+                        <p>Beautiful illustration would appear here</p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
