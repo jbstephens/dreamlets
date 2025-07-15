@@ -13,19 +13,19 @@ const sampleStories = [
     id: '1',
     title: 'Emma and the Dancing Dragon',
     text: 'Emma was playing in her garden when she noticed something magical behind the rose bushes. A small, friendly dragon with shimmering purple scales was practicing dance moves!',
-    imageUrl: '/sample-emma-dragon.svg'
+    imageUrl: '/sample-emma-dragon.png?v=' + Date.now()
   },
   {
     id: '2', 
     title: 'Max\'s Pirate Adventure',
     text: 'Captain Max stood proudly on his ship\'s deck, his parrot friend Squawk perched on his shoulder. Together they sailed under the starry sky, following their treasure map to a mysterious island filled with wonders!',
-    imageUrl: '/sample-max-pirate.png'
+    imageUrl: '/sample-max-pirate.png?v=' + Date.now()
   },
   {
     id: '3',
     title: 'Luna\'s Dream Kingdom',
     text: 'Luna floated gently through the clouds, surrounded by glowing star creatures who giggled and danced around her. In this magical kingdom above the clouds, every wish could come true!',
-    imageUrl: '/sample-luna-clouds.png'
+    imageUrl: '/sample-luna-clouds.png?v=' + Date.now()
   }
 ];
 
