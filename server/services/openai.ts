@@ -154,6 +154,30 @@ Respond in JSON format with this structure:
   }
 }
 
+async function downloadAndSaveImage(imageUrl: string, filename: string): Promise<string> {
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to download image: ${response.status}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    
+    const filePath = path.join(process.cwd(), 'public', 'story-images', filename);
+    await fs.writeFile(filePath, buffer);
+    
+    console.log(`Image saved to: ${filePath}`);
+    return `/story-images/${filename}`;
+  } catch (error) {
+    console.error(`Failed to download and save image ${filename}:`, error);
+    return imageUrl; // Fallback to original URL if download fails
+  }
+}
+
 export async function generateImages(imagePrompts: string[], characterDescriptions: string): Promise<GeneratedImages> {
   try {
     console.log("Starting image generation for", imagePrompts.length, "prompts...");
@@ -186,12 +210,20 @@ Style: Simple children's book illustration, soft watercolor, warm colors, peacef
         size: "1024x1024",
         quality: "standard"
       });
+      
+      const openaiUrl = response.data[0].url!;
       console.log(`Image ${index + 1} generated successfully`);
-      return response.data[0].url!;
+      
+      // Download and save the image locally
+      const timestamp = Date.now();
+      const filename = `story-${timestamp}-${index + 1}.png`;
+      const localUrl = await downloadAndSaveImage(openaiUrl, filename);
+      
+      return localUrl;
     });
 
     const imageUrls = await Promise.all(imagePromises);
-    console.log("All images generated successfully");
+    console.log("All images generated and saved locally");
     
     return {
       imageUrl1: imageUrls[0],
