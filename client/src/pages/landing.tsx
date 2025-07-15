@@ -56,7 +56,7 @@ export default function Landing() {
           <div className="flex flex-col gap-4 justify-center items-center">
             <Button 
               size="lg" 
-              className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
+              className="bg-coral text-white hover:bg-coral/90 px-8 py-4 text-lg shadow-xl"
               onClick={() => {
                 trackEvent('cta_click', 'engagement', 'create_story_hero');
                 navigate("/create");
@@ -365,7 +365,7 @@ export default function Landing() {
           </p>
           <Button 
             size="lg" 
-            className="bg-sunset text-white hover:bg-sunset/90 px-8 py-4 text-lg shadow-xl"
+            className="bg-coral text-white hover:bg-coral/90 px-8 py-4 text-lg shadow-xl"
             onClick={() => {
               trackEvent('cta_click', 'engagement', 'final_cta');
               navigate("/create");
