@@ -50,13 +50,15 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               <p className="text-white/90">A {story.tone} story</p>
             </div>
           </div>
-          <Button
-            onClick={handlePrint}
-            className="bg-white text-coral hover:bg-white/90"
-          >
-            <Printer className="h-4 w-4 mr-2" />
-            Print Story
-          </Button>
+          <div className="flex justify-center flex-1">
+            <Button
+              onClick={handlePrint}
+              className="bg-white text-coral hover:bg-white/90"
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print Story
+            </Button>
+          </div>
         </div>
       </div>
 
