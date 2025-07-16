@@ -35,30 +35,22 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
       {/* Story Header */}
       <div className="bg-gradient-to-r from-coral to-sunset p-6 text-white no-print">
         <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="bg-white/40 text-navy hover:bg-white/50 mr-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-            <div>
-              <h3 className="text-2xl font-nunito font-bold mb-2">{story.title}</h3>
-              <p className="text-white/90">A {story.tone} story</p>
-            </div>
-          </div>
-          <div className="flex justify-center flex-1">
-            <Button
-              onClick={handlePrint}
-              className="bg-white text-coral hover:bg-white/90"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Print Story
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="bg-white/40 text-navy hover:bg-white/50"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <Button
+            onClick={handlePrint}
+            className="bg-white text-coral hover:bg-white/90"
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Print Story
+          </Button>
         </div>
       </div>
 
