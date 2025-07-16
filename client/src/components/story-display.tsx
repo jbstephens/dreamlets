@@ -93,8 +93,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
         {/* Page 2 */}
         <div className="story-page print-page p-8 min-h-screen flex flex-col">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-crimson font-bold text-navy mb-2">{story.title}</h1>
-            <p className="text-lg font-nunito text-gray-600">Chapter 2: The Adventure</p>
+            <h2 className="text-2xl font-nunito font-bold text-gray-600">Chapter 2: The Adventure</h2>
           </div>
           
           <div className="flex-1 flex items-center justify-center mb-8">
@@ -127,8 +126,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
         {/* Page 3 */}
         <div className="story-page p-8 min-h-screen flex flex-col">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-crimson font-bold text-navy mb-2">{story.title}</h1>
-            <p className="text-lg font-nunito text-gray-600">Chapter 3: The Happy Ending</p>
+            <h2 className="text-2xl font-nunito font-bold text-gray-600">Chapter 3: The Happy Ending</h2>
           </div>
           
           <div className="flex-1 flex items-center justify-center mb-8">
