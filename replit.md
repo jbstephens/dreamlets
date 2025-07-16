@@ -143,3 +143,5 @@ Changelog:
 - July 14, 2025. Fixed sample image loading issue by implementing static image serving from /public directory - eliminated expensive OpenAI API calls on every landing page visit and replaced with locally stored PNG files for instant loading
 - July 15, 2025. Updated sample story carousel with authentic, high-quality AI-generated illustrations - replaced placeholder images with properly labeled story images for Emma & Dragon, Max's Pirate Adventure, and Luna's Dream Kingdom
 - July 15, 2025. Fixed critical image expiration issue - OpenAI DALL-E URLs expire after 1-2 hours causing all story images to break. Implemented automatic image downloading and local storage in /public/story-images/ for permanent image hosting
+- July 16, 2025. Enhanced story generation prompt for longer stories with approximately twice the length, emphasizing meaningful middle sections and contextually appropriate character trait mentions rather than forced inclusion
+- July 16, 2025. Improved story page UI - fixed Print button styling to use coral theme colors, enhanced Back button visibility with proper contrast, and removed duplicate title from header for cleaner layout
