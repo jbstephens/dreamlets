@@ -81,23 +81,27 @@ export async function generateStory(request: StoryRequest): Promise<StoryRespons
     });
   }
   
-  const prompt = `Create a bedtime story for ${kidNamesStr}${characterNamesStr}. 
+  const prompt = `Create a longer bedtime story for ${kidNamesStr}${characterNamesStr}. 
   
 Story idea: ${storyIdea}
 Tone: ${tone}${characterDetailsSection}
 
-Please create a 3-part story with the following structure:
-1. Setup - Introduce the characters and the initial situation
-2. Climax - The main adventure or challenge
-3. Resolution - How everything is resolved with a cozy ending
+Please create a 3-part story with the following structure and length guidelines:
+1. INTRODUCTION (Short & Delightful) - Set the scene and introduce characters in a charming way
+2. MAIN ADVENTURE (Longer & Meaningful) - The heart of the story with a substantial story arc, challenges, discoveries, and character development. This should be about twice as long as the other parts.
+3. RESOLUTION (Satisfying Conclusion) - Wrap up the adventure with a cozy, peaceful ending perfect for bedtime
 
-Each part should be suitable for children and appropriate for bedtime. The story should be engaging but calming.
+TARGET LENGTH: Make this story approximately twice as long as typical children's bedtime stories. Focus especially on developing the middle section with rich details, meaningful interactions, and a proper story arc.
 
-CRITICAL PHYSICAL DESCRIPTION RULES:
-- ONLY use the physical attributes provided above when describing the children
-- DO NOT make up or invent physical descriptions (hair color, eye color, etc.) for any children
-- If no physical attributes are provided for a child, simply use their name without physical descriptions
-- You may describe clothing, expressions, and actions, but NOT physical features unless explicitly provided
+Each part should be suitable for children and appropriate for bedtime. The story should be engaging but ultimately calming for sleep.
+
+PHYSICAL DESCRIPTION AND CHARACTER TRAIT GUIDELINES:
+- When provided with specific physical attributes (hair color, eye color, etc.) for children or detailed character descriptions, use these details ACCURATELY when contextually relevant
+- You do NOT need to mention every physical trait in every scene - only include them when they naturally fit the story context
+- NEVER contradict or deviate from provided descriptions, but feel free to omit details when they're not relevant to the scene
+- Consider story context: mention appearance details when they're important to the plot, action, or emotional moment
+- For character personalities and traits, weave them naturally into the story when appropriate rather than forcing them into every paragraph
+- If no physical attributes are provided for a child, simply use their name without making up physical descriptions
 
 CRITICAL CHARACTER CONSISTENCY FOR ILLUSTRATIONS:
 First, establish EXACT character descriptions that must remain identical across all three images:
@@ -142,7 +146,7 @@ Respond in JSON format with this structure:
         }
       ],
       response_format: { type: "json_object" },
-      max_tokens: 2000
+      max_tokens: 3500
     });
 
     console.log("Story generation completed successfully");
