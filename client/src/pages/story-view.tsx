@@ -1,5 +1,6 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { StoryDisplay } from "@/components/story-display";
 import { useLocation } from "wouter";
@@ -18,6 +19,18 @@ export default function StoryView() {
   });
 
   console.log("StoryView: story =", story, "isLoading =", isLoading, "error =", error);
+
+  // Update page title when story loads
+  useEffect(() => {
+    if (story?.title) {
+      document.title = `${story.title} - Dreamlets - Personalized Bedtime Stories`;
+    }
+    
+    // Reset title when component unmounts
+    return () => {
+      document.title = "Dreamlets - Personalized Bedtime Stories";
+    };
+  }, [story?.title]);
 
   const handleBack = () => {
     setLocation("/");
