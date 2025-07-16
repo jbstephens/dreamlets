@@ -91,7 +91,13 @@ Please create a 3-part story with the following structure and length guidelines:
 2. MAIN ADVENTURE (Longer & Meaningful) - The heart of the story with a substantial story arc, challenges, discoveries, and character development. This should be about twice as long as the other parts.
 3. RESOLUTION (Satisfying Conclusion) - Wrap up the adventure with a cozy, peaceful ending perfect for bedtime
 
-TARGET LENGTH: Make this story approximately twice as long as typical children's bedtime stories. Focus especially on developing the middle section with rich details, meaningful interactions, and a proper story arc.
+TARGET LENGTH REQUIREMENTS:
+- TOTAL STORY LENGTH: Aim for 4000-5000+ characters (approximately twice the length of typical bedtime stories)
+- PART 1 (Introduction): 800-1200 characters - delightful setup
+- PART 2 (Main Adventure): 2000-2500+ characters - the longest section with rich detail, meaningful character development, and substantial plot progression
+- PART 3 (Resolution): 800-1200 characters - satisfying conclusion
+
+IMPORTANT: This is a LONGER story format. Develop scenes thoroughly with rich descriptions, dialogue, character thoughts, and detailed interactions. Take time to build the adventure with multiple scenes, obstacles, discoveries, and emotional moments.
 
 Each part should be suitable for children and appropriate for bedtime. The story should be engaging but ultimately calming for sleep.
 
