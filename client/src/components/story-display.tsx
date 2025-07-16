@@ -40,7 +40,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
               variant="ghost"
               size="sm"
               onClick={onBack}
-              className="text-white hover:bg-white/20 mr-4"
+              className="bg-white/20 text-white hover:bg-white/30 mr-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
