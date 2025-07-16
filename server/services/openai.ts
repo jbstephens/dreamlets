@@ -91,13 +91,20 @@ Please create a 3-part story with the following structure and length guidelines:
 2. MAIN ADVENTURE (Longer & Meaningful) - The heart of the story with a substantial story arc, challenges, discoveries, and character development. This should be about twice as long as the other parts.
 3. RESOLUTION (Satisfying Conclusion) - Wrap up the adventure with a cozy, peaceful ending perfect for bedtime
 
-TARGET LENGTH REQUIREMENTS:
-- TOTAL STORY LENGTH: Aim for 4000-5000+ characters (approximately twice the length of typical bedtime stories)
-- PART 1 (Introduction): 800-1200 characters - delightful setup
-- PART 2 (Main Adventure): 2000-2500+ characters - the longest section with rich detail, meaningful character development, and substantial plot progression
-- PART 3 (Resolution): 800-1200 characters - satisfying conclusion
+⭐ CRITICAL LENGTH REQUIREMENTS - DO NOT MAKE THIS A SHORT STORY ⭐
+- TOTAL STORY LENGTH: MUST be 4000-5000+ characters (count carefully - current stories are too short at ~2000 characters)
+- PART 1 (Introduction): 1000-1200 characters minimum - thorough, detailed setup with rich scene-setting
+- PART 2 (Main Adventure): 2500-3000+ characters minimum - the heart of the story with extensive detail, multiple scenes, dialogue, inner thoughts, obstacles, and character development
+- PART 3 (Resolution): 1000-1200 characters minimum - comprehensive, satisfying conclusion
 
-IMPORTANT: This is a LONGER story format. Develop scenes thoroughly with rich descriptions, dialogue, character thoughts, and detailed interactions. Take time to build the adventure with multiple scenes, obstacles, discoveries, and emotional moments.
+⭐ ESSENTIAL WRITING STYLE FOR LENGTH ⭐
+- Include extensive dialogue between characters
+- Describe settings, emotions, and actions in rich detail
+- Show character thoughts and feelings throughout
+- Create multiple scenes within each part
+- Add sensory descriptions (what they see, hear, feel, smell)
+- Develop the plot thoroughly with proper pacing
+- This is NOT a brief bedtime story - it's a substantial, immersive adventure
 
 Each part should be suitable for children and appropriate for bedtime. The story should be engaging but ultimately calming for sleep.
 
@@ -144,7 +151,7 @@ Respond in JSON format with this structure:
       messages: [
         {
           role: "system",
-          content: "You are a creative children's story writer who specializes in bedtime stories. Create engaging, age-appropriate stories with beautiful, descriptive language."
+          content: "You are a creative children's story writer who specializes in detailed, immersive bedtime stories. You excel at creating longer narratives with rich descriptions, engaging dialogue, and thorough character development. Your stories captivate young readers with vivid imagery and meaningful adventures while remaining appropriate for bedtime."
         },
         {
           role: "user",
@@ -152,7 +159,7 @@ Respond in JSON format with this structure:
         }
       ],
       response_format: { type: "json_object" },
-      max_tokens: 3500
+      max_tokens: 4000
     });
 
     console.log("Story generation completed successfully");
