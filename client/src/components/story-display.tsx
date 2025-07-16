@@ -52,8 +52,7 @@ export function StoryDisplay({ story, onBack }: StoryDisplayProps) {
           </div>
           <Button
             onClick={handlePrint}
-            variant="ghost"
-            className="text-white hover:bg-white/20"
+            className="bg-white text-coral hover:bg-white/90"
           >
             <Printer className="h-4 w-4 mr-2" />
             Print Story
