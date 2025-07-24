@@ -23,6 +23,7 @@ export interface IStorage {
   getStoriesByUserId(userId: string): Promise<Story[]>;
   getStoryById(id: number): Promise<Story | undefined>;
   createStory(story: InsertStory): Promise<Story>;
+  updateStory(id: number, updates: Partial<InsertStory>): Promise<Story | undefined>;
   deleteStory(id: number): Promise<void>;
   
   // Subscription management
@@ -157,6 +158,15 @@ export class MemStorage implements IStorage {
     };
     this.stories.set(id, story);
     return story;
+  }
+
+  async updateStory(id: number, updates: Partial<InsertStory>): Promise<Story | undefined> {
+    const story = this.stories.get(id);
+    if (!story) return undefined;
+    
+    const updatedStory = { ...story, ...updates };
+    this.stories.set(id, updatedStory);
+    return updatedStory;
   }
 
   async deleteStory(id: number): Promise<void> {
@@ -294,6 +304,17 @@ class DatabaseStorage implements IStorage {
     await this.db.delete(characters).where(eq(characters.id, id));
   }
 
+  // Helper methods for repair endpoint
+  async getKidsByIds(kidIds: number[]): Promise<Kid[]> {
+    if (kidIds.length === 0) return [];
+    return await this.db.select().from(kids).where(sql`${kids.id} = ANY(${kidIds})`);
+  }
+
+  async getCharactersByIds(characterIds: number[]): Promise<Character[]> {
+    if (characterIds.length === 0) return [];
+    return await this.db.select().from(characters).where(sql`${characters.id} = ANY(${characterIds})`);
+  }
+
   async getStoriesByUserId(userId: string): Promise<Story[]> {
     return await this.db.select().from(stories).where(eq(stories.userId, userId)).orderBy(desc(stories.createdAt));
   }
@@ -305,6 +326,14 @@ class DatabaseStorage implements IStorage {
 
   async createStory(insertStory: InsertStory): Promise<Story> {
     const result = await this.db.insert(stories).values(insertStory).returning();
+    return result[0];
+  }
+
+  async updateStory(id: number, updates: Partial<InsertStory>): Promise<Story | undefined> {
+    const result = await this.db.update(stories)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(stories.id, id))
+      .returning();
     return result[0];
   }
 

@@ -173,9 +173,10 @@ Respond in JSON format with this structure:
 
 async function downloadAndSaveImage(imageUrl: string, filename: string): Promise<string> {
   try {
+    console.log(`Attempting to download image: ${imageUrl}`);
     const response = await fetch(imageUrl);
     if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.status}`);
+      throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
     }
     
     const arrayBuffer = await response.arrayBuffer();
@@ -184,14 +185,24 @@ async function downloadAndSaveImage(imageUrl: string, filename: string): Promise
     const fs = await import('fs/promises');
     const path = await import('path');
     
-    const filePath = path.join(process.cwd(), 'public', 'story-images', filename);
+    // Ensure directory exists
+    const storyImagesDir = path.join(process.cwd(), 'public', 'story-images');
+    await fs.mkdir(storyImagesDir, { recursive: true });
+    
+    const filePath = path.join(storyImagesDir, filename);
     await fs.writeFile(filePath, buffer);
     
-    console.log(`Image saved to: ${filePath}`);
+    console.log(`Image successfully saved to: ${filePath}`);
+    
+    // Verify file was written correctly
+    const stats = await fs.stat(filePath);
+    console.log(`File size: ${stats.size} bytes`);
+    
     return `/story-images/${filename}`;
   } catch (error) {
-    console.error(`Failed to download and save image ${filename}:`, error);
-    return imageUrl; // Fallback to original URL if download fails
+    console.error(`CRITICAL: Failed to download and save image ${filename}:`, error);
+    // Don't fallback to original URL since it will expire - throw error instead
+    throw new Error(`Image download failed: ${error.message}`);
   }
 }
 

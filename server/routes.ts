@@ -461,6 +461,186 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Repair ALL broken story images for a user
+  app.post("/api/repair-all-story-images", async (req: any, res) => {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized - please log in" });
+      }
+      
+      console.log(`Repairing ALL broken images for user ${userId}`);
+      
+      // Get all stories for this user
+      const userStories = await storage.getStoriesByUserId(userId);
+      const brokenStories = [];
+      
+      // Check which stories have missing image files
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      
+      for (const story of userStories) {
+        let hasMissingImages = false;
+        const imageUrls = [story.imageUrl1, story.imageUrl2, story.imageUrl3];
+        
+        for (const imageUrl of imageUrls) {
+          if (imageUrl && imageUrl.startsWith('/story-images/')) {
+            const filePath = path.join(process.cwd(), 'public', imageUrl);
+            try {
+              await fs.access(filePath);
+            } catch {
+              hasMissingImages = true;
+              break;
+            }
+          }
+        }
+        
+        if (hasMissingImages) {
+          brokenStories.push(story);
+        }
+      }
+      
+      console.log(`Found ${brokenStories.length} stories with missing images`);
+      
+      if (brokenStories.length === 0) {
+        return res.json({ 
+          success: true, 
+          message: "No broken images found - all stories are working correctly!",
+          repairedCount: 0
+        });
+      }
+      
+      // Repair each broken story
+      let repairedCount = 0;
+      const { generateImages } = await import("./services/openai");
+      
+      for (const story of brokenStories) {
+        try {
+          console.log(`Repairing story ${story.id}: ${story.title}`);
+          
+          // Get kids and characters for this story
+          const kids = await storage.getKidsByIds(story.kidIds);
+          const characters = await storage.getCharactersByIds(story.characterIds);
+          
+          // Generate image prompts based on story content
+          const imagePrompts = [
+            story.storyPart1.substring(0, 200) + "...",
+            story.storyPart2.substring(0, 200) + "...",
+            story.storyPart3.substring(0, 200) + "..."
+          ];
+          
+          // Create character descriptions
+          const kidDescriptions = kids.map(kid => 
+            `${kid.name} (age ${kid.age}): ${kid.description}, ${kid.skinTone} skin, ${kid.eyeColor} eyes, ${kid.hairLength} ${kid.hairColor} hair`
+          ).join(". ");
+          
+          const characterDescriptions = characters.map(char =>
+            `${char.name}: ${char.description}`
+          ).join(". ");
+          
+          const allDescriptions = [kidDescriptions, characterDescriptions].filter(Boolean).join(". ");
+          
+          // Generate new images
+          const images = await generateImages(imagePrompts, allDescriptions);
+          
+          // Update story with new image URLs
+          await storage.updateStory(story.id, {
+            imageUrl1: images.imageUrl1,
+            imageUrl2: images.imageUrl2,
+            imageUrl3: images.imageUrl3
+          });
+          
+          repairedCount++;
+          console.log(`Successfully repaired story ${story.id}`);
+          
+        } catch (error: any) {
+          console.error(`Failed to repair story ${story.id}:`, error);
+        }
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `Successfully repaired ${repairedCount} out of ${brokenStories.length} broken stories`,
+        repairedCount,
+        totalBroken: brokenStories.length
+      });
+      
+    } catch (error: any) {
+      console.error(`Error repairing all story images:`, error);
+      res.status(500).json({ 
+        message: "Failed to repair story images",
+        error: error.message 
+      });
+    }
+  });
+
+  // Repair broken story images
+  app.post("/api/repair-story-images/:id", async (req: any, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const story = await storage.getStoryById(id);
+      
+      if (!story) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+      
+      // Check if user owns this story
+      const userId = req.session?.userId;
+      if (story.userId !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      console.log(`Repairing images for story ${id}: ${story.title}`);
+      
+      // Get kids and characters for this story
+      const kids = await storage.getKidsByIds(story.kidIds);
+      const characters = await storage.getCharactersByIds(story.characterIds);
+      
+      // Generate image prompts based on story content
+      const imagePrompts = [
+        story.storyPart1.substring(0, 200) + "...",
+        story.storyPart2.substring(0, 200) + "...",
+        story.storyPart3.substring(0, 200) + "..."
+      ];
+      
+      // Create character descriptions
+      const kidDescriptions = kids.map(kid => 
+        `${kid.name} (age ${kid.age}): ${kid.description}, ${kid.skinTone} skin, ${kid.eyeColor} eyes, ${kid.hairLength} ${kid.hairColor} hair`
+      ).join(". ");
+      
+      const characterDescriptions = characters.map(char =>
+        `${char.name}: ${char.description}`
+      ).join(". ");
+      
+      const allDescriptions = [kidDescriptions, characterDescriptions].filter(Boolean).join(". ");
+      
+      // Generate new images
+      const { generateImages } = await import("./services/openai");
+      const images = await generateImages(imagePrompts, allDescriptions);
+      
+      // Update story with new image URLs
+      await storage.updateStory(id, {
+        imageUrl1: images.imageUrl1,
+        imageUrl2: images.imageUrl2,
+        imageUrl3: images.imageUrl3
+      });
+      
+      console.log(`Successfully repaired images for story ${id}`);
+      res.json({ 
+        success: true, 
+        message: "Images repaired successfully",
+        images: images
+      });
+      
+    } catch (error: any) {
+      console.error(`Error repairing story images:`, error);
+      res.status(500).json({ 
+        message: "Failed to repair story images",
+        error: error.message 
+      });
+    }
+  });
+
   app.delete("/api/stories/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
