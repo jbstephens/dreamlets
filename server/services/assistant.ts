@@ -34,6 +34,9 @@ export interface AssistantStoryResponse {
     name: string;
     description: string;
   }>;
+  imageUrl1?: string;
+  imageUrl2?: string;
+  imageUrl3?: string;
   runId: string;
   messageId: string;
 }
@@ -74,7 +77,9 @@ You must respond with a JSON object in this exact format:
   ]
 }
 
-Remember: You have persistent memory of this family's story history. Use it to create meaningful continuity and growth in your storytelling.`;
+Remember: You have persistent memory of this family's story history. Use it to create meaningful continuity and growth in your storytelling.
+
+After creating the story, always call the generate_story_images function to create illustrations that match your story perfectly.`;
 
 export async function getOrCreateAssistant(userId: string): Promise<{ assistantId: string; threadId: string }> {
   try {
@@ -91,7 +96,41 @@ export async function getOrCreateAssistant(userId: string): Promise<{ assistantI
         name: "Dreamlets Storytelling Companion",
         instructions: STORYTELLING_ASSISTANT_INSTRUCTIONS,
         model: "gpt-4o",
-        response_format: { type: "json_object" }
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "generate_story_images",
+              description: "Generate illustrations for a children's bedtime story",
+              parameters: {
+                type: "object",
+                properties: {
+                  story_title: {
+                    type: "string",
+                    description: "The title of the story"
+                  },
+                  character_descriptions: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string" },
+                        description: { type: "string" }
+                      }
+                    },
+                    description: "Physical descriptions of characters for consistent illustrations"
+                  },
+                  image_prompts: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "Three detailed image prompts for each part of the story"
+                  }
+                },
+                required: ["story_title", "character_descriptions", "image_prompts"]
+              }
+            }
+          }
+        ]
       });
       console.log("Created assistant:", assistant.id);
     }
@@ -188,9 +227,56 @@ Remember everything you know about this family and build on previous stories whe
     let attempts = 0;
     const maxAttempts = 60; // 60 seconds timeout
     
-    while ((runStatus.status === 'in_progress' || runStatus.status === 'queued') && attempts < maxAttempts) {
+    while ((runStatus.status === 'in_progress' || runStatus.status === 'queued' || runStatus.status === 'requires_action') && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Retrieving run status for threadId:", finalThreadId, "runId:", finalRunId, "attempt:", attempts);
+      console.log("Retrieving run status for threadId:", finalThreadId, "runId:", finalRunId, "attempt:", attempts, "status:", runStatus.status);
+      
+      // Handle function calls for image generation
+      if (runStatus.status === 'requires_action' && runStatus.required_action?.type === 'submit_tool_outputs') {
+        console.log("Assistant requesting function call for image generation");
+        
+        const toolCalls = runStatus.required_action.submit_tool_outputs.tool_calls;
+        const toolOutputs = [];
+        
+        for (const toolCall of toolCalls) {
+          if (toolCall.function.name === 'generate_story_images') {
+            try {
+              const args = JSON.parse(toolCall.function.arguments);
+              console.log("Generating images with args:", args);
+              
+              // Generate images using DALL-E
+              const { generateImages } = await import("./openai");
+              const imageUrls = await generateImages(args.image_prompts, args.character_descriptions);
+              
+              toolOutputs.push({
+                tool_call_id: toolCall.id,
+                output: JSON.stringify({
+                  success: true,
+                  image_urls: imageUrls,
+                  message: "Images generated successfully"
+                })
+              });
+              
+              console.log("Images generated successfully:", imageUrls);
+            } catch (error) {
+              console.error("Error generating images:", error);
+              toolOutputs.push({
+                tool_call_id: toolCall.id,
+                output: JSON.stringify({
+                  success: false,
+                  error: error.message
+                })
+              });
+            }
+          }
+        }
+        
+        // Submit the function outputs
+        await openai.beta.threads.runs.submitToolOutputs(finalThreadId, finalRunId, {
+          tool_outputs: toolOutputs
+        });
+      }
+      
       runStatus = await openai.beta.threads.runs.retrieve(finalThreadId, finalRunId);
       attempts++;
     }
@@ -214,12 +300,39 @@ Remember everything you know about this family and build on previous stories whe
     // Parse the JSON response
     const storyData = JSON.parse(responseText);
     
+    // Extract image URLs from function call results if available
+    let imageUrls = [undefined, undefined, undefined];
+    if (runStatus.status === 'completed') {
+      // Check if there were any function calls that generated images
+      const runSteps = await openai.beta.threads.runs.steps.list(finalThreadId, finalRunId);
+      for (const step of runSteps.data) {
+        if (step.type === 'tool_calls') {
+          for (const toolCall of step.step_details.tool_calls) {
+            if (toolCall.type === 'function' && toolCall.function.name === 'generate_story_images') {
+              try {
+                const output = JSON.parse(toolCall.function.output || '{}');
+                if (output.success && output.image_urls) {
+                  imageUrls = output.image_urls;
+                  console.log("Extracted image URLs from function call:", imageUrls);
+                }
+              } catch (e) {
+                console.log("Could not parse function output for image URLs");
+              }
+            }
+          }
+        }
+      }
+    }
+    
     return {
       title: storyData.title,
       part1: storyData.part1,
       part2: storyData.part2,
       part3: storyData.part3,
       characterDescriptions: storyData.characterDescriptions,
+      imageUrl1: imageUrls[0],
+      imageUrl2: imageUrls[1], 
+      imageUrl3: imageUrls[2],
       runId: finalRunId,
       messageId: assistantMessage.id
     };

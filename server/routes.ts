@@ -379,30 +379,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             isFirstInteraction
           );
           
-          // Convert assistant response to standard story response format and generate images
-          const { generateImages } = await import("./services/openai");
-          
-          // Generate image prompts based on the story content  
-          const imagePrompts = [
-            `Children's book illustration: ${assistantResult.part1.substring(0, 100)}...`,
-            `Children's book illustration: ${assistantResult.part2.substring(0, 100)}...`, 
-            `Children's book illustration: ${assistantResult.part3.substring(0, 100)}...`
-          ];
-          
-          const images = await generateImages(imagePrompts, assistantResult.characterDescriptions);
-          
+          // Convert assistant response to standard story response format 
           storyResponse = {
             title: assistantResult.title,
             part1: assistantResult.part1,
             part2: assistantResult.part2,
             part3: assistantResult.part3,
             characterDescriptions: assistantResult.characterDescriptions,
-            imagePrompt1: imagePrompts[0],
-            imagePrompt2: imagePrompts[1], 
-            imagePrompt3: imagePrompts[2],
-            imageUrl1: images[0],
-            imageUrl2: images[1],
-            imageUrl3: images[2]
+            imagePrompt1: `Children's book illustration based on: ${assistantResult.part1.substring(0, 100)}...`,
+            imagePrompt2: `Children's book illustration based on: ${assistantResult.part2.substring(0, 100)}...`,
+            imagePrompt3: `Children's book illustration based on: ${assistantResult.part3.substring(0, 100)}...`,
+            imageUrl1: assistantResult.imageUrl1,
+            imageUrl2: assistantResult.imageUrl2,
+            imageUrl3: assistantResult.imageUrl3
           };
           
           assistantInfo = {
