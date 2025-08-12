@@ -129,6 +129,7 @@ export async function generateStoryWithAssistant(
     }
     
     // Check if there are any active runs on this thread first
+    console.log("About to check active runs for threadId:", threadId);
     const activeRuns = await openai.beta.threads.runs.list(threadId, { limit: 1 });
     if (activeRuns.data.length > 0 && 
         (activeRuns.data[0].status === 'in_progress' || activeRuns.data[0].status === 'queued')) {
@@ -170,17 +171,20 @@ Remember everything you know about this family and build on previous stories whe
     }
     
     // Add message to thread
+    console.log("About to create message for threadId:", threadId);
     const message = await openai.beta.threads.messages.create(threadId, {
       role: "user",
       content: messageContent
     });
     
     // Run the assistant
+    console.log("About to create run for threadId:", threadId, "assistantId:", assistantId);
     const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId
     });
     
     // Wait for completion with timeout
+    console.log("About to retrieve run status for threadId:", threadId, "runId:", run.id);
     let runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
     let attempts = 0;
     const maxAttempts = 60; // 60 seconds timeout
@@ -196,6 +200,7 @@ Remember everything you know about this family and build on previous stories whe
     }
     
     // Get the assistant's response
+    console.log("About to list messages for threadId:", threadId);
     const messages = await openai.beta.threads.messages.list(threadId);
     const assistantMessage = messages.data.find(m => m.role === 'assistant' && m.run_id === run.id);
     
