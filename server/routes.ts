@@ -363,28 +363,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const userStories = await storage.getStoriesByUserId(userId);
         const isFirstInteraction = userStories.length === 0;
         
-        // Generate story using assistant with persistent context
-        const assistantResult = await generateStoryWithAssistant(
-          userAssistantInfo.threadId!,
-          userAssistantInfo.assistantId!,
-          {
+        // Generate story using assistant with persistent context, fallback to traditional if it fails
+        try {
+          const assistantResult = await generateStoryWithAssistant(
+            userAssistantInfo.threadId!,
+            userAssistantInfo.assistantId!,
+            {
+              kidNames,
+              characterNames,
+              storyIdea: validatedData.storyIdea,
+              tone: validatedData.tone,
+              kidPhysicalAttributes,
+              characterDescriptions
+            },
+            isFirstInteraction
+          );
+          
+          storyResponse = assistantResult;
+          assistantInfo = {
+            runId: assistantResult.runId,
+            messageId: assistantResult.messageId
+          };
+          
+          console.log("Story generated with assistant context - this story will build on previous family interactions");
+        } catch (assistantError) {
+          console.error("Assistant API failed, falling back to traditional completion:", assistantError.message);
+          
+          // Fallback to traditional OpenAI completion
+          const { generateStory } = await import("./services/openai");
+          storyResponse = await generateStory({
             kidNames,
             characterNames,
             storyIdea: validatedData.storyIdea,
             tone: validatedData.tone,
             kidPhysicalAttributes,
             characterDescriptions
-          },
-          isFirstInteraction
-        );
-        
-        storyResponse = assistantResult;
-        assistantInfo = {
-          runId: assistantResult.runId,
-          messageId: assistantResult.messageId
-        };
-        
-        console.log("Story generated with assistant context - this story will build on previous family interactions");
+          });
+          
+          console.log("Story generated with traditional completion as fallback for authenticated user");
+        }
       } else {
         // Use traditional OpenAI completion for guest users (no persistent context)
         const { generateStory } = await import("./services/openai");

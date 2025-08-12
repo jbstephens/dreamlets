@@ -185,13 +185,17 @@ Remember everything you know about this family and build on previous stories whe
     
     // Wait for completion with timeout
     console.log("About to retrieve run status for threadId:", threadId, "runId:", run.id);
-    let runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+    const finalThreadId = threadId; // Store in const to prevent any variable issues
+    const finalRunId = run.id;
+    
+    let runStatus = await openai.beta.threads.runs.retrieve(finalThreadId, finalRunId);
     let attempts = 0;
     const maxAttempts = 60; // 60 seconds timeout
     
     while ((runStatus.status === 'in_progress' || runStatus.status === 'queued') && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+      console.log("Retrieving run status for threadId:", finalThreadId, "runId:", finalRunId, "attempt:", attempts);
+      runStatus = await openai.beta.threads.runs.retrieve(finalThreadId, finalRunId);
       attempts++;
     }
     
@@ -200,9 +204,9 @@ Remember everything you know about this family and build on previous stories whe
     }
     
     // Get the assistant's response
-    console.log("About to list messages for threadId:", threadId);
-    const messages = await openai.beta.threads.messages.list(threadId);
-    const assistantMessage = messages.data.find(m => m.role === 'assistant' && m.run_id === run.id);
+    console.log("About to list messages for threadId:", finalThreadId);
+    const messages = await openai.beta.threads.messages.list(finalThreadId);
+    const assistantMessage = messages.data.find(m => m.role === 'assistant' && m.run_id === finalRunId);
     
     if (!assistantMessage || !assistantMessage.content[0] || assistantMessage.content[0].type !== 'text') {
       throw new Error("No response from assistant");
