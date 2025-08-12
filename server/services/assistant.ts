@@ -25,15 +25,15 @@ export interface StoryRequest {
   }>;
 }
 
-export interface StoryResponse {
+export interface AssistantStoryResponse {
   title: string;
   part1: string;
   part2: string;
   part3: string;
-  characterDescriptions: string;
-  imagePrompt1: string;
-  imagePrompt2: string;
-  imagePrompt3: string;
+  characterDescriptions: Array<{
+    name: string;
+    description: string;
+  }>;
   runId: string;
   messageId: string;
 }
@@ -66,17 +66,13 @@ You must respond with a JSON object in this exact format:
   "part1": "Beginning chapter text (150-200 words)",
   "part2": "Middle chapter text (150-200 words)", 
   "part3": "Ending chapter text (150-200 words)",
-  "characterDescriptions": "Combined descriptions of all characters for image generation",
-  "imagePrompt1": "Simple image description for part 1 scene",
-  "imagePrompt2": "Simple image description for part 2 scene", 
-  "imagePrompt3": "Simple image description for part 3 scene"
+  "characterDescriptions": [
+    {
+      "name": "Character Name",
+      "description": "Physical description for consistent illustrations"
+    }
+  ]
 }
-
-## Image Prompts
-- Keep image descriptions simple and child-friendly
-- Focus on main characters and key scene elements
-- Describe what's happening, not complex artistic styles
-- Ensure consistency with character descriptions across all three images
 
 Remember: You have persistent memory of this family's story history. Use it to create meaningful continuity and growth in your storytelling.`;
 
@@ -120,7 +116,7 @@ export async function generateStoryWithAssistant(
   assistantId: string,
   request: StoryRequest,
   isFirstInteraction: boolean = false
-): Promise<StoryResponse> {
+): Promise<AssistantStoryResponse> {
   try {
     console.log("Generating story with assistant for thread:", threadId);
     
@@ -224,10 +220,7 @@ Remember everything you know about this family and build on previous stories whe
       part2: storyData.part2,
       part3: storyData.part3,
       characterDescriptions: storyData.characterDescriptions,
-      imagePrompt1: storyData.imagePrompt1,
-      imagePrompt2: storyData.imagePrompt2,
-      imagePrompt3: storyData.imagePrompt3,
-      runId: run.id,
+      runId: finalRunId,
       messageId: assistantMessage.id
     };
     
