@@ -124,6 +124,24 @@ export async function generateStoryWithAssistant(
   try {
     console.log("Generating story with assistant for thread:", threadId);
     
+    if (!threadId || threadId === 'undefined') {
+      throw new Error("Invalid thread ID provided");
+    }
+    
+    // Check if there are any active runs on this thread first
+    const activeRuns = await openai.beta.threads.runs.list(threadId, { limit: 1 });
+    if (activeRuns.data.length > 0 && 
+        (activeRuns.data[0].status === 'in_progress' || activeRuns.data[0].status === 'queued')) {
+      console.log("Waiting for active run to complete...");
+      // Wait for the active run to complete
+      let activeRun = activeRuns.data[0];
+      while (activeRun.status === 'in_progress' || activeRun.status === 'queued') {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        activeRun = await openai.beta.threads.runs.retrieve(threadId, activeRun.id);
+      }
+      console.log("Active run completed with status:", activeRun.status);
+    }
+    
     // Build the story request message
     let messageContent = "";
     
@@ -162,15 +180,19 @@ Remember everything you know about this family and build on previous stories whe
       assistant_id: assistantId
     });
     
-    // Wait for completion
+    // Wait for completion with timeout
     let runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
-    while (runStatus.status === 'in_progress' || runStatus.status === 'queued') {
+    let attempts = 0;
+    const maxAttempts = 60; // 60 seconds timeout
+    
+    while ((runStatus.status === 'in_progress' || runStatus.status === 'queued') && attempts < maxAttempts) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+      attempts++;
     }
     
     if (runStatus.status !== 'completed') {
-      throw new Error(`Assistant run failed with status: ${runStatus.status}`);
+      throw new Error(`Assistant run failed with status: ${runStatus.status} after ${attempts} seconds`);
     }
     
     // Get the assistant's response
@@ -200,7 +222,7 @@ Remember everything you know about this family and build on previous stories whe
       messageId: assistantMessage.id
     };
     
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating story with assistant:", error);
     throw new Error(`Failed to generate story: ${error.message}`);
   }

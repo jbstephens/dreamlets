@@ -432,6 +432,10 @@ class DatabaseStorage implements IStorage {
 
   async getUserAssistantInfo(userId: string): Promise<{ assistantId?: string; threadId?: string }> {
     const user = await this.getUser(userId);
+    console.log("Retrieved user assistant info for", userId, ":", {
+      assistantId: user?.openaiAssistantId,
+      threadId: user?.openaiThreadId
+    });
     return {
       assistantId: user?.openaiAssistantId || undefined,
       threadId: user?.openaiThreadId || undefined

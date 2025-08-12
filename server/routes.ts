@@ -357,6 +357,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Created new assistant and thread for user:", userId);
         }
         
+        console.log("Using assistant:", userAssistantInfo.assistantId, "thread:", userAssistantInfo.threadId);
+        
         // Check if this is first interaction by checking if user has any stories
         const userStories = await storage.getStoriesByUserId(userId);
         const isFirstInteraction = userStories.length === 0;
