@@ -24,6 +24,8 @@ export const users = pgTable("users", {
   subscriptionTier: varchar("subscription_tier").default("free"), // 'free', 'premium_15', 'premium_unlimited'
   storiesThisMonth: integer("stories_this_month").default(0),
   monthlyResetDate: timestamp("monthly_reset_date").defaultNow(),
+  openaiThreadId: varchar("openai_thread_id"), // OpenAI Assistant thread for persistent context
+  openaiAssistantId: varchar("openai_assistant_id"), // OpenAI Assistant ID for this user
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -63,6 +65,8 @@ export const stories = pgTable("stories", {
   imageUrl2: text("image_url_2"),
   imageUrl3: text("image_url_3"),
   tone: text("tone").notNull(),
+  openaiRunId: varchar("openai_run_id"), // OpenAI Assistant run ID for this story
+  openaiMessageId: varchar("openai_message_id"), // OpenAI thread message ID
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -93,7 +97,6 @@ export const insertStorySchema = createInsertSchema(stories).omit({
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
 
 export type InsertKid = z.infer<typeof insertKidSchema>;
 export type Kid = typeof kids.$inferSelect;

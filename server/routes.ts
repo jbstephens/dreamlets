@@ -336,15 +336,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: char.description || undefined,
       }));
       
-      // Generate story
-      const storyResponse = await generateStory({
-        kidNames,
-        characterNames,
-        storyIdea: validatedData.storyIdea,
-        tone: validatedData.tone,
-        kidPhysicalAttributes,
-        characterDescriptions
-      });
+      // Generate story using Assistant API for authenticated users, traditional for guests
+      let storyResponse;
+      let assistantInfo = { runId: "", messageId: "" };
+      
+      if (isAuthenticated) {
+        // Use OpenAI Assistant for authenticated users to get persistent context
+        const { getOrCreateAssistant, generateStoryWithAssistant } = await import("./services/assistant");
+        
+        // Get or create assistant and thread for this user
+        let userAssistantInfo = await storage.getUserAssistantInfo(userId);
+        
+        if (!userAssistantInfo.assistantId || !userAssistantInfo.threadId) {
+          // First time - create assistant and thread
+          const newAssistantInfo = await getOrCreateAssistant(userId);
+          userAssistantInfo = newAssistantInfo;
+          
+          // Save to database
+          await storage.updateUserAssistantInfo(userId, newAssistantInfo.assistantId, newAssistantInfo.threadId);
+          console.log("Created new assistant and thread for user:", userId);
+        }
+        
+        // Check if this is first interaction by checking if user has any stories
+        const userStories = await storage.getStoriesByUserId(userId);
+        const isFirstInteraction = userStories.length === 0;
+        
+        // Generate story using assistant with persistent context
+        const assistantResult = await generateStoryWithAssistant(
+          userAssistantInfo.threadId!,
+          userAssistantInfo.assistantId!,
+          {
+            kidNames,
+            characterNames,
+            storyIdea: validatedData.storyIdea,
+            tone: validatedData.tone,
+            kidPhysicalAttributes,
+            characterDescriptions
+          },
+          isFirstInteraction
+        );
+        
+        storyResponse = assistantResult;
+        assistantInfo = {
+          runId: assistantResult.runId,
+          messageId: assistantResult.messageId
+        };
+        
+        console.log("Story generated with assistant context - this story will build on previous family interactions");
+      } else {
+        // Use traditional OpenAI completion for guest users (no persistent context)
+        const { generateStory } = await import("./services/openai");
+        storyResponse = await generateStory({
+          kidNames,
+          characterNames,
+          storyIdea: validatedData.storyIdea,
+          tone: validatedData.tone,
+          kidPhysicalAttributes,
+          characterDescriptions
+        });
+        console.log("Story generated with traditional completion for guest user");
+      }
       
       console.log("Story generated, now generating images...");
       // Generate images with fallback
@@ -369,10 +420,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let story;
       
       if (isAuthenticated) {
-        // Authenticated user - save to database
+        // Authenticated user - save to database with assistant metadata
         story = await storage.createStory({
           userId,
           title: storyResponse.title,
+          openaiRunId: assistantInfo.runId || null,
+          openaiMessageId: assistantInfo.messageId || null,
           kidIds: validatedData.kidIds,
           characterIds: validatedData.characterIds,
           storyPart1: storyResponse.part1,

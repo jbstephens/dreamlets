@@ -18,7 +18,10 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Session-based (demo user for MVP)
-- **AI Integration**: OpenAI API for story generation and image creation
+- **AI Integration**: 
+  - OpenAI Assistants API for authenticated users (persistent context)
+  - OpenAI Completions API for guest users (stateless)
+  - OpenAI DALL-E for image generation
 - **API Design**: RESTful endpoints for CRUD operations
 
 ### Data Storage
@@ -31,10 +34,10 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 ## Key Components
 
 ### Database Schema
-- **Users**: Basic user authentication and identification
-- **Kids**: Child profiles with name, age, and description
+- **Users**: Basic user authentication, subscription tiers, and OpenAI Assistant thread management
+- **Kids**: Child profiles with name, age, and detailed physical descriptions
 - **Characters**: Recurring story characters (manual or image-based)
-- **Stories**: Generated stories with three parts, images, and metadata
+- **Stories**: Generated stories with three parts, images, metadata, and OpenAI run tracking
 
 ### Core Features
 1. **Character Management**: Add and manage kids and story characters
@@ -146,3 +149,4 @@ Changelog:
 - July 16, 2025. Enhanced story generation prompt for longer stories with approximately twice the length, emphasizing meaningful middle sections and contextually appropriate character trait mentions rather than forced inclusion
 - July 16, 2025. Improved story page UI - fixed Print button styling to use coral theme colors, enhanced Back button visibility with proper contrast, and removed duplicate title from header for cleaner layout
 - July 24, 2025. Fixed critical broken story images issue - OpenAI DALL-E URLs were expiring but image download process was failing silently, leaving users with broken blue placeholder icons. Implemented robust error handling, improved image download reliability, and created comprehensive repair endpoint to regenerate all missing story images
+- January 16, 2025. **MAJOR UPGRADE**: Implemented OpenAI Assistants API with persistent conversation threads for authenticated users. Each user now has a dedicated AI storytelling companion that remembers all their kids, characters, story preferences, and previous adventures. Stories build contextually on past interactions, creating personalized narrative continuity and character development over time. Guest users continue using traditional completion API, while authenticated users get the enhanced experience with memory and relationship building.

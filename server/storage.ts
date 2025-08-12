@@ -30,6 +30,10 @@ export interface IStorage {
   canCreateStory(userId: string): Promise<{ canCreate: boolean; reason?: string; storiesUsed: number; limit: number }>;
   incrementUserStoryCount(userId: string): Promise<void>;
   updateUserSubscription(userId: string, subscriptionTier: string): Promise<void>;
+
+  // OpenAI Assistant management
+  updateUserAssistantInfo(userId: string, assistantId: string, threadId: string): Promise<void>;
+  getUserAssistantInfo(userId: string): Promise<{ assistantId?: string; threadId?: string }>;
   
   // Guest session migration
   migrateGuestDataToUser(userId: string, guestData: {
@@ -209,6 +213,15 @@ export class MemStorage implements IStorage {
 
   async updateUserSubscription(userId: string, subscriptionTier: string): Promise<void> {
     // Memory storage - no-op for testing
+  }
+
+  async updateUserAssistantInfo(userId: string, assistantId: string, threadId: string): Promise<void> {
+    // Memory storage - no-op for assistant info
+  }
+
+  async getUserAssistantInfo(userId: string): Promise<{ assistantId?: string; threadId?: string }> {
+    // Memory storage - no assistant info available
+    return {};
   }
 
   async migrateGuestDataToUser(userId: string, guestData: {
@@ -405,6 +418,24 @@ class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
+  }
+
+  async updateUserAssistantInfo(userId: string, assistantId: string, threadId: string): Promise<void> {
+    await this.db.update(users)
+      .set({ 
+        openaiAssistantId: assistantId,
+        openaiThreadId: threadId,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async getUserAssistantInfo(userId: string): Promise<{ assistantId?: string; threadId?: string }> {
+    const user = await this.getUser(userId);
+    return {
+      assistantId: user?.openaiAssistantId || undefined,
+      threadId: user?.openaiThreadId || undefined
+    };
   }
 
   async migrateGuestDataToUser(userId: string, guestData: {
