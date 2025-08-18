@@ -358,6 +358,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         console.log("Using assistant:", userAssistantInfo.assistantId, "thread:", userAssistantInfo.threadId);
+        console.log("Assistant info validation - assistantId type:", typeof userAssistantInfo.assistantId, "threadId type:", typeof userAssistantInfo.threadId);
+        console.log("Assistant info validation - assistantId:", userAssistantInfo.assistantId, "threadId:", userAssistantInfo.threadId);
+        
+        // Ensure we have valid IDs
+        if (!userAssistantInfo.assistantId || !userAssistantInfo.threadId || 
+            userAssistantInfo.assistantId === 'undefined' || userAssistantInfo.threadId === 'undefined') {
+          console.log("Invalid assistant info detected, creating new ones");
+          const newAssistantInfo = await getOrCreateAssistant(userId);
+          userAssistantInfo = newAssistantInfo;
+          
+          // Save to database
+          await storage.updateUserAssistantInfo(userId, newAssistantInfo.assistantId, newAssistantInfo.threadId);
+          console.log("Created new assistant and thread for user:", userId);
+        }
         
         // Check if this is first interaction by checking if user has any stories
         const userStories = await storage.getStoriesByUserId(userId);
