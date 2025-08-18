@@ -345,7 +345,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const { getOrCreateAssistant, generateStoryWithAssistant } = await import("./services/assistant");
         
         // Get or create assistant and thread for this user
+        console.log("=== RETRIEVING ASSISTANT INFO ===");
+        console.log("UserId:", userId);
         let userAssistantInfo = await storage.getUserAssistantInfo(userId);
+        console.log("Raw userAssistantInfo:", userAssistantInfo);
+        console.log("typeof userAssistantInfo.threadId:", typeof userAssistantInfo.threadId);
+        console.log("userAssistantInfo.threadId === 'undefined':", userAssistantInfo.threadId === 'undefined');
         
         if (!userAssistantInfo.assistantId || !userAssistantInfo.threadId) {
           // First time - create assistant and thread
