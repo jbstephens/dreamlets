@@ -434,11 +434,24 @@ class DatabaseStorage implements IStorage {
     const user = await this.getUser(userId);
     console.log("Retrieved user assistant info for", userId, ":", {
       assistantId: user?.openaiAssistantId,
-      threadId: user?.openaiThreadId
+      threadId: user?.openaiThreadId,
+      userFound: !!user
     });
+    
+    // Convert null to undefined for consistency
+    const assistantId = user?.openaiAssistantId || undefined;
+    const threadId = user?.openaiThreadId || undefined;
+    
+    console.log("Returning assistant info:", {
+      assistantId,
+      threadId,
+      assistantIdType: typeof assistantId,
+      threadIdType: typeof threadId
+    });
+    
     return {
-      assistantId: user?.openaiAssistantId || undefined,
-      threadId: user?.openaiThreadId || undefined
+      assistantId,
+      threadId
     };
   }
 

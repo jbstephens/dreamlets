@@ -157,10 +157,21 @@ export async function generateStoryWithAssistant(
   isFirstInteraction: boolean = false
 ): Promise<AssistantStoryResponse> {
   try {
+    console.log("=== ASSISTANT API DEBUG ===");
     console.log("Generating story with assistant for thread:", threadId);
+    console.log("Assistant ID:", assistantId);
+    console.log("Thread ID type:", typeof threadId);
+    console.log("Thread ID value:", threadId);
+    console.log("Thread ID === 'undefined':", threadId === 'undefined');
+    console.log("Thread ID == undefined:", threadId == undefined);
+    console.log("!threadId:", !threadId);
     
-    if (!threadId || threadId === 'undefined') {
-      throw new Error("Invalid thread ID provided");
+    if (!threadId || threadId === 'undefined' || threadId === 'null') {
+      throw new Error(`Invalid thread ID provided: ${threadId}`);
+    }
+    
+    if (!assistantId || assistantId === 'undefined' || assistantId === 'null') {
+      throw new Error(`Invalid assistant ID provided: ${assistantId}`);
     }
     
     // Check if there are any active runs on this thread first
