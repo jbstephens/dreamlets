@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { objectStorageClient } from "../replit_integrations/object_storage";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
@@ -182,26 +183,50 @@ async function downloadAndSaveImage(imageUrl: string, filename: string): Promise
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
+    // Check if Object Storage is available
+    const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+    
+    if (bucketId) {
+      // Use Object Storage for permanent storage (preferred)
+      try {
+        const objectPath = `public/story-images/${filename}`;
+        const bucket = objectStorageClient.bucket(bucketId);
+        const file = bucket.file(objectPath);
+        
+        await file.save(buffer, {
+          contentType: 'image/png',
+          metadata: {
+            cacheControl: 'public, max-age=31536000',
+          },
+        });
+        
+        console.log(`Image successfully uploaded to Object Storage: ${objectPath}`);
+        console.log(`File size: ${buffer.length} bytes`);
+        
+        return `/objects/${objectPath}`;
+      } catch (storageError: any) {
+        console.error(`Object Storage failed, falling back to local filesystem:`, storageError.message);
+        // Fall through to local filesystem storage
+      }
+    }
+    
+    // Fallback: Save to local filesystem (may not persist across deployments)
     const fs = await import('fs/promises');
     const path = await import('path');
     
-    // Ensure directory exists
     const storyImagesDir = path.join(process.cwd(), 'public', 'story-images');
     await fs.mkdir(storyImagesDir, { recursive: true });
     
     const filePath = path.join(storyImagesDir, filename);
     await fs.writeFile(filePath, buffer);
     
-    console.log(`Image successfully saved to: ${filePath}`);
-    
-    // Verify file was written correctly
-    const stats = await fs.stat(filePath);
-    console.log(`File size: ${stats.size} bytes`);
+    console.log(`Image saved to local filesystem: ${filePath}`);
+    console.log(`File size: ${buffer.length} bytes`);
+    console.log(`WARNING: Local filesystem storage may not persist across deployments`);
     
     return `/story-images/${filename}`;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`CRITICAL: Failed to download and save image ${filename}:`, error);
-    // Don't fallback to original URL since it will expire - throw error instead
     throw new Error(`Image download failed: ${error.message}`);
   }
 }

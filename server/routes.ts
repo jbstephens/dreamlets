@@ -8,6 +8,7 @@ import { z } from "zod";
 import express from "express";
 import path from "path";
 import Stripe from "stripe";
+import { registerObjectStorageRoutes, objectStorageClient } from "./replit_integrations/object_storage";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -26,6 +27,40 @@ const generateStorySchema = z.object({
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
+
+  // Register object storage routes for permanent file storage
+  registerObjectStorageRoutes(app);
+
+  // Serve story images from Object Storage (new path format)
+  app.get("/objects/public/story-images/:filename", async (req, res) => {
+    try {
+      const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+      if (!bucketId) {
+        return res.status(500).json({ error: "Object storage not configured" });
+      }
+      
+      const filename = req.params.filename;
+      const objectPath = `public/story-images/${filename}`;
+      const bucket = objectStorageClient.bucket(bucketId);
+      const file = bucket.file(objectPath);
+      
+      const [exists] = await file.exists();
+      if (!exists) {
+        return res.status(404).json({ error: "Image not found" });
+      }
+      
+      const [metadata] = await file.getMetadata();
+      res.set({
+        "Content-Type": metadata.contentType || "image/png",
+        "Cache-Control": "public, max-age=31536000",
+      });
+      
+      file.createReadStream().pipe(res);
+    } catch (error) {
+      console.error("Error serving story image:", error);
+      res.status(500).json({ error: "Failed to serve image" });
+    }
+  });
 
   // Auth middleware
   await setupSimpleAuth(app);

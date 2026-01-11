@@ -421,6 +421,16 @@ class DatabaseStorage implements IStorage {
   }
 
   async updateUserAssistantInfo(userId: string, assistantId: string, threadId: string): Promise<void> {
+    // Validate inputs to prevent storing invalid values
+    if (!assistantId || assistantId === 'undefined' || assistantId === 'null' || !assistantId.startsWith('asst_')) {
+      throw new Error(`Invalid assistantId: ${assistantId}. Expected format: asst_xxxxx`);
+    }
+    if (!threadId || threadId === 'undefined' || threadId === 'null' || !threadId.startsWith('thread_')) {
+      throw new Error(`Invalid threadId: ${threadId}. Expected format: thread_xxxxx`);
+    }
+    
+    console.log("Saving valid assistant info:", { userId, assistantId, threadId });
+    
     await this.db.update(users)
       .set({ 
         openaiAssistantId: assistantId,
@@ -432,21 +442,35 @@ class DatabaseStorage implements IStorage {
 
   async getUserAssistantInfo(userId: string): Promise<{ assistantId?: string; threadId?: string }> {
     const user = await this.getUser(userId);
-    console.log("Retrieved user assistant info for", userId, ":", {
-      assistantId: user?.openaiAssistantId,
-      threadId: user?.openaiThreadId,
+    console.log("Retrieved user from database for", userId, ":", {
+      openaiAssistantId: user?.openaiAssistantId,
+      openaiThreadId: user?.openaiThreadId,
       userFound: !!user
     });
     
-    // Convert null to undefined for consistency
-    const assistantId = user?.openaiAssistantId || undefined;
-    const threadId = user?.openaiThreadId || undefined;
+    // Validate values - only return if they are properly formatted
+    let assistantId: string | undefined = undefined;
+    let threadId: string | undefined = undefined;
     
-    console.log("Returning assistant info:", {
+    if (user?.openaiAssistantId && 
+        user.openaiAssistantId !== 'undefined' && 
+        user.openaiAssistantId !== 'null' &&
+        user.openaiAssistantId.startsWith('asst_')) {
+      assistantId = user.openaiAssistantId;
+    }
+    
+    if (user?.openaiThreadId && 
+        user.openaiThreadId !== 'undefined' && 
+        user.openaiThreadId !== 'null' &&
+        user.openaiThreadId.startsWith('thread_')) {
+      threadId = user.openaiThreadId;
+    }
+    
+    console.log("Returning validated assistant info:", {
       assistantId,
       threadId,
-      assistantIdType: typeof assistantId,
-      threadIdType: typeof threadId
+      assistantIdValid: !!assistantId,
+      threadIdValid: !!threadId
     });
     
     return {
