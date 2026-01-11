@@ -29,6 +29,7 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 - **ORM**: Drizzle ORM with type-safe queries
 - **Schema**: Four main tables - users, kids, characters, stories
 - **Migrations**: Managed through Drizzle Kit
+- **Image Storage**: User-specific folders in `storage/users/{userId}/images/` - platform-independent, served via Express
 - **Production Storage**: PostgreSQL database with persistent data storage
 
 ## Key Components
@@ -99,6 +100,7 @@ Dreamlets is a full-stack web application that generates personalized illustrate
 - `DATABASE_URL`: PostgreSQL connection string
 - `OPENAI_API_KEY`: OpenAI API authentication
 - `NODE_ENV`: Environment configuration
+- `ASSET_STORAGE_ROOT`: Optional custom path for image storage (defaults to `./storage`)
 
 ## User Preferences
 
@@ -150,4 +152,4 @@ Changelog:
 - July 16, 2025. Improved story page UI - fixed Print button styling to use coral theme colors, enhanced Back button visibility with proper contrast, and removed duplicate title from header for cleaner layout
 - July 24, 2025. Fixed critical broken story images issue - OpenAI DALL-E URLs were expiring but image download process was failing silently, leaving users with broken blue placeholder icons. Implemented robust error handling, improved image download reliability, and created comprehensive repair endpoint to regenerate all missing story images
 - August 12, 2025. **MAJOR UPGRADE**: Successfully implemented OpenAI Assistants API with persistent conversation threads for authenticated users. Each user now has a dedicated AI storytelling companion that remembers all their kids, characters, story preferences, and previous adventures. Stories build contextually on past interactions, creating personalized narrative continuity and character development over time. Guest users continue using traditional completion API, while authenticated users get the enhanced experience with memory and relationship building. Fixed concurrent run handling and thread validation for robust Assistant API integration.
-- January 11, 2026. **CRITICAL FIX - Permanent Image Storage**: Migrated story image storage from local filesystem to Replit's Object Storage for permanent persistence across deployments. Local filesystem images were being lost during server updates - now images are stored in cloud object storage that persists forever. New images are saved to `/objects/public/story-images/` path and served via dedicated route. Added repair endpoints for regenerating broken images. Also reset corrupted Assistant API thread IDs to enable fresh story sequels with memory.
+- January 11, 2026. **CRITICAL FIX - Portable Image Storage**: Implemented platform-independent image storage using user-specific folders (`storage/users/{userId}/images/`). Each user's story images are saved to their own folder, served via `/user-assets/:userId/images/:filename` route. This approach works on any platform without dependencies on cloud-specific services. Also added robust validation to prevent storing invalid OpenAI Assistant thread IDs - now validates that IDs start with proper prefixes ('asst_' and 'thread_') and auto-recovers from corrupted data.

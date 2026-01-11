@@ -1,10 +1,16 @@
 import OpenAI from "openai";
-import { objectStorageClient } from "../replit_integrations/object_storage";
+import * as fs from "fs/promises";
+import * as path from "path";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || ""
 });
+
+const STORAGE_ROOT = process.env.ASSET_STORAGE_ROOT || path.join(process.cwd(), "storage");
+
+export function getStorageRoot(): string {
+  return STORAGE_ROOT;
+}
 
 export interface StoryRequest {
   kidNames: string[];
@@ -172,9 +178,9 @@ Respond in JSON format with this structure:
   }
 }
 
-async function downloadAndSaveImage(imageUrl: string, filename: string): Promise<string> {
+async function downloadAndSaveImage(imageUrl: string, filename: string, userId: string): Promise<string> {
   try {
-    console.log(`Attempting to download image: ${imageUrl}`);
+    console.log(`Attempting to download image: ${imageUrl} for user: ${userId}`);
     const response = await fetch(imageUrl);
     if (!response.ok) {
       throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
@@ -183,57 +189,27 @@ async function downloadAndSaveImage(imageUrl: string, filename: string): Promise
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Check if Object Storage is available
-    const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
+    // Create user-specific directory for images
+    const userImagesDir = path.join(STORAGE_ROOT, "users", userId, "images");
+    await fs.mkdir(userImagesDir, { recursive: true });
     
-    if (bucketId) {
-      // Use Object Storage for permanent storage (preferred)
-      try {
-        const objectPath = `public/story-images/${filename}`;
-        const bucket = objectStorageClient.bucket(bucketId);
-        const file = bucket.file(objectPath);
-        
-        await file.save(buffer, {
-          contentType: 'image/png',
-          metadata: {
-            cacheControl: 'public, max-age=31536000',
-          },
-        });
-        
-        console.log(`Image successfully uploaded to Object Storage: ${objectPath}`);
-        console.log(`File size: ${buffer.length} bytes`);
-        
-        return `/objects/${objectPath}`;
-      } catch (storageError: any) {
-        console.error(`Object Storage failed, falling back to local filesystem:`, storageError.message);
-        // Fall through to local filesystem storage
-      }
-    }
-    
-    // Fallback: Save to local filesystem (may not persist across deployments)
-    const fs = await import('fs/promises');
-    const path = await import('path');
-    
-    const storyImagesDir = path.join(process.cwd(), 'public', 'story-images');
-    await fs.mkdir(storyImagesDir, { recursive: true });
-    
-    const filePath = path.join(storyImagesDir, filename);
+    const filePath = path.join(userImagesDir, filename);
     await fs.writeFile(filePath, buffer);
     
-    console.log(`Image saved to local filesystem: ${filePath}`);
+    console.log(`Image saved to: ${filePath}`);
     console.log(`File size: ${buffer.length} bytes`);
-    console.log(`WARNING: Local filesystem storage may not persist across deployments`);
     
-    return `/story-images/${filename}`;
+    // Return URL path that will be served by Express
+    return `/user-assets/${userId}/images/${filename}`;
   } catch (error: any) {
     console.error(`CRITICAL: Failed to download and save image ${filename}:`, error);
     throw new Error(`Image download failed: ${error.message}`);
   }
 }
 
-export async function generateImages(imagePrompts: string[], characterDescriptions: string): Promise<GeneratedImages> {
+export async function generateImages(imagePrompts: string[], characterDescriptions: string, userId: string): Promise<GeneratedImages> {
   try {
-    console.log("Starting image generation for", imagePrompts.length, "prompts...");
+    console.log("Starting image generation for", imagePrompts.length, "prompts for user:", userId);
     
     const imagePromises = imagePrompts.map(async (prompt, index) => {
       console.log(`Generating image ${index + 1}...`);
@@ -267,16 +243,16 @@ Style: Simple children's book illustration, soft watercolor, warm colors, peacef
       const openaiUrl = response.data[0].url!;
       console.log(`Image ${index + 1} generated successfully`);
       
-      // Download and save the image locally
+      // Download and save the image to user's folder
       const timestamp = Date.now();
       const filename = `story-${timestamp}-${index + 1}.png`;
-      const localUrl = await downloadAndSaveImage(openaiUrl, filename);
+      const localUrl = await downloadAndSaveImage(openaiUrl, filename, userId);
       
       return localUrl;
     });
 
     const imageUrls = await Promise.all(imagePromises);
-    console.log("All images generated and saved locally");
+    console.log("All images generated and saved to user folder");
     
     return {
       imageUrl1: imageUrls[0],

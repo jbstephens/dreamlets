@@ -154,6 +154,7 @@ export async function generateStoryWithAssistant(
   threadId: string,
   assistantId: string,
   request: StoryRequest,
+  userId: string,
   isFirstInteraction: boolean = false
 ): Promise<AssistantStoryResponse> {
   try {
@@ -257,7 +258,7 @@ Remember everything you know about this family and build on previous stories whe
               
               // Generate images using DALL-E
               const { generateImages } = await import("./openai");
-              const imageUrls = await generateImages(args.image_prompts, args.character_descriptions);
+              const imageUrls = await generateImages(args.image_prompts, args.character_descriptions, userId);
               
               toolOutputs.push({
                 tool_call_id: toolCall.id,

@@ -2,13 +2,12 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertKidSchema, insertCharacterSchema, insertStorySchema } from "@shared/schema";
-import { generateStory, generateImages } from "./services/openai";
+import { generateStory, generateImages, getStorageRoot } from "./services/openai";
 import { setupSimpleAuth, isAuthenticated } from "./simpleAuth";
 import { z } from "zod";
 import express from "express";
 import path from "path";
 import Stripe from "stripe";
-import { registerObjectStorageRoutes, objectStorageClient } from "./replit_integrations/object_storage";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -28,36 +27,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
 
-  // Register object storage routes for permanent file storage
-  registerObjectStorageRoutes(app);
-
-  // Serve story images from Object Storage (new path format)
-  app.get("/objects/public/story-images/:filename", async (req, res) => {
+  // Serve user-specific images from storage directory
+  // Route: /user-assets/:userId/images/:filename
+  app.get("/user-assets/:userId/images/:filename", async (req, res) => {
     try {
-      const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketId) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const { userId, filename } = req.params;
+      const storageRoot = getStorageRoot();
+      const filePath = path.join(storageRoot, "users", userId, "images", filename);
       
-      const filename = req.params.filename;
-      const objectPath = `public/story-images/${filename}`;
-      const bucket = objectStorageClient.bucket(bucketId);
-      const file = bucket.file(objectPath);
-      
-      const [exists] = await file.exists();
-      if (!exists) {
-        return res.status(404).json({ error: "Image not found" });
-      }
-      
-      const [metadata] = await file.getMetadata();
       res.set({
-        "Content-Type": metadata.contentType || "image/png",
+        "Content-Type": "image/png",
         "Cache-Control": "public, max-age=31536000",
       });
       
-      file.createReadStream().pipe(res);
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.error("Error serving user image:", err);
+          res.status(404).json({ error: "Image not found" });
+        }
+      });
     } catch (error) {
-      console.error("Error serving story image:", error);
+      console.error("Error serving user image:", error);
       res.status(500).json({ error: "Failed to serve image" });
     }
   });
@@ -430,6 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               kidPhysicalAttributes,
               characterDescriptions
             },
+            userId,
             isFirstInteraction
           );
           
@@ -492,7 +483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           storyResponse.imagePrompt1,
           storyResponse.imagePrompt2,
           storyResponse.imagePrompt3
-        ], storyResponse.characterDescriptions);
+        ], storyResponse.characterDescriptions, userId);
       } catch (imageError: any) {
         console.warn("Image generation failed, creating story without images:", imageError.message);
         images = {
@@ -584,13 +575,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Test endpoint for DALL-E image generation
-  app.post("/api/test-images", async (req, res) => {
+  app.post("/api/test-images", async (req: any, res) => {
     try {
       console.log("Testing DALL-E image generation...");
+      const userId = req.session?.userId || "test-user";
       const { generateImages } = await import("./services/openai");
       const images = await generateImages([
         "A cozy bedroom scene with a child reading a book"
-      ], "A young child with brown hair wearing pajamas");
+      ], "A young child with brown hair wearing pajamas", userId);
       res.json({ success: true, imageUrl: images.imageUrl1 });
     } catch (error: any) {
       console.error("DALL-E test failed:", error);
@@ -681,7 +673,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const allDescriptions = [kidDescriptions, characterDescriptions].filter(Boolean).join(". ");
           
           // Generate new images
-          const images = await generateImages(imagePrompts, allDescriptions);
+          const images = await generateImages(imagePrompts, allDescriptions, userId);
           
           // Update story with new image URLs
           await storage.updateStory(story.id, {
@@ -756,7 +748,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Generate new images
       const { generateImages } = await import("./services/openai");
-      const images = await generateImages(imagePrompts, allDescriptions);
+      const images = await generateImages(imagePrompts, allDescriptions, userId);
       
       // Update story with new image URLs
       await storage.updateStory(id, {
