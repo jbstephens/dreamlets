@@ -8,13 +8,12 @@ import { z } from "zod";
 import express from "express";
 import path from "path";
 import Stripe from "stripe";
+import rateLimit from "express-rate-limit";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const generateStorySchema = z.object({
   kidIds: z.array(z.number()),
@@ -23,7 +22,35 @@ const generateStorySchema = z.object({
   tone: z.string()
 });
 
+// Rate limiters for security
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window per IP
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 login/register attempts per hour per IP
+  message: { error: 'Too many authentication attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const generateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 30, // 30 story generations per hour per IP
+  message: { error: 'Story generation limit reached, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply rate limiting to API routes
+  app.use('/api/', apiLimiter);
+  
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
 
@@ -284,7 +311,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/stories/generate", async (req: any, res) => {
+  app.post("/api/stories/generate", generateLimiter, async (req: any, res) => {
     try {
       const validatedData = generateStorySchema.parse(req.body);
       const isAuthenticated = !!req.session?.userId;
@@ -932,9 +959,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe webhook handler for production reliability
+  // Note: This route uses express.raw() middleware (configured in index.ts)
   app.post("/api/webhook/stripe", async (req, res) => {
     try {
-      const event = req.body;
+      let event: Stripe.Event;
+      
+      // Verify webhook signature in production
+      const sig = req.headers['stripe-signature'];
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      
+      if (webhookSecret && sig) {
+        try {
+          event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            webhookSecret
+          );
+        } catch (err: any) {
+          console.error('Webhook signature verification failed:', err.message);
+          return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+        }
+      } else {
+        // Development mode - parse body directly (less secure)
+        event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+        if (process.env.NODE_ENV === 'production') {
+          console.warn('Warning: STRIPE_WEBHOOK_SECRET not set. Webhook signature verification disabled.');
+        }
+      }
       
       switch (event.type) {
         case 'checkout.session.completed':

@@ -2,7 +2,17 @@ import bcrypt from "bcrypt";
 import type { Express, RequestHandler } from "express";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
+import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
+
+// Rate limiter for auth endpoints (stricter than general API)
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 attempts per hour per IP
+  message: { message: 'Too many authentication attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Simple session configuration
 export function getSession() {
@@ -49,8 +59,8 @@ export async function setupSimpleAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(getSession());
 
-  // Register endpoint
-  app.post("/api/auth/register", async (req: any, res) => {
+  // Register endpoint (with rate limiting)
+  app.post("/api/auth/register", authLimiter, async (req: any, res) => {
     try {
       const { email, password, firstName, lastName } = req.body;
       
@@ -113,7 +123,8 @@ export async function setupSimpleAuth(app: Express) {
   });
 
   // Login endpoint
-  app.post("/api/auth/login", async (req: any, res) => {
+  // Login endpoint (with rate limiting)
+  app.post("/api/auth/login", authLimiter, async (req: any, res) => {
     try {
       const { email, password } = req.body;
       

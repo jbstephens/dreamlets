@@ -1,0 +1,43 @@
+# Render.com Blueprint
+# Deploy with: render blueprint apply
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # Web Service
+  - type: web
+    name: dreamlets
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dreamlets-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+    disk:
+      name: story-images
+      mountPath: /opt/render/project/src/storage
+      sizeGB: 1
+
+# Database
+databases:
+  - name: dreamlets-db
+    databaseName: dreamlets
+    region: oregon
+    plan: free
+    ipAllowList: []
