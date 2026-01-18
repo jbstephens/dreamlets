@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { eq, desc, sql } from "drizzle-orm";
 import { users, kids, characters, stories, type User, type UpsertUser, type Kid, type InsertKid, type Character, type InsertCharacter, type Story, type InsertStory } from "@shared/schema";
 
@@ -236,7 +236,8 @@ export class MemStorage implements IStorage {
 
 // Database implementation
 class DatabaseStorage implements IStorage {
-  private db = drizzle(neon(process.env.DATABASE_URL!));
+  private pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  private db = drizzle(this.pool);
 
   async getUser(id: string): Promise<User | undefined> {
     const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
